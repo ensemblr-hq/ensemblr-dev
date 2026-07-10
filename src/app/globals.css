@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+:root {
+	--background: #0a0707;
+	--foreground: #e4e1dd;
+	--accent-cyan: #22d3ee;
+	--accent-pink: #ff2e63;
+}
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-accent-cyan: var(--accent-cyan);
+	--color-accent-pink: var(--accent-pink);
+	--font-sans:
+		ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+		Arial, sans-serif;
+	--font-mono:
+		ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas,
+		monospace;
+}
+
+/* Single-page coming-soon: pin the brand dark theme regardless of OS setting. */
+html {
+	color-scheme: dark;
+}
+
+body {
+	background: var(--background);
+	color: var(--foreground);
+	font-family: var(--font-sans);
+}
