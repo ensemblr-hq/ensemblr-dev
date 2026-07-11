@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Ensemblr Coming Soon
 
-## Getting Started
+Small Next.js app for the Ensemblr launch page. It shows a minimal waitlist form, stores signups in NocoDB, and can send best-effort signup alerts via Resend.
 
-First, run the development server:
+## Stack
+
+- Next.js 16 + React 19
+- TypeScript
+- Tailwind CSS 4
+- Biome
+- NocoDB REST API for waitlist storage
+- Resend for optional email notifications
+
+## Run locally
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+bun install
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Create `.env.local`:
 
-## Learn More
+```bash
+NOCODB_API_URL=https://your-nocodb-host
+NOCODB_API_TOKEN=your-token
+NOCODB_TABLE_ID=your-table-id
+NOCODB_EMAIL_FIELD=Email
 
-To learn more about Next.js, take a look at the following resources:
+RESEND_API_KEY=your-resend-key
+NOTIFICATIONS_RECIPIENT=you@example.com
+NOTIFICATIONS_FROM="Ensemblr <hello@your-domain.com>"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+NocoDB vars are required to persist signups. Without them, the API validates and logs the email but returns success so the form still works during setup.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Resend vars are optional. Notifications never block signup storage.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+bun dev      # local dev server
+bun build    # production build
+bun start    # run production server
+bun lint     # Biome check
+bun format   # Biome format
+```
