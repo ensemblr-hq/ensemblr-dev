@@ -1,5 +1,5 @@
 {
-	"name": "ensemblr-coming-soon",
+	"name": "ensemblr-site",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
@@ -7,20 +7,26 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "biome check",
-		"format": "biome format --write"
+		"format": "biome format --write",
+		"typecheck": "tsc --noEmit",
+		"test": "bun test",
+		"check:pin": "bun scripts/check-pinned-release.ts",
+		"gen:favicon": "bun scripts/generate-favicon.ts"
 	},
 	"dependencies": {
+		"@vercel/analytics": "^2.0.1",
 		"clsx": "^2.1.1",
+		"motion": "^13.1.0",
 		"next": "16.2.10",
 		"react": "19.2.4",
 		"react-dom": "19.2.4",
-		"resend": "^6.17.2",
 		"tailwind-merge": "^3.6.0",
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.2.0",
 		"@tailwindcss/postcss": "^4",
+		"@types/bun": "^1.3.14",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",

@@ -1,24 +1,72 @@
-import { EnsemblrWordmark } from '@/components/ensemblr-wordmark';
-import { SubscribeForm } from '@/components/subscribe-form';
+import { PixelRule } from '@/components/brand/pixel-rule';
+import { SiteFooter } from '@/components/chrome/site-footer';
+import { SiteNav } from '@/components/chrome/site-nav';
+import { Download } from '@/components/sections/download';
+import { FeatureGrid } from '@/components/sections/feature-grid';
+import { Hero } from '@/components/sections/hero';
+import { Orchestration } from '@/components/sections/orchestration';
+import { Showcase } from '@/components/sections/showcase';
+import { Trust } from '@/components/sections/trust';
+import { JsonLd } from '@/components/seo/json-ld';
+import { getLatestRelease } from '@/lib/github-release';
+import { buildHomeGraph } from '@/lib/structured-data';
 
-export default function Home() {
+/**
+ * Every seam between the prose sections carries the same rule. Three sections
+ * that each open with an eyebrow and a display heading, separated by nothing
+ * but their own padding, read as one undifferentiated column however well each
+ * is set — the rule is what makes them chapters.
+ */
+function SectionRule() {
 	return (
-		<main className='relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-background px-6 py-16 text-foreground'>
-			<div className='flex w-full max-w-xl flex-col items-center gap-8 text-center'>
-				<EnsemblrWordmark />
-				<div className='flex flex-col items-center gap-3'>
-					<p className='font-mono text-xs uppercase tracking-[0.35em] text-foreground/50'>
-						Coming soon
-					</p>
-					<h1 className='max-w-md text-balance text-sm text-foreground/70 sm:text-base'>
-						Something is being composed. Join the list for early access.
-					</h1>
-				</div>
-				<SubscribeForm className='mt-2' />
-			</div>
-			<footer className='pointer-events-none absolute inset-x-0 bottom-6 text-center font-mono text-[0.65rem] uppercase tracking-[0.3em] text-foreground/25'>
-				Ensemblr
-			</footer>
-		</main>
+		<div className='mx-auto w-full max-w-7xl px-5 sm:px-8'>
+			<PixelRule />
+		</div>
+	);
+}
+
+export default async function Home() {
+	/*
+	 * The same lookup the hero, the download block and the footer each make. It
+	 * is `'use cache'`d, so this is a fourth read of one cached value rather than
+	 * a fourth request — and the structured data has to describe the build the
+	 * button actually serves, not a version literal that can drift from it.
+	 */
+	const release = await getLatestRelease();
+
+	return (
+		<>
+			<JsonLd data={buildHomeGraph(release)} />
+			{/* Seven tab stops sit between the top of the document and the first
+			    heading, and the first of them is the nav's own back-to-top link. */}
+			<a
+				className='sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-[60] focus-visible:rounded-lg focus-visible:bg-accent focus-visible:px-4 focus-visible:py-2 focus-visible:font-medium focus-visible:text-[0.9375rem] focus-visible:text-accent-foreground'
+				href='#main'
+			>
+				Skip to content
+			</a>
+			<SiteNav />
+			{/*
+			 * Trust sits immediately before Download, not two sections up.
+			 *
+			 * It answers the visitor's second question — can I trust this with my
+			 * credentials and my machine — and it used to be separated from the
+			 * button by the entire seventeen-item feature grid, so the argument was
+			 * made and then left to cool for a couple of thousand pixels. The long
+			 * tail is the right thing to defer; the reason to click is not.
+			 */}
+			<main id='main'>
+				<Hero />
+				<Showcase />
+				<SectionRule />
+				<Orchestration />
+				<SectionRule />
+				<FeatureGrid />
+				<SectionRule />
+				<Trust />
+				<Download />
+			</main>
+			<SiteFooter />
+		</>
 	);
 }

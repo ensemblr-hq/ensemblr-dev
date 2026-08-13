@@ -1,0 +1,78 @@
+import { Reveal } from '@/components/motion/reveal';
+import { cn } from '@/lib/utils';
+
+/**
+ * Eyebrow, title and lede in the one arrangement every section shares.
+ *
+ * `size` is the only real variation between the sections that use it, and it
+ * moves the title and the lede together — the showcase's four beats are
+ * subordinate to the section they sit in, so they take a smaller heading *and*
+ * a smaller lede. Splitting those into two props would let a caller set a step
+ * heading over a section-sized lede, which is not a combination the page has.
+ */
+interface SectionHeadingProps {
+	eyebrow: string;
+	title: React.ReactNode;
+	lede?: React.ReactNode;
+	className?: string;
+	/** For the odd measure — Download caps its title at 18ch, not `max-w-3xl`. */
+	titleClassName?: string;
+	align?: 'left' | 'center';
+	size?: 'title' | 'step';
+}
+
+const TITLE_CLASS = {
+	title: 'max-w-3xl text-3xl sm:text-4xl lg:text-title',
+	step: 'text-2xl sm:text-3xl lg:text-step',
+} as const;
+
+/*
+ * Measured in characters, not rems: a lede is read as a single run of prose,
+ * and ~52ch is where it stops needing a return sweep. The old `max-w-2xl` was
+ * ~74ch at this size, wide enough that every section lede filled its line to
+ * the same edge and the page gained a second, accidental left-to-right rhythm.
+ */
+const LEDE_CLASS = {
+	title: 'max-w-[52ch] text-base leading-relaxed sm:text-lg',
+	step: 'text-[0.9375rem] leading-relaxed',
+} as const;
+
+export function SectionHeading({
+	align = 'left',
+	className,
+	eyebrow,
+	lede,
+	size = 'title',
+	title,
+	titleClassName,
+}: SectionHeadingProps) {
+	return (
+		<div
+			className={cn(
+				'flex flex-col gap-5',
+				align === 'center' && 'items-center text-center',
+				className,
+			)}
+		>
+			<Reveal className='flex items-center gap-2.5'>
+				<span
+					aria-hidden='true'
+					className='size-1.5 shrink-0 bg-accent shadow-[0_0_12px_var(--accent)]'
+				/>
+				<span className='eyebrow'>{eyebrow}</span>
+			</Reveal>
+			<Reveal index={1}>
+				<h2 className={cn('text-balance', TITLE_CLASS[size], titleClassName)}>
+					{title}
+				</h2>
+			</Reveal>
+			{lede ? (
+				<Reveal index={2}>
+					<p className={cn('text-pretty text-muted', LEDE_CLASS[size])}>
+						{lede}
+					</p>
+				</Reveal>
+			) : null}
+		</div>
+	);
+}

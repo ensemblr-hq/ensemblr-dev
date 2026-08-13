@@ -2,25 +2,15 @@
 
 import { useEffect, useState } from 'react';
 
+import { useReducedMotion } from '@/components/motion/use-reduced-motion';
+import {
+	buildWordmarkPixels,
+	GLYPH_HEIGHT,
+	PIXEL_INSET,
+	PIXEL_SIZE,
+	TOTAL_WIDTH,
+} from '@/lib/glyphs';
 import { cn } from '@/lib/utils';
-
-const GLYPHS: Record<string, readonly string[]> = {
-	B: ['11110', '10001', '10001', '11110', '10001', '10001', '11110'],
-	E: ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
-	L: ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
-	M: ['10001', '11011', '10101', '10001', '10001', '10001', '10001'],
-	N: ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
-	R: ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
-	S: ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
-};
-
-const WORD = 'ENSEMBLR';
-const GLYPH_WIDTH = 5;
-const GLYPH_HEIGHT = 7;
-const LETTER_GAP = 1;
-const TOTAL_WIDTH = WORD.length * GLYPH_WIDTH + (WORD.length - 1) * LETTER_GAP;
-const PIXEL_INSET = 0.1;
-const PIXEL_SIZE = 1 - PIXEL_INSET * 2;
 
 const FLICKER_CYCLE_MIN = 12;
 const FLICKER_CYCLE_RANGE = 8;
@@ -30,42 +20,17 @@ const BURST_INTERVAL_RANGE_MS = 8000;
 const BURST_DURATION_MIN_MS = 260;
 const BURST_DURATION_RANGE_MS = 200;
 
-interface PixelRect {
-	x: number;
-	y: number;
-}
-
 interface FlickerTiming {
 	delay: number;
 	duration: number;
 }
 
 /**
- * Deterministic pixel positions derived from the glyph bitmaps. These are
- * identical on the server and client, so they never trigger a hydration
- * mismatch. Random flicker timing is intentionally NOT computed here.
+ * Positions are deterministic (see `@/lib/glyphs`), so they are identical on
+ * the server and the client and never trigger a hydration mismatch. Random
+ * flicker timing is intentionally NOT computed here.
  */
-function buildPixels(): PixelRect[] {
-	const pixels: PixelRect[] = [];
-	for (let letterIndex = 0; letterIndex < WORD.length; letterIndex += 1) {
-		const glyph = GLYPHS[WORD[letterIndex]];
-		if (!glyph) {
-			continue;
-		}
-		const baseX = letterIndex * (GLYPH_WIDTH + LETTER_GAP);
-		for (let row = 0; row < glyph.length; row += 1) {
-			const rowData = glyph[row];
-			for (let col = 0; col < rowData.length; col += 1) {
-				if (rowData[col] === '1') {
-					pixels.push({ x: baseX + col, y: row });
-				}
-			}
-		}
-	}
-	return pixels;
-}
-
-const PIXELS = buildPixels();
+const PIXELS = buildWordmarkPixels();
 
 /**
  * Per-pixel flicker timing uses `Math.random()`, so it must be generated on the
@@ -77,19 +42,6 @@ function buildFlickerTimings(): FlickerTiming[] {
 		duration: FLICKER_CYCLE_MIN + Math.random() * FLICKER_CYCLE_RANGE,
 	}));
 }
-
-const KEYFRAMES = `
-@keyframes ensemblr-wordmark-flicker {
-  0%, 100% { opacity: 1; }
-  48% { opacity: 1; }
-  49% { opacity: 0.15; }
-  50% { opacity: 0.85; }
-  51% { opacity: 1; }
-  76% { opacity: 1; }
-  77% { opacity: 0.4; }
-  78% { opacity: 1; }
-}
-`;
 
 interface GhostLayerProps {
 	color: string;
@@ -132,15 +84,32 @@ function GhostLayer({ color, offset, visible }: GhostLayerProps) {
  * JS-timed RGB-split glitch burst (pink + cyan ghosts). Fully static when the
  * user prefers reduced motion.
  */
-export function EnsemblrWordmark({ className }: { className?: string }) {
+export function EnsemblrWordmark({
+	className,
+	static: isStatic = false,
+}: {
+	className?: string;
+	/** Suppress flicker and glitch entirely — for sizes too small to carry them. */
+	static?: boolean;
+}) {
 	const [glitching, setGlitching] = useState(false);
 	const [flicker, setFlicker] = useState<FlickerTiming[] | null>(null);
+	const reducedMotion = useReducedMotion();
 
 	useEffect(() => {
-		if (
-			typeof window === 'undefined' ||
-			window.matchMedia('(prefers-reduced-motion: reduce)').matches
-		) {
+		// `null` means the preference has not been read yet. It matters more here
+		// than in the pixel field: `runBurst()` below fires immediately rather than
+		// after an interval, so acting on a guessed `false` painted the whole
+		// RGB-split glitch in front of a reader who asked for no motion.
+		if (reducedMotion === null) {
+			return;
+		}
+
+		if (isStatic || reducedMotion) {
+			// Clear anything a previous run attached, so turning the preference on
+			// mid-session actually stops the mark rather than waiting for a reload.
+			setFlicker(null);
+			setGlitching(false);
 			return;
 		}
 
@@ -188,21 +157,22 @@ export function EnsemblrWordmark({ className }: { className?: string }) {
 				window.clearTimeout(releaseTimeoutId);
 			}
 		};
-	}, []);
+	}, [isStatic, reducedMotion]);
 
 	return (
 		<span
 			aria-label='Ensemblr'
+			/* `w-fit` matters: without it a stretching flex parent widens the span,
+			   and the SVG then letterboxes its content instead of sitting flush. */
 			className={cn(
-				'relative inline-flex h-16 text-foreground sm:h-20',
+				'relative inline-flex h-16 w-fit text-ink sm:h-20',
 				className,
 			)}
 			role='img'
 			style={{ aspectRatio: `${TOTAL_WIDTH} / ${GLYPH_HEIGHT}` }}
 		>
-			<style>{KEYFRAMES}</style>
-			<GhostLayer color='#ff2e63' offset={-3} visible={glitching} />
-			<GhostLayer color='#22d3ee' offset={3} visible={glitching} />
+			<GhostLayer color='var(--signal)' offset={-3} visible={glitching} />
+			<GhostLayer color='var(--accent)' offset={3} visible={glitching} />
 			<svg
 				aria-hidden='true'
 				className='relative h-full w-full'

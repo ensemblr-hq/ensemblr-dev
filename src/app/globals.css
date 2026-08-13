@@ -1,32 +1,336 @@
 @import "tailwindcss";
 
+/*
+ * Two scales, one hue family.
+ *
+ * `:root` is the *page*: the same warm hue-35 cast as the app, run three steps
+ * deeper. The page has to be darker than the product, because the replica in
+ * `src/components/app-mock/` is an object sitting on it — matched lightness
+ * would let the window dissolve into the page and take the shadow with it.
+ *
+ * The chroma is what was wrong before. The app's own sheet explains it:
+ * perceived saturation collapses as lightness drops, so 0.006 reads as flat
+ * grey where 0.009 reads as charcoal. Every neutral here now carries the app's
+ * 0.009, which is the difference between "dark theme" and *this* dark theme.
+ */
 :root {
-	--background: #0a0707;
-	--foreground: #e4e1dd;
-	--accent-cyan: #22d3ee;
-	--accent-pink: #ff2e63;
+	--canvas: oklch(0.155 0.009 35);
+	--surface: oklch(0.192 0.009 35);
+	--pane: oklch(0.232 0.009 35);
+	--pane-strong: oklch(0.285 0.009 35);
+	--border: oklch(0.315 0.009 35);
+	--border-soft: oklch(0.315 0.009 35 / 55%);
+	--ink: oklch(0.905 0.008 75);
+	--muted-ink: oklch(0.71 0.008 75);
+	/*
+	 * 78%, not 62%. At 62% this landed on 3.5:1 against the canvas, and it is
+	 * not the tier the page can afford to lose: `faint` carries the release
+	 * line, the digest, the requirement badges and the whole footer — every
+	 * checkable fact the site stakes its first principle on. A visitor who
+	 * cannot read the version has no claim to check. 78% clears 4.5:1 on the
+	 * canvas *and* on the two translucent surfaces it also sits over, so the
+	 * tier stays the quietest step in the ramp without dropping below AA.
+	 */
+	--faint-ink: oklch(0.71 0.008 75 / 78%);
+	--accent: oklch(0.72 0.123 221);
+	--accent-strong: oklch(0.8 0.13 221);
+	--accent-foreground: oklch(0.17 0.009 35);
+	--status-ok: oklch(0.76 0.18 151);
+	--status-warning: oklch(0.81 0.13 73);
+	--status-danger: oklch(0.79 0.15 28);
+
+	/* Second signal, reserved for "agent running" moments. Inherited from the
+	 * original launch page, which used it as the wordmark's glitch ghost. */
+	--signal: oklch(0.66 0.24 8);
+
+	--diff-add: oklch(0.76 0.18 151 / 14%);
+	--diff-remove: oklch(0.79 0.15 28 / 14%);
+
+	/* The app's corner scale, so the replica's radii are the product's own
+	 * rather than Tailwind's defaults. */
+	--radius: 0.55rem;
+}
+
+/*
+ * The app cut, verbatim from the dark arm of `--ensemblr-*` in
+ * `src/renderer/styles/index.css` (ensemblr-hq/ensemblr).
+ *
+ * Scoped rather than global on purpose: `@theme inline` inlines the *var
+ * reference* into each utility, so re-declaring the tokens on a subtree
+ * re-points every `bg-canvas`/`text-muted`/`border-line` inside the replica at
+ * the product's real values without touching a single class name. The window
+ * is then lit by the app's palette while the page around it keeps its own.
+ */
+.app-chrome {
+	--canvas: oklch(0.21 0.009 35);
+	--surface: oklch(0.248 0.009 35);
+	--pane: oklch(0.285 0.009 35);
+	--pane-strong: oklch(0.335 0.009 35);
+	--border: oklch(0.375 0.009 35);
+	--border-soft: oklch(0.375 0.009 35 / 62%);
+	--ink: oklch(0.905 0.008 75);
+	--muted-ink: oklch(0.71 0.008 75);
+	--faint-ink: oklch(0.71 0.008 75 / 62%);
+	--accent: oklch(0.75 0.123 221);
+	--accent-strong: oklch(0.75 0.123 221);
+	--accent-foreground: oklch(0.21 0.009 35);
+	--status-ok: oklch(0.76 0.18 151);
+	--status-warning: oklch(0.81 0.13 73);
+	--status-danger: oklch(0.79 0.15 28);
+
+	/* The sidebar is its own surface in the app — a touch lighter than the
+	 * canvas it sits beside, not the same colour. */
+	--sidebar: oklch(0.228 0.009 35);
 }
 
 @theme inline {
-	--color-background: var(--background);
-	--color-foreground: var(--foreground);
-	--color-accent-cyan: var(--accent-cyan);
-	--color-accent-pink: var(--accent-pink);
+	--color-canvas: var(--canvas);
+	--color-surface: var(--surface);
+	--color-pane: var(--pane);
+	--color-pane-strong: var(--pane-strong);
+	--color-line: var(--border);
+	--color-line-soft: var(--border-soft);
+	--color-ink: var(--ink);
+	--color-muted: var(--muted-ink);
+	--color-faint: var(--faint-ink);
+	--color-accent: var(--accent);
+	--color-accent-strong: var(--accent-strong);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-ok: var(--status-ok);
+	--color-warning: var(--status-warning);
+	--color-danger: var(--status-danger);
+	--color-signal: var(--signal);
+	--color-diff-add: var(--diff-add);
+	--color-diff-remove: var(--diff-remove);
+	--color-sidebar: var(--sidebar, var(--canvas));
+
+	--radius-sm: calc(var(--radius) * 0.55);
+	--radius-md: calc(var(--radius) * 0.75);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) * 1.2);
+	--radius-2xl: calc(var(--radius) * 1.5);
+
 	--font-sans:
-		ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
-		Arial, sans-serif;
+		var(--font-geist), ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+		Roboto, Helvetica, Arial, sans-serif;
 	--font-mono:
-		ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas,
+		var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, Consolas,
 		monospace;
+
+	/*
+	 * Three display steps, and the page uses exactly these — no arbitrary
+	 * `text-[2.75rem]` anywhere. Before, each section hand-wrote the same
+	 * `text-3xl sm:text-4xl lg:text-[2.75rem]` string, so the scale existed as
+	 * a coincidence between files rather than as a system, and every heading on
+	 * the page ended up shouting at one volume.
+	 *
+	 * `display` is the hero and the closing CTA. `title` sits a clear step
+	 * below it for section heads, and `step` below that for the showcase's four
+	 * beats — which are subordinate to the section they sit in.
+	 */
+	--text-display: 3.5rem;
+	--text-display--line-height: 1.02;
+	--text-display--letter-spacing: -0.035em;
+	--text-display--font-weight: 600;
+
+	--text-title: 2.5rem;
+	--text-title--line-height: 1.06;
+	--text-title--letter-spacing: -0.03em;
+	--text-title--font-weight: 600;
+
+	--text-step: 2rem;
+	--text-step--line-height: 1.12;
+	--text-step--letter-spacing: -0.025em;
+	--text-step--font-weight: 600;
 }
 
-/* Single-page coming-soon: pin the brand dark theme regardless of OS setting. */
 html {
 	color-scheme: dark;
+	scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
 }
 
 body {
-	background: var(--background);
-	color: var(--foreground);
+	background: var(--canvas);
+	color: var(--ink);
 	font-family: var(--font-sans);
+	-webkit-font-smoothing: antialiased;
+}
+
+::selection {
+	background: var(--accent);
+	color: var(--accent-foreground);
+}
+
+:focus-visible {
+	outline: 2px solid var(--accent);
+	outline-offset: 2px;
+}
+
+@utility eyebrow {
+	font-family: var(--font-mono);
+	font-size: 0.6875rem;
+	letter-spacing: 0.3em;
+	line-height: 1;
+	text-transform: uppercase;
+	color: var(--muted-ink);
+}
+
+/*
+ * Entrance animation for section content.
+ *
+ * The resting state is *visible*, and the animation is layered on only where
+ * scroll-driven timelines exist. Doing this with a JS animation library instead
+ * would mean shipping `opacity: 0` in the server HTML — one failed hydration
+ * and the page reads as blank. `--reveal-delay` staggers siblings by shifting
+ * the range rather than by delaying a clock, which is what a scroll timeline
+ * wants.
+ */
+@keyframes reveal-in {
+	from {
+		opacity: 0;
+		transform: translateY(1rem);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@utility reveal {
+	--reveal-delay: 0%;
+}
+
+@supports (animation-timeline: view()) {
+	@media (prefers-reduced-motion: no-preference) {
+		.reveal {
+			animation: reveal-in linear both;
+			animation-timeline: view();
+			animation-range: entry calc(4% + var(--reveal-delay)) cover
+				calc(30% + var(--reveal-delay));
+		}
+	}
+}
+
+/*
+ * The three animations the components used to inject as inline `<style>` tags.
+ *
+ * They belong here for the same reason `reveal-in` does: a keyframe rule is a
+ * stylesheet, not markup. `ensemblr-field-flicker` in particular was emitted
+ * inside the SVG, and `PixelField` renders twice on the page — so the document
+ * carried two identical copies of it. Nothing reads these but the components
+ * that name them; the animation is still attached per-element, in JS, only when
+ * the reader has not asked for reduced motion.
+ */
+
+/* Per-pixel flicker in the ambient backdrop. `--pixel-opacity` is set inline on
+ * each rect, so the pixel returns to its own resting brightness, not to 1. */
+@keyframes ensemblr-field-flicker {
+	0%,
+	100% {
+		opacity: var(--pixel-opacity);
+	}
+	47% {
+		opacity: var(--pixel-opacity);
+	}
+	48% {
+		opacity: 0.05;
+	}
+	50% {
+		opacity: var(--pixel-opacity);
+	}
+	81% {
+		opacity: var(--pixel-opacity);
+	}
+	82% {
+		opacity: 0.12;
+	}
+	83% {
+		opacity: var(--pixel-opacity);
+	}
+}
+
+/* The wordmark's own flicker — every lit pixel rests at full strength here, so
+ * unlike the field above it can return to a literal 1. */
+@keyframes ensemblr-wordmark-flicker {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	48% {
+		opacity: 1;
+	}
+	49% {
+		opacity: 0.15;
+	}
+	50% {
+		opacity: 0.85;
+	}
+	51% {
+		opacity: 1;
+	}
+	76% {
+		opacity: 1;
+	}
+	77% {
+		opacity: 0.4;
+	}
+	78% {
+		opacity: 1;
+	}
+}
+
+/* The accent pass down the orchestration diagram's delegation fan. Offset is
+ * one full dash cycle (10 on, 46 off), so the loop has no visible seam. */
+@keyframes dash {
+	to {
+		stroke-dashoffset: -56;
+	}
+}
+
+/*
+ * The hero window's scroll-scrubbed tilt. Motion writes the transform as an
+ * inline style, so neutralising it for reduced motion has to out-specify that
+ * — which is what `!important` is for here.
+ */
+@media (prefers-reduced-motion: reduce) {
+	.scrub-tilt {
+		/* biome-ignore lint/complexity/noImportantStyles: overriding a library's
+		   inline style is the one case the cascade cannot reach without it.
+		   Doing this in JS instead would either mismatch hydration or let the
+		   tilt paint once before being removed — the opposite of the intent. */
+		opacity: 1 !important;
+		/* biome-ignore lint/complexity/noImportantStyles: as above. */
+		transform: none !important;
+	}
+}
+
+@utility bloom {
+	background: radial-gradient(
+		ellipse 60% 50% at 50% 0%,
+		oklch(0.675 0.123 221 / 14%),
+		transparent 70%
+	);
+}
+
+/*
+ * The closing section's light, one step up from the opening's.
+ *
+ * Both ends of the page used `bloom` verbatim, so the visitor arrived at the
+ * CTA under exactly the light they landed in and the ending read as a reprise
+ * rather than a destination. The difference is deliberately small — this is a
+ * page that argues by restraint — but a page needs to brighten towards the
+ * thing it is asking for.
+ */
+@utility bloom-strong {
+	background: radial-gradient(
+		ellipse 70% 60% at 50% 0%,
+		oklch(0.675 0.123 221 / 22%),
+		transparent 72%
+	);
 }
