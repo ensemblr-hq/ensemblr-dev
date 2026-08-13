@@ -35,7 +35,12 @@ export const metadata: Metadata = {
 	authors: [{ name: SITE.name, url: SITE.url }],
 	category: 'technology',
 	creator: SITE.name,
-	description: SITE.description,
+	/*
+	 * The short one, and only here. `<meta name="description">` is the string a
+	 * search result is cut from, so it is the one place on the site with a hard
+	 * 155-character budget; every other consumer below takes the full argument.
+	 */
+	description: SITE.searchDescription,
 	/*
 	 * The download block prints a 64-character SHA-256 and a version number, and
 	 * iOS Safari reads long digit runs as phone numbers — it wraps them in tel:
@@ -43,10 +48,19 @@ export const metadata: Metadata = {
 	 * whole job is being copied verbatim.
 	 */
 	formatDetection: { address: false, email: false, telephone: false },
+	/*
+	 * The words a reader would actually type, not the words the product uses for
+	 * itself. "Workbench" is Ensemblr's term and nobody searches it; someone
+	 * looking for this app searches for an orchestrator, a multi-agent setup, or
+	 * a worktree manager, so all three appear here and in the visible copy.
+	 */
 	keywords: [
+		'agent orchestrator',
 		'coding agents',
 		'multi-agent',
+		'sub-agents',
 		'git worktree',
+		'worktree manager',
 		'Claude Code',
 		'Pi',
 		'macOS',

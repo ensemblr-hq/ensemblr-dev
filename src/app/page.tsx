@@ -47,9 +47,19 @@ export default async function Home() {
 			</a>
 			<SiteNav />
 			{/*
-			 * Trust sits immediately before Download, not two sections up.
+			 * Control is the second thing on the page, not the fifth.
 			 *
-			 * It answers the visitor's second question — can I trust this with my
+			 * Counting the showcase's four steps, the orchestration section used to
+			 * be the fifth thing a reader scrolled — behind four claims that a
+			 * neighbouring product could make word for word. Isolated worktrees are
+			 * table stakes in this category now; an agent that drives the app it
+			 * runs inside is the one claim nobody else is making, so it goes
+			 * directly under the headline that promises it. The showcase then
+			 * *supports* that claim rather than competing with it: this is the
+			 * surface those sub-agents are driving.
+			 *
+			 * Trust still sits immediately before Download, not two sections up. It
+			 * answers the visitor's second question — can I trust this with my
 			 * credentials and my machine — and it used to be separated from the
 			 * button by the entire seventeen-item feature grid, so the argument was
 			 * made and then left to cool for a couple of thousand pixels. The long
@@ -57,9 +67,9 @@ export default async function Home() {
 			 */}
 			<main id='main'>
 				<Hero />
-				<Showcase />
-				<SectionRule />
 				<Orchestration />
+				<SectionRule />
+				<Showcase />
 				<SectionRule />
 				<FeatureGrid />
 				<SectionRule />

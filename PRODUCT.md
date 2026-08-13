@@ -24,11 +24,15 @@ teams evaluating for procurement, and anyone on Intel Macs, Linux, or Windows.
 
 ## Product Purpose
 
-Ensemblr is a native macOS workbench for isolated, multi-agent coding workflows.
-Every stream of work gets its own workspace: its own git worktree, its own
-branch, its own agent sessions, its own terminals, its own review path. The user
-drives it with the agent CLIs they already installed, reviews the diff in the
-same place they produced it, and opens the PR without leaving the app.
+Ensemblr is a native macOS orchestrator for multi-agent coding work, driving the
+Pi CLI or the Claude Code CLI — whichever the user already runs. The agent
+inside a workspace can drive the app itself through Ensemblr Control: spawn
+sub-agents into their own tabs, delegate a unit of work to each, block until
+they report, and integrate the results. The worktree manager underneath exists
+to make that safe — every stream of work gets its own git worktree, branch,
+agent sessions, terminals and review path, so a fan-out of agents cannot
+collide. The user reviews the diff in the same place they produced it and opens
+the PR without leaving the app.
 
 This repository is the marketing site at https://www.ensemblr.dev. Its job is
 narrow and measurable: a developer who fits the profile above lands, believes
@@ -40,20 +44,50 @@ repo started as has been removed.
 
 ## Positioning
 
-The mechanism a neighbouring product cannot truthfully copy: **isolation is git,
-not a sandbox abstraction.** A workspace is a real git worktree on the user's
-disk on a real branch. Two agents can edit the same file at the same time and
-never see each other, and nothing about that arrangement is proprietary or
-reversible — the user can walk away and their branches are still branches.
+The claim nobody else in this category is making: **an agent drives the app
+itself.** Ensemblr Control is a permission-gated surface — a shipped Pi
+extension, and an embedded MCP endpoint for Claude Code and the terminal
+harnesses — through which an agent spawns sub-agents into their own tabs, waits
+on them, reads their reports, opens diffs, leaves review comments, runs scripts
+and moves the workspace across the board. This leads the page. It is the h1, the
+first section under it, the first nav label and the OG card.
 
-Second differentiator: **Ensemblr ships no agent binary.** It drives the Pi and
-`claude` CLIs the user installed, so provider credentials never enter Ensemblr's
-world. GitHub data is read through the user's own authenticated `gh`; Linear is
-OAuth with the token in the macOS Keychain; session history is local SQLite.
-Nothing is uploaded to run the app.
+Second: **both first-class runtimes, named in the first sentence.** Claude Code
+is where the search volume is; Pi is where Ensemblr is the only option. A reader
+with either one already on PATH can run this today, and saying so early is what
+qualifies them.
 
-Third: it is a **native macOS app, MIT-licensed, source public** at
+Third, and no longer the lead: **isolation is git, not a sandbox abstraction.**
+A workspace is a real git worktree on the user's disk on a real branch. Two
+agents can edit the same file at the same time and never see each other. Still
+true, still load-bearing, but every neighbouring product now ships isolated
+worktrees — it is table stakes, so it supports the argument instead of opening
+it.
+
+Fourth: **Ensemblr ships no agent binary.** It drives the Pi and `claude` CLIs
+the user installed, so provider credentials never enter Ensemblr's world. GitHub
+data is read through the user's own authenticated `gh`; Linear is OAuth with the
+token in the macOS Keychain; session history is local SQLite. Nothing is
+uploaded to run the app. Against competitors that run an account and a sync
+service this is a headline, not a footnote, so it appears in the hero as well as
+in the Credentials section.
+
+Fifth: it is a **native macOS app, MIT-licensed, source public** at
 `ensemblr-hq/ensemblr`.
+
+### Vocabulary
+
+The copy uses the words a reader would type, not the words the product uses for
+itself. "Workbench" was Ensemblr's own term and nobody searches it;
+**orchestrator**, **multi-agent** and **worktree manager** all have to appear in
+visible copy and in the metadata keywords.
+
+The app repo settled on the same vocabulary in `4c17975`, so the README and this
+site now lead identically. `SITE.tagline` is still shorter than the README's
+opening line, and deliberately: it is the `<title>`, Google renders about sixty
+characters of that, and `Ensemblr — ` spends eleven. The runtimes stay in it
+because "Claude Code" is the term with the volume; "multi-agent coding work"
+rides in `SITE.description` and the keywords instead.
 
 ## Operating Context
 
@@ -144,12 +178,16 @@ Explicitly absent — must never be fabricated:
 1. **Every claim is checkable.** The audience will open the repo. Copy comes
    from the product's own README, inventory doc, and release data — never from
    marketing invention.
-2. **Isolation is the story.** Whatever else a surface says, the visitor must
-   leave understanding that a workspace is a real git worktree on their disk.
+2. **Control is the story; isolation is the foundation.** The visitor must leave
+   understanding both — that an agent can drive the app itself, and that a
+   workspace is a real git worktree on their disk — but the first is what they
+   meet first, because it is the only one a competitor cannot also print.
 3. **Trust is stated as mechanism, not adjective.** "Your runtimes, your keys",
    "OAuth only, Keychain", "local SQLite" — never "secure" or "private".
-4. **Say the beta out loud.** Pre-1.0 status, prerelease builds, and Apple
-   silicon-only are stated where a visitor meets them, not buried.
+4. **Say the beta and the gates out loud, early.** Pre-1.0 status, prerelease
+   builds, Apple silicon-only, bring-your-own agent CLI and an authenticated
+   `gh` are stated in the first screenful — not only in the download section,
+   and never left for a commenter to point out.
 5. **The product is the hero.** The app's own surface, palette, and typography
    lead; the site is its frame, not a competing visual world.
 

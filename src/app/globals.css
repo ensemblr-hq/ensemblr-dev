@@ -21,17 +21,31 @@
 	--border: oklch(0.315 0.009 35);
 	--border-soft: oklch(0.315 0.009 35 / 55%);
 	--ink: oklch(0.905 0.008 75);
-	--muted-ink: oklch(0.71 0.008 75);
 	/*
-	 * 78%, not 62%. At 62% this landed on 3.5:1 against the canvas, and it is
-	 * not the tier the page can afford to lose: `faint` carries the release
-	 * line, the digest, the requirement badges and the whole footer — every
-	 * checkable fact the site stakes its first principle on. A visitor who
-	 * cannot read the version has no claim to check. 78% clears 4.5:1 on the
-	 * canvas *and* on the two translucent surfaces it also sits over, so the
-	 * tier stays the quietest step in the ramp without dropping below AA.
+	 * The quiet end of the ramp, lifted as a pair — 0.71 → 0.745 — rather than
+	 * `faint` alone being squeezed up into `muted`.
+	 *
+	 * Between them these two carry every small fact on the page: the release
+	 * line, the hero's requirement gates, the SHA-256, the "prefer a zip" line,
+	 * the requirement details and the whole footer. Almost all of it is set at
+	 * 11px monospace, and that is the size the old values were failing at —
+	 * `faint` measured 4.97:1 on the canvas at its original 78%, `muted` 7.59:1,
+	 * and both read as unlit at 11px however well they scored at body size. The
+	 * bloom under the hero and the download CTA lifts the background and takes
+	 * them lower again.
+	 *
+	 * Raising only `faint` would have closed the tier: at the ~7:1 it needed it
+	 * is `muted`, and the ramp loses a step. Moving the base lightness instead
+	 * keeps the step — 8.64:1 and 6.83:1, a wider gap than the 7.59/6.01 it
+	 * replaces — and leaves `ink` at 14.74:1 far enough above both that body
+	 * copy has not crept towards headline weight.
+	 *
+	 * The `.app-chrome` block below keeps its own 0.71 and its own 62% faint:
+	 * that is the product's token sheet copied verbatim, not a value this page
+	 * gets to tune, and the replica sits on a lighter canvas anyway.
 	 */
-	--faint-ink: oklch(0.71 0.008 75 / 78%);
+	--muted-ink: oklch(0.745 0.008 75);
+	--faint-ink: oklch(0.745 0.008 75 / 88%);
 	--accent: oklch(0.72 0.123 221);
 	--accent-strong: oklch(0.8 0.13 221);
 	--accent-foreground: oklch(0.17 0.009 35);
@@ -45,6 +59,18 @@
 
 	--diff-add: oklch(0.76 0.18 151 / 14%);
 	--diff-remove: oklch(0.79 0.15 28 / 14%);
+
+	/*
+	 * Anthropic's own orange, copied from `--ensemblr-brand-claude` in the app's
+	 * token sheet rather than sampled from a logo. It is a vendor's colour, so
+	 * it stays a hex — restating it in oklch would be this page paraphrasing
+	 * someone else's brand.
+	 *
+	 * The runtime links spend it on hover only. Two vendor colours sitting lit
+	 * on a page that spends its own accent twice would read as a third and
+	 * fourth accent, and the whole palette argument here is restraint.
+	 */
+	--brand-claude: #d97757;
 
 	/* The app's corner scale, so the replica's radii are the product's own
 	 * rather than Tailwind's defaults. */
@@ -100,6 +126,7 @@
 	--color-warning: var(--status-warning);
 	--color-danger: var(--status-danger);
 	--color-signal: var(--signal);
+	--color-brand-claude: var(--brand-claude);
 	--color-diff-add: var(--diff-add);
 	--color-diff-remove: var(--diff-remove);
 	--color-sidebar: var(--sidebar, var(--canvas));
@@ -118,25 +145,76 @@
 		monospace;
 
 	/*
-	 * Three display steps, and the page uses exactly these — no arbitrary
-	 * `text-[2.75rem]` anywhere. Before, each section hand-wrote the same
-	 * `text-3xl sm:text-4xl lg:text-[2.75rem]` string, so the scale existed as
-	 * a coincidence between files rather than as a system, and every heading on
-	 * the page ended up shouting at one volume.
+	 * The display scale. The page uses exactly these — no arbitrary
+	 * `text-[2.75rem]` anywhere, and no bare Tailwind size on a heading. Before,
+	 * each section hand-wrote the same `text-3xl sm:text-4xl lg:text-[2.75rem]`
+	 * string, so the scale existed as a coincidence between files rather than as
+	 * a system, and every heading on the page ended up shouting at one volume.
+	 */
+	/*
+	 * Three steps, nine tokens: each step carries its own small and medium tier
+	 * so that a heading changes *size* across breakpoints and nothing else.
+	 *
+	 * It read as three steps and behaved as nine, because only the `lg` tier was
+	 * ever a token. Below 1024px every heading on the page fell back to plain
+	 * Tailwind sizes — `text-3xl sm:text-4xl` — which set a font size and
+	 * nothing else, so the whole page rendered at weight 400, default leading
+	 * and zero tracking, then snapped to 600 / 1.02 / -0.035em at exactly one
+	 * breakpoint. The h1 was the worst of it: 32px of weight-400 text on a 48px
+	 * line, a leading of 1.5 where the token asks for 1.02, so the headline that
+	 * carries the page arrived at phone width as loose body copy. This was
+	 * invisible from a desktop browser and unmissable on a phone.
+	 *
+	 * Leading opens and tracking relaxes as the size drops, which is why the
+	 * tiers are not one value scaled: -0.035em is right for 56px and far too
+	 * tight for 32px, and 1.02 is a display leading that a 24px step heading
+	 * cannot wear. The sizes themselves are unchanged from the Tailwind steps
+	 * they replace, so nothing reflows — only the weight, leading and tracking
+	 * that were never set.
 	 *
 	 * `display` is the hero and the closing CTA. `title` sits a clear step
 	 * below it for section heads, and `step` below that for the showcase's four
 	 * beats — which are subordinate to the section they sit in.
 	 */
+	--text-display-sm: 2rem;
+	--text-display-sm--line-height: 1.08;
+	--text-display-sm--letter-spacing: -0.025em;
+	--text-display-sm--font-weight: 600;
+
+	--text-display-md: 3rem;
+	--text-display-md--line-height: 1.04;
+	--text-display-md--letter-spacing: -0.032em;
+	--text-display-md--font-weight: 600;
+
 	--text-display: 3.5rem;
 	--text-display--line-height: 1.02;
 	--text-display--letter-spacing: -0.035em;
 	--text-display--font-weight: 600;
 
+	--text-title-sm: 1.875rem;
+	--text-title-sm--line-height: 1.12;
+	--text-title-sm--letter-spacing: -0.022em;
+	--text-title-sm--font-weight: 600;
+
+	--text-title-md: 2.25rem;
+	--text-title-md--line-height: 1.08;
+	--text-title-md--letter-spacing: -0.027em;
+	--text-title-md--font-weight: 600;
+
 	--text-title: 2.5rem;
 	--text-title--line-height: 1.06;
 	--text-title--letter-spacing: -0.03em;
 	--text-title--font-weight: 600;
+
+	--text-step-sm: 1.5rem;
+	--text-step-sm--line-height: 1.2;
+	--text-step-sm--letter-spacing: -0.018em;
+	--text-step-sm--font-weight: 600;
+
+	--text-step-md: 1.875rem;
+	--text-step-md--line-height: 1.15;
+	--text-step-md--letter-spacing: -0.022em;
+	--text-step-md--font-weight: 600;
 
 	--text-step: 2rem;
 	--text-step--line-height: 1.12;

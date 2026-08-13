@@ -18,14 +18,30 @@ const TOOLS = [
 	'ensemblr_launch_harness',
 	'ensemblr_get_workspace_diff',
 	'ensemblr_add_diff_comments',
+	'ensemblr_ask_user_question',
 	'ensemblr_set_workspace_status',
 ] as const;
 
+/*
+ * The last row is the one the app README leads its orchestration paragraph
+ * with, and it was missing here: agent work stops at In Review, in code rather
+ * than in a prompt. It is the strongest thing this section can say — every
+ * other guardrail limits how much an agent can do, and that one settles who
+ * decides when the work is finished. A reader handing an agent their repo is
+ * buying exactly that guarantee.
+ */
 const GUARDRAILS = [
 	['Permission mode', 'read-only · approval required · workspace-trusted'],
 	['Delegation depth', 'shallow — sub-agents never delegate onward'],
 	['Spawn limits', 'per-session quota and rate cap'],
-	['Waits', 'bounded, and a blocked child can wake its caller'],
+	[
+		'Waits',
+		'bounded — the caller blocks until its children report or the window expires; a blocked child can wake it',
+	],
+	[
+		'Issue writes',
+		'withheld from sub-agents — and agent work stops at In Review, enforced in code',
+	],
 ] as const;
 
 function Connector() {
@@ -120,11 +136,13 @@ function ControlDiagram() {
 				    bare arrow hanging off the end of the first. */}
 				{BEATS.map((beat, index) => (
 					<span className='flex items-center gap-1.5' key={beat}>
-						{/* /45, not /30. The arrow is what makes four chips a sequence
-						    rather than four tags, and at /30 it sat near 1.9:1 — present
-						    in the DOM and effectively absent on the screen. */}
+						{/* /55, not /45 and certainly not the /30 this started at. The
+						    arrow is what makes four chips a sequence rather than four
+						    tags — a graphical mark carrying meaning, so 3:1 is the floor,
+						    and /45 measured 2.57:1 on `pane`. /55 lands at 3.18:1 there
+						    and stays well below the chips it separates. */}
 						{index > 0 ? (
-							<span aria-hidden='true' className='text-muted/45'>
+							<span aria-hidden='true' className='text-muted/55'>
 								→
 							</span>
 						) : null}
@@ -169,10 +187,32 @@ export function Orchestration() {
 			 */}
 			<div className='grid gap-12 lg:grid-cols-2 lg:gap-20'>
 				<div className='flex flex-col gap-8'>
+					{/*
+					 * The title no longer restates the h1 — the hero took "agents that
+					 * drive the app" when Control moved to the front of the page, and a
+					 * section that repeats the headline it sits directly under reads as
+					 * the reader having lost their place. This one escalates instead,
+					 * and it is the app's own framing: `docs/agent-control.md` opens on
+					 * turning "a place you run one agent into a place a team of agents
+					 * runs itself".
+					 */}
+					{/*
+					 * The parity claim names the two chat-surface runtimes and stops
+					 * there. It used to read "Claude Code and any MCP-capable harness
+					 * reach the same operations", which is the one caller class it is
+					 * false for: `CHAT_TAB_ONLY_OPS` — `setName`, `setSummary`,
+					 * `askUserQuestion`, `exitPlanMode` — are refused to any caller that
+					 * drives no native chat tab, and a terminal harness is exactly that.
+					 * The sentence was advertising `askUserQuestion` two clauses earlier.
+					 *
+					 * "Cannot drift" is not the loose half of that claim and survives: the
+					 * Pi extension registers the complement of `SUBAGENT_WITHHELD_OPS` and
+					 * a parity test compares its copy against the shared set.
+					 */}
 					<SectionHeading
 						eyebrow='Ensemblr Control'
-						lede='A permission-gated control surface lets an agent drive the app itself — spawn a conversation, launch a harness, run a script, open a diff, leave a review comment, move the workspace across the board. Pi reaches it through a shipped extension; Claude Code and MCP harnesses through an embedded MCP server.'
-						title='Agents that drive the app, not just the code.'
+						lede='A permission-gated control surface lets an agent drive the app itself — spawn sub-agents into their own tabs and block until they report, launch a harness, run a script, read the diff and leave review comments on it, ask you a multiple-choice question, move the workspace across the board. Pi reaches it through a shipped extension, Claude Code through an embedded MCP server, and a parity test keeps the two tool lists from drifting apart.'
+						title='Not a place you run one agent. A place a team of agents runs itself.'
 					/>
 
 					<Reveal className='flex flex-wrap gap-1.5' index={3}>

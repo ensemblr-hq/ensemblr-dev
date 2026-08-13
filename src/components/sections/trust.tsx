@@ -10,7 +10,7 @@ export function Trust() {
 		>
 			<SectionHeading
 				eyebrow='Credentials'
-				lede='Ensemblr is a workbench, not a service. There is no account, no sync, and nothing to sign into on our side — because there is no our side.'
+				lede='Ensemblr is an orchestrator, not a service. There is no account to create, nothing to sign in to, and nothing synced off your machine — because there is no our side.'
 				title={
 					<>
 						Your machine. Your <span className='text-accent'>credentials</span>.

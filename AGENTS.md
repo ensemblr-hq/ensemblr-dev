@@ -55,6 +55,9 @@ editing, and prefer re-copying to hand-editing:
 | `FALLBACK_RELEASE` in `src/lib/release.ts` | the newest published release |
 | `REQUIREMENTS`, `DISTRIBUTION` in `src/lib/site.ts` | the app's README and its signing/notarisation setup |
 | `FEATURE_GROUPS` in `src/lib/features.ts` | the app's README and `docs/product/current-shell-inventory.md` |
+| `TRUST_ITEMS` in `src/lib/features.ts` | the README's "What it stores, and where", and `SECURITY.md` |
+| `SITE.tagline`, `SITE.description`, the h1 and the Control section | the README's opening block and `docs/agent-control.md` |
+| `GUARDRAILS`, `TOOLS` in `src/components/sections/orchestration.tsx` | `docs/agent-control.md` and the README's orchestration paragraph |
 | `src/components/app-mock/data.ts` | `docs/product/current-shell-inventory.md`, and the running app |
 | the oklch tokens in `src/app/globals.css` | the app's own token sheet |
 | `src/app/icon.svg`, `src/app/apple-icon.png` | `assets/icon.svg`, `assets/icon.png` — copy verbatim, then `bun run gen:favicon` |
