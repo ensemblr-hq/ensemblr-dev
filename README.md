@@ -1,15 +1,18 @@
-# Ensemblr Coming Soon
+# ensemblr.dev
 
-Small Next.js app for the Ensemblr launch page. It shows a minimal waitlist form, stores signups in NocoDB, and can send best-effort signup alerts via Resend.
+The marketing site for [Ensemblr](https://github.com/ensemblr-hq/ensemblr) — a macOS workbench for
+isolated, multi-agent coding workflows.
+
+One route. It explains the product, shows a recreation of the app's workbench, and hands over the
+latest macOS build.
 
 ## Stack
 
-- Next.js 16 + React 19
+- Next.js 16 (App Router, Cache Components) + React 19
 - TypeScript
 - Tailwind CSS 4
-- Biome
-- NocoDB REST API for waitlist storage
-- Resend for optional email notifications
+- [Motion](https://motion.dev) for scroll and reveal animation
+- Biome for lint and format
 
 ## Run locally
 
@@ -22,29 +25,82 @@ Open http://localhost:3000.
 
 ## Environment
 
-Create `.env.local`:
+`GITHUB_TOKEN` is optional locally and expected in deployment.
+
+The download button reads the newest release from the public GitHub API, which allows 60
+unauthenticated requests per hour **per IP**. On your own machine that budget is yours alone. On a
+hosted build the address is shared, so an unauthenticated lookup is likely to be refused — and the
+failure is quiet: it falls back to the release pinned in `src/lib/release.ts`, `cacheLife('hours')`
+caches that fallback exactly as durably as a success, and the build stays green while serving a
+stale version, size and digest for the whole revalidation window.
 
 ```bash
-NOCODB_API_URL=https://your-nocodb-host
-NOCODB_API_TOKEN=your-token
-NOCODB_TABLE_ID=your-table-id
-NOCODB_EMAIL_FIELD=Email
-
-RESEND_API_KEY=your-resend-key
-NOTIFICATIONS_RECIPIENT=you@example.com
-NOTIFICATIONS_FROM="Ensemblr <hello@your-domain.com>"
+# .env.local — any classic token with no scopes will do
+GITHUB_TOKEN="ghp_..."
 ```
 
-NocoDB vars are required to persist signups. Without them, the API validates and logs the email but returns success so the form still works during setup.
+The pin itself is checked rather than trusted. `bun run check:pin` fails when the newest published
+release no longer matches it, or when the pinned `.dmg` stops resolving; CI runs it on every PR. If
+GitHub cannot be reached the check warns and passes, because *cannot verify* is not *is stale*.
 
-Resend vars are optional. Notifications never block signup storage.
+When it does fail, update `FALLBACK_RELEASE` in `src/lib/release.ts` — tag, version, `publishedAt`,
+`notesUrl`, and both assets' url, size and `sha256`. The digests come from the `digest` field on the
+release assets, and `bun test` will reject any that a reader could not check with `shasum -a 256`.
+
+## How it is put together
+
+```
+scripts/          the pinned-release check CI runs, and the favicon generator
+src/app/          route, metadata, icons, OG image, robots, sitemap
+src/components/
+  app-mock/       DOM recreation of the Ensemblr workbench
+  brand/          wordmark, pixel field, section headings
+  chrome/         nav and footer
+  download/       release-aware download button
+  icons/          icons the site draws — nav, footer, hero, download
+  motion/         LazyMotion provider and the shared reveal
+  sections/       one file per page section
+src/lib/          site facts, feature copy, glyph bitmaps, release lookup
+```
+
+Five things are worth knowing before editing:
+
+**The palette is the app's palette.** The oklch tokens in `src/app/globals.css` are copied from the
+desktop app's own token sheet. Keep them in sync — the recreated window only reads as the product
+because the colours are the product's.
+
+**The wordmark is a 5×7 bitmap.** `src/lib/glyphs.ts` holds the glyph table, shared by the animated
+SVG wordmark and the OG image. Pixel positions must stay deterministic; per-pixel flicker timing is
+generated after mount so server and client markup match.
+
+**The app icons come from the app.** `src/app/icon.svg` and `src/app/apple-icon.png` are copied
+verbatim from `assets/icon.svg` and `assets/icon.png` in the app repo — re-copy them when the app's
+icon changes rather than editing them here. `src/app/favicon.ico` cannot be a copy: downsampling a
+1024px mark whose detail is a dot grid and a sub-pixel chromatic split produces a smudge at 16px, so
+`scripts/generate-favicon.ts` redraws it at 16, 32 and 48 on whole pixels, using that icon's own
+constants. The `.ico` is generated but committed, and `generate-favicon.test.ts` fails if the two
+drift apart.
+
+**Nothing in `app-mock/` is a screenshot.** It is real DOM built from
+`docs/product/current-shell-inventory.md` in the app repo. All of its content lives in
+`src/components/app-mock/data.ts`. It draws its own glyphs in `app-mock/icons.tsx`; icons the *site*
+uses belong in `components/icons/site.tsx`, so a nav or footer never imports from the mock.
+
+**The release is fetched once per subtree and passed down.** `Hero`, `SiteNav`, `SiteFooter` and the
+`Download` section each await `getLatestRelease()` and hand the result to their children as a prop.
+That is what guarantees the digest `IntegrityNote` prints describes the file `DownloadButton` links
+to — an invariant worth holding in the code rather than in the cache.
 
 ## Scripts
 
 ```bash
-bun dev      # local dev server
-bun build    # production build
-bun start    # run production server
-bun lint     # Biome check
-bun format   # Biome format
+bun dev            # local dev server
+bun build          # production build
+bun start          # run the production server
+bun lint           # Biome check
+bun format         # Biome format
+bun typecheck      # tsc --noEmit
+bun test           # unit tests for the release and glyph logic
+bun run check:pin  # fail if the pinned fallback release has gone stale
+bun run gen:favicon  # redraw src/app/favicon.ico from the glyph table
 ```
