@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - run: bun install --frozen-lockfile
+
+      - run: bun run lint
+
+      - run: bun run typecheck
+
+      - run: bun test
+
+      - run: bun run build
+        env:
+          # GitHub allows 60 unauthenticated API requests an hour per IP, and
+          # hosted runners share addresses. Without this the release lookup in
+          # the build gets rate-limited and the site silently ships the pinned
+          # fallback — which builds green and is not what we want to ship.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Deliberately after the build: it guards what visitors see when the API
+      # is *not* reachable, and a stale pin should be loud rather than fatal to
+      # everything downstream of it.
+      - run: bun run check:pin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
