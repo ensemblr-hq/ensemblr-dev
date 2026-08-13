@@ -3,7 +3,7 @@ import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { GitHubIcon } from '@/components/icons/site';
 import { getLatestRelease } from '@/lib/github-release';
 import { releaseYear } from '@/lib/release';
-import { REPO, SITE } from '@/lib/site';
+import { AUTHOR, REPO, SITE } from '@/lib/site';
 
 export async function SiteFooter() {
 	const release = await getLatestRelease();
@@ -52,7 +52,10 @@ export async function SiteFooter() {
 					{/* Year comes from the cached release rather than the clock: reading
 					    the current time here would make the whole footer dynamic. */}
 					<p>
-						{release.tag} · © {releaseYear(release.publishedAt)} Ensemblr
+						{release.tag} · © {releaseYear(release.publishedAt)}{' '}
+						<a className='transition-colors hover:text-ink' href={AUTHOR.url}>
+							{AUTHOR.name}
+						</a>
 					</p>
 				</div>
 			</div>
