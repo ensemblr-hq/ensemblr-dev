@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# agent scratch output — transcripts, page snapshots, critique notes and local
+# tool config written by coding agents while working in this repo. Biome runs
+# with `vcs.useIgnoreFile`, so anything left out of this list also gets linted.
+/.playwright-mcp/
+/.impeccable/
+/.codex/
+/.context/
+/.claude/settings.local.json
