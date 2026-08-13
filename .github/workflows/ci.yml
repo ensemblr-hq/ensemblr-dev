@@ -4,9 +4,16 @@ on:
   push:
     branches: [master]
   pull_request:
+  # The pin is otherwise only verified when someone opens a PR, and a release
+  # can ship on a week nobody does. Note GitHub disables scheduled workflows in
+  # a repo with 60 days of no commit activity, and mails the owner about it.
+  schedule:
+    - cron: "17 7 * * *"
+  workflow_dispatch:
 
 jobs:
   check:
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -34,6 +41,28 @@ jobs:
       # Deliberately after the build: it guards what visitors see when the API
       # is *not* reachable, and a stale pin should be loud rather than fatal to
       # everything downstream of it.
+      - run: bun run check:pin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Scheduled and manual runs only. The PR path already ends `check` with
+  # check:pin, and a cron run has no reason to lint, test and build the site to
+  # answer one question about a repo it does not contain. A failure here mails
+  # the owner rather than blocking anything, which is the right severity for a
+  # pin that has drifted: the site still builds, it just serves a stale version.
+  pin:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # check:pin imports src/lib/release.ts, which imports zod.
+      - run: bun install --frozen-lockfile
+
       - run: bun run check:pin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
