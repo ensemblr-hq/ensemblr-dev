@@ -59,21 +59,30 @@ export interface TrustItem {
 	readonly body: string;
 }
 
+/*
+ * The four claims re-cut against the app README's own "What it stores, and
+ * where" section (`4c17975`), which states each of these as a mechanism rather
+ * than a posture. Every clause below has a counterpart there — "no token field
+ * in settings", "never a file and never an environment variable", the ~260 MB
+ * the Agent SDK would bundle, "no Ensemblr backend in the path and no
+ * telemetry". None of it is this site's invention, and none of it should be
+ * softened into an adjective on the way across.
+ */
 export const TRUST_ITEMS: readonly TrustItem[] = [
 	{
-		title: 'GitHub, through your own gh',
-		body: 'PR state, checks and comments are read through the GitHub CLI using the credentials you already authenticated. Ensemblr stores no GitHub tokens.',
+		title: 'GitHub tokens stay with gh',
+		body: 'Ensemblr stores none. No token field in settings, no OAuth screen, no second place one can leak from — it shells out to the CLI you already authenticated.',
 	},
 	{
-		title: 'Linear, OAuth only',
-		body: 'Issue integration is OAuth, and the token lives in the macOS Keychain rather than in a config file.',
+		title: 'Secrets live in the Keychain',
+		body: 'Linear’s OAuth tokens go straight to the macOS Keychain — never a file, never an environment variable. The app can list what it holds without reading it back.',
 	},
 	{
-		title: 'Your runtimes, your keys',
-		body: 'Ensemblr ships no agent binary. It drives the Pi and claude CLIs you installed, so provider credentials stay in their own environment.',
+		title: 'No agent binary ships',
+		body: 'Your pi and claude installs, your credentials, your models, your config. The ~260 MB the Claude Agent SDK would bundle is deliberately left out.',
 	},
 	{
-		title: 'Local by default',
-		body: 'Workspaces are git worktrees on your disk and session history is a local SQLite file. Nothing is uploaded to run the app.',
+		title: 'No account, no server',
+		body: 'Ensemblr talks to GitHub, Linear and your agent CLIs directly — no backend in the path, no telemetry. State is a local SQLite database beside your worktrees.',
 	},
 ];

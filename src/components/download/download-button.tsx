@@ -38,7 +38,15 @@ export function DownloadButton({
 			)}
 			href={href}
 		>
-			<AppleIcon className={size === 'lg' ? 'size-4' : 'size-3.5'} />
+			{/*
+			 * 18px beside a 15px label, not 16. The Apple mark is a narrow glyph
+			 * with a bite out of one side and a leaf above it, so it carries far
+			 * less visual mass than its box implies — matched to the cap height of
+			 * the words next to it, it reads smaller than them rather than equal.
+			 * Set a step over the text it labels, it finally sits as the platform
+			 * badge on the one control this page exists to get pressed.
+			 */}
+			<AppleIcon className={size === 'lg' ? 'size-[1.125rem]' : 'size-4'} />
 			{size === 'lg' ? (
 				<span>Download for macOS</span>
 			) : (

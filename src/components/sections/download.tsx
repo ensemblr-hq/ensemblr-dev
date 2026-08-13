@@ -173,8 +173,12 @@ export async function Download() {
 								{TRUST_ECHO.map((claim, index) => (
 									<li className='flex items-center gap-2' key={claim}>
 										{claim}
+										{/* /55, matching the hero's gate list, which runs the same
+										    idiom over the same tier. At /45 the dot measured 2.58:1
+										    against the canvas and less than that here, where the
+										    bloom lifts the surface under it. */}
 										{index < TRUST_ECHO.length - 1 ? (
-											<span aria-hidden='true' className='text-muted/45'>
+											<span aria-hidden='true' className='text-muted/55'>
 												·
 											</span>
 										) : null}

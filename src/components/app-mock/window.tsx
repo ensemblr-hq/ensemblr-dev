@@ -40,7 +40,11 @@ export function AppWindow({ className, variant = 'full' }: AppWindowProps) {
 	const narrow = variant === 'narrow';
 	return (
 		<div
-			aria-label='The Ensemblr workbench: project sidebar, agent conversation, review panel, and script dock.'
+			// "app", not "workbench" — the same word the visible copy settled on.
+			// This label is the entire description of the replica for a reader who
+			// is not looking at it, so it is user-facing text and was the last
+			// unmigrated instance of the product's old name for itself.
+			aria-label='The Ensemblr app: project sidebar, agent conversation, review panel, and script dock.'
 			className={cn(
 				'app-chrome overflow-hidden rounded-xl bg-canvas',
 				// A hairline of light along the top edge and a wide, very soft drop:

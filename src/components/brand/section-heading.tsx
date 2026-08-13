@@ -21,9 +21,16 @@ interface SectionHeadingProps {
 	size?: 'title' | 'step';
 }
 
+/*
+ * Tokens at every breakpoint, not just `lg`. `text-3xl sm:text-4xl` set a font
+ * size and nothing else, so every section heading below 1024px rendered at
+ * weight 400 with default leading — the display treatment arrived at one
+ * breakpoint and the page had two typographic identities depending on the
+ * window. The sizes are the same ones those utilities produced.
+ */
 const TITLE_CLASS = {
-	title: 'max-w-3xl text-3xl sm:text-4xl lg:text-title',
-	step: 'text-2xl sm:text-3xl lg:text-step',
+	title: 'max-w-3xl text-title-sm sm:text-title-md lg:text-title',
+	step: 'text-step-sm sm:text-step-md lg:text-step',
 } as const;
 
 /*

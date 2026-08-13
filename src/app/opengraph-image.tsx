@@ -74,8 +74,11 @@ export default function OpengraphImage() {
 						maxWidth: '900px',
 					}}
 				>
-					A macOS workbench for isolated, multi-agent coding workflows.
+					Agents that drive the app, not just the code.
 				</div>
+				{/* The card carries the h1 and the runtime pair, in that order, because
+				    a social preview is read at a glance and the two runtimes are what
+				    tell a scroller whether this is for them. */}
 				<div
 					style={{
 						color: MUTED,
@@ -84,7 +87,8 @@ export default function OpengraphImage() {
 						maxWidth: '820px',
 					}}
 				>
-					Every stream of work gets its own copy of the repo.
+					A macOS orchestrator for Pi and Claude Code. Every stream of work gets
+					its own git worktree.
 				</div>
 			</div>
 

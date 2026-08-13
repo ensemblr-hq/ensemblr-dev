@@ -7,7 +7,7 @@ interface RevealProps {
 	className?: string;
 	/** Position within a group; shifts the scroll range to stagger siblings. */
 	index?: number;
-	as?: 'div' | 'section' | 'li' | 'article' | 'header' | 'dl';
+	as?: 'div' | 'section' | 'li' | 'ul' | 'article' | 'header' | 'dl';
 }
 
 /**

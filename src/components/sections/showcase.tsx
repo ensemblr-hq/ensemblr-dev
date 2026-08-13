@@ -23,7 +23,7 @@ interface Step {
  */
 const STEPS: readonly Step[] = [
 	{
-		body: 'A workspace is a real git worktree, not a branch you keep switching between. Two agents can rewrite the same file at the same time and never see each other.',
+		body: 'The worktree manager underneath Control. A workspace is a real git worktree, not a branch you keep switching between, so a fan-out of agents cannot collide — two of them rewrite the same file at the same time and never see each other.',
 		eyebrow: 'Workspaces',
 		id: 'workspaces',
 		points: [
@@ -42,7 +42,7 @@ const STEPS: readonly Step[] = [
 		id: 'runtimes',
 		points: [
 			'One timeline, tool cards, approval prompts and context gauge for both',
-			'Plan mode holds an agent to read-only tools until it submits a plan',
+			'Plan mode holds an agent — and every sub-agent it spawns — to read-only tools',
 			'Git-backed checkpoints restore the tree to an earlier turn',
 			'Sessions persist to SQLite, with tree-structured branching',
 			'Codex, Vibe and the claude TUI also run as terminal harnesses',
@@ -73,7 +73,11 @@ const STEPS: readonly Step[] = [
 			'A fingerprinted setup script that skips an unchanged workspace',
 			'Real PTY terminals that survive an app restart with clean scrollback',
 			'Detected dev-server ports surface as an Open :PORT action',
-			'⌘R toggles the default run script from anywhere in the workbench',
+			// "the app", not "the workbench". The rest of the page dropped Ensemblr's
+			// own word for itself when the copy moved to "orchestrator"; this was the
+			// one line of visible text still carrying it, so the page named itself
+			// two different things depending on how far you had scrolled.
+			'⌘R toggles the default run script from anywhere in the app',
 		],
 		region: 'dock',
 		title: 'Run it without leaving the workspace.',
@@ -119,7 +123,11 @@ export function Showcase() {
 		<MockFocusProvider>
 			{/* Wider than the rest of the page on purpose: the replica needs room to
 			    keep three panes legible at something close to real proportions. */}
-			<section className='mx-auto w-full max-w-[92rem] px-5 py-16 sm:px-8 sm:py-20 lg:pt-8 lg:pb-24'>
+			{/* The `lg:pt-8` that used to sit here was borrowed from the hero's
+			    bottom padding, back when this section followed the hero directly.
+			    Control sits between them now, behind a rule of its own, so the
+			    section takes the page's ordinary section padding at the top. */}
+			<section className='mx-auto w-full max-w-[92rem] px-5 py-16 sm:px-8 sm:py-20 lg:pb-24'>
 				{/*
 				 * 26rem, not 23. The step bodies and their five-bullet lists are the
 				 * argument this section makes, and at 23rem nearly every bullet

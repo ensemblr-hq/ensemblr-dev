@@ -6,9 +6,22 @@ import { ReleaseLine } from '@/components/download/release-line';
 import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
 import { getLatestRelease } from '@/lib/github-release';
-import { REPO } from '@/lib/site';
+import { REPO, REQUIREMENTS } from '@/lib/site';
 
 import { HeroWindow } from './hero-window';
+import { RuntimeLinks } from './runtime-links';
+
+/*
+ * The hard gates, in the first screenful rather than only at the button.
+ *
+ * Three of these four disqualify a reader outright — an Intel Mac, no agent CLI
+ * on PATH, no authenticated `gh` — and a page that withholds them until the
+ * download section has spent the reader's whole scroll on a product they cannot
+ * install. Said up front they cost one line and buy the rest of the page.
+ */
+const GATES = REQUIREMENTS.filter((requirement) => requirement.required).map(
+	(requirement) => requirement.short,
+);
 
 /*
  * One await for the whole hero. The button and the line beneath it describe the
@@ -42,30 +55,93 @@ export async function Hero() {
 						<EnsemblrWordmark className='h-5 sm:h-6' />
 					</Reveal>
 
+					{/*
+					 * The h1 is the control claim, not the isolation claim.
+					 *
+					 * Every product in this category now ships isolated worktrees, so
+					 * "isolated, multi-agent coding workflows" described Ensemblr and
+					 * three of its competitors equally well. An agent that drives the
+					 * app it runs inside — spawning sub-agents, waiting on them, folding
+					 * their work back in — is the sentence none of them can print.
+					 */}
 					<Reveal className='mt-1' index={2}>
-						<h1 className='max-w-4xl text-balance text-[2rem] sm:text-5xl lg:text-display'>
-							A macOS workbench for isolated,{' '}
-							<span className='whitespace-nowrap text-accent'>multi-agent</span>{' '}
-							coding workflows.
+						{/* `text-[2rem]` set a size and nothing else, so the h1 arrived on
+						    a phone at weight 400 on a 48px line — a leading of 1.5 where
+						    the display token asks for 1.02. Same sizes, now carrying the
+						    weight, leading and tracking at every width. */}
+						<h1 className='max-w-4xl text-balance text-display-sm sm:text-display-md lg:text-display'>
+							Agents that{' '}
+							<span className='whitespace-nowrap text-accent'>
+								drive the app
+							</span>
+							, not just the code.
 						</h1>
 					</Reveal>
 
+					{/* Both runtimes in the first clause: Claude Code is where the volume
+					    is, Pi is where Ensemblr is the only option, and a reader who has
+					    one of them installed is a reader who can run this today. */}
 					<Reveal index={3}>
 						<p className='max-w-[54ch] text-pretty text-base leading-relaxed text-muted sm:text-lg'>
-							Every stream of work gets its own copy of the repo — its own
-							branch, working tree, agent sessions and review path. Drive it
-							with the Pi or Claude Code CLI you already have installed, review
-							the diff where you made it, open the PR.
+							Ensemblr is a macOS orchestrator for the Pi agent harness or the
+							Claude Code CLI you already have installed. Every stream of work
+							gets its own git worktree, and the agent inside it can spawn
+							sub-agents, delegate, wait and integrate — then open the diff, run
+							the scripts and file the PR.
 						</p>
 					</Reveal>
 
+					{/*
+					 * Directly under the lede that names them, and above everything
+					 * else, so what this drives is settled in the first screenful. A
+					 * reader arrives asking one qualifying question — is my CLI the one
+					 * it runs — and two marks answer it before the prose has to.
+					 *
+					 * `-mt-2` against the column's `gap-6`, and the same stagger step as
+					 * the lede. The marks are that sentence's first clause drawn rather
+					 * than written, and at the full gap they sat equidistant from the
+					 * paragraph above and the paragraph below — two unlabelled glyphs
+					 * floating between two blocks of prose, belonging to neither. Pulled
+					 * up they read as what they are: the lede's last line.
+					 */}
+					<RuntimeLinks className='-mt-2' index={3} />
+
+					{/*
+					 * The credentials line, promoted out of the section it used to wait
+					 * in. Against funded competitors that all run an account and a sync
+					 * service, "there is nothing to sign into" is a differentiator, and a
+					 * differentiator stated for the first time two thousand pixels down
+					 * is one most readers never meet.
+					 */}
+					{/*
+					 * Its own step in the cascade, not the lede's. This shared `index={3}`
+					 * with the paragraph three blocks up and the marks between them, so
+					 * a stagger built to arrive one beat at a time landed three
+					 * consecutive beats at once and then paused.
+					 */}
+					<Reveal index={4}>
+						<p className='max-w-[52ch] text-pretty text-[0.9375rem] text-muted/85 leading-relaxed'>
+							No account, no sign-in, no cloud sync, no telemetry. There is no
+							Ensemblr backend in the path, and the app ships no agent binary of
+							its own.
+						</p>
+					</Reveal>
+
+					{/*
+					 * Full-width below `sm`, side by side above it. Centred and left at
+					 * their intrinsic widths, the two buttons stacked as a wide bar above
+					 * a narrower one on the same axis — close enough to match to read as
+					 * a failed attempt at matching. The Download section pairs the same
+					 * two controls left-aligned, where unequal widths share an edge and
+					 * are plainly deliberate; a centred stack has no such edge.
+					 */}
 					<Reveal
-						className='mt-2 flex flex-col items-center gap-4 sm:flex-row'
-						index={4}
+						className='mt-2 flex w-full flex-col items-stretch gap-4 sm:w-auto sm:flex-row sm:items-center'
+						index={5}
 					>
-						<DownloadButton release={release} />
+						<DownloadButton className='justify-center' release={release} />
 						<a
-							className='inline-flex min-h-11 items-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
+							className='inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
 							href={REPO.url}
 						>
 							<GitHubIcon className='size-4' />
@@ -73,7 +149,33 @@ export async function Hero() {
 						</a>
 					</Reveal>
 
-					<Reveal index={5}>
+					{/* The separator trails its gate, for the same reason the download
+					    section's does: this list wraps at every width the hero offers,
+					    and a leading dot puts a bare bullet at the head of line two. */}
+					{/* Gates and release line share a step on purpose: they are one band
+					    of fine print under the button, not two beats. */}
+					<Reveal index={6}>
+						<ul className='flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[0.6875rem] text-faint'>
+							{GATES.map((gate, index) => (
+								<li className='flex items-center gap-2' key={gate}>
+									{gate}
+									{/* /55, not /45. The middot is what keeps four constraints
+									    from reading as one run-on phrase, and at /45 it measured
+									    2.58:1 on the canvas — under the 3:1 a graphical mark
+									    needs, on the line that names the three things that
+									    disqualify a reader outright. /55 clears it at 3.29:1 and
+									    is still the quietest thing in the band. */}
+									{index < GATES.length - 1 ? (
+										<span aria-hidden='true' className='text-muted/55'>
+											·
+										</span>
+									) : null}
+								</li>
+							))}
+						</ul>
+					</Reveal>
+
+					<Reveal index={6}>
 						<ReleaseLine className='justify-center' release={release} />
 					</Reveal>
 				</div>
