@@ -39,13 +39,32 @@ stale version, size and digest for the whole revalidation window.
 GITHUB_TOKEN="ghp_..."
 ```
 
-The pin itself is checked rather than trusted. `bun run check:pin` fails when the newest published
-release no longer matches it, or when the pinned `.dmg` stops resolving; CI runs it on every PR. If
-GitHub cannot be reached the check warns and passes, because *cannot verify* is not *is stale*.
+## The release the page shows
 
-When it does fail, update `FALLBACK_RELEASE` in `src/lib/release.ts` — tag, version, `publishedAt`,
-`notesUrl`, and both assets' url, size and `sha256`. The digests come from the `digest` field on the
-release assets, and `bun test` will reject any that a reader could not check with `shasum -a 256`.
+Everything under the download button — tag, date, size, SHA-256 — describes a real published release
+of the app in [ensemblr-hq/ensemblr](https://github.com/ensemblr-hq/ensemblr). Check it there before
+you write it down here:
+
+```bash
+gh release list --repo ensemblr-hq/ensemblr --limit 5
+gh release view <tag> --repo ensemblr-hq/ensemblr \
+  --json tagName,publishedAt,isPrerelease,url,assets
+```
+
+The pin itself is checked rather than trusted. `bun run check:pin` fails when the newest published
+release no longer matches it, or when the pinned `.dmg` stops resolving; CI runs it on every PR and
+once a day on a schedule, because a release can ship on a week nobody opens one. If GitHub cannot be
+reached the check warns and passes, because *cannot verify* is not *is stale*.
+
+When it does fail, update `FALLBACK_RELEASE` in `src/lib/release.ts` from the `gh release view`
+output above — tag, version, `publishedAt`, `notesUrl`, and both assets' url, size and `sha256`.
+Each digest is that asset's `digest` field with the `sha256:` prefix stripped, and `bun test` will
+reject any that a reader could not check with `shasum -a 256`.
+
+The release is not the only thing this site copies from the app repo — requirements, distribution
+claims, feature copy, palette tokens, icons and the workbench replica all come from there too.
+`AGENTS.md` lists each one against its source. Same rule for all of them: read the source, don't
+recall it.
 
 ## How it is put together
 
