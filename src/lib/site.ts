@@ -17,6 +17,16 @@ export const SITE = {
 	ogLocale: 'en_GB',
 } as const;
 
+/**
+ * Who holds the copyright on the work this site markets, named in the footer.
+ * A person rather than the product: `SITE.name` is the app, and the two are not
+ * interchangeable in a copyright line.
+ */
+export const AUTHOR = {
+	name: 'Philipp Soldunov',
+	url: 'https://github.com/psoldunov',
+} as const;
+
 export const REPO = {
 	owner: 'ensemblr-hq',
 	name: 'ensemblr',
