@@ -13,7 +13,7 @@ import { cn } from '@/lib/utils';
  * what it is instead.
  *
  * The parts are separated for a screen reader too. Read as one undifferentiated
- * run it announces "v0.1.0-beta.3 beta Apple silicon 13 Aug 2026", which is four
+ * run it announces "v0.1.0-beta.4 beta Apple silicon 14 Aug 2026", which is four
  * facts and no labels; the visually-hidden prefixes name each one.
  */
 export function ReleaseLine({
