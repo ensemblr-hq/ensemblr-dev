@@ -163,7 +163,9 @@ export function EnsemblrWordmark({
 		<span
 			aria-label='Ensemblr'
 			/* `w-fit` matters: without it a stretching flex parent widens the span,
-			   and the SVG then letterboxes its content instead of sitting flush. */
+			   and the SVG then letterboxes its content instead of sitting flush.
+			   What `w-fit` resolves to is settled by the one in-flow child below —
+			   see the note on its `w-auto`. */
 			className={cn(
 				'relative inline-flex h-16 w-fit text-ink sm:h-20',
 				className,
@@ -173,15 +175,36 @@ export function EnsemblrWordmark({
 		>
 			<GhostLayer color='var(--signal)' offset={-3} visible={glitching} />
 			<GhostLayer color='var(--accent)' offset={3} visible={glitching} />
+			{/*
+			 * `w-auto` plus the width/height attributes, not `w-full`.
+			 *
+			 * This is the only in-flow child, so it is what the span's `w-fit`
+			 * measures. At `w-full` the width is a percentage of a container whose
+			 * width is exactly what is being measured, and the engines disagree on
+			 * what to do about that: Chrome falls back to the span's `aspect-ratio`,
+			 * Safari falls back to the 300x150 default size of a replaced element
+			 * with no intrinsic dimensions. So in Safari the mark sat in a 300px box
+			 * at every size it is used, letterboxed and centred by the default
+			 * `preserveAspectRatio` — which is the slab of empty space that appeared
+			 * to the left of the wordmark in the nav, hero and footer alike.
+			 *
+			 * The attributes give the element a real intrinsic ratio, and `w-auto`
+			 * lets it transfer that ratio through the definite height it inherits
+			 * from `h-full`. The span's `w-fit` then measures 47/7 of its own height,
+			 * which is what its `aspect-ratio` claims it is — one number, agreed on
+			 * by both engines rather than guessed at twice.
+			 */}
 			<svg
 				aria-hidden='true'
-				className='relative h-full w-full'
+				className='relative h-full w-auto'
+				height={GLYPH_HEIGHT}
 				shapeRendering='crispEdges'
 				style={{
 					transform: glitching ? 'translateX(1px) skewX(-2deg)' : 'none',
 					transition: 'transform 70ms cubic-bezier(.2,.7,.2,1)',
 				}}
 				viewBox={`0 0 ${TOTAL_WIDTH} ${GLYPH_HEIGHT}`}
+				width={TOTAL_WIDTH}
 				xmlns='http://www.w3.org/2000/svg'
 			>
 				<title>Ensemblr</title>
