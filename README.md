@@ -1,6 +1,6 @@
 # ensemblr.dev
 
-The marketing site for [Ensemblr](https://github.com/ensemblr-hq/ensemblr) — a macOS workbench for
+The marketing site for [Ensemblr](https://github.com/ensemblr-hq/ensemblr) — a macOS orchestrator for
 isolated, multi-agent coding workflows.
 
 One route. It explains the product, shows a recreation of the app's workbench, and hands over the
