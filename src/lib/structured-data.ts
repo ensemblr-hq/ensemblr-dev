@@ -165,7 +165,20 @@ export function buildSoftwareApplication(release: Release): JsonLdNode {
 		image: OG_IMAGE_URL,
 		installUrl: DOWNLOAD_URL,
 		isAccessibleForFree: true,
-		license: REPO.licenseUrl,
+		/*
+		 * No `license`, deliberately.
+		 *
+		 * This node carries `softwareVersion` and `downloadUrl`, so everything on
+		 * it is a claim about one specific build — and the relicence to Apache 2.0
+		 * is not retroactive. v0.1.0-beta.4 and every release before it shipped
+		 * under MIT, so a `license` pointing at the repository's current LICENSE
+		 * would assert, in machine-readable form, an Apache grant over an artefact
+		 * that never carried one.
+		 *
+		 * The licence is still stated on the site: the footer links `REPO.license`
+		 * at `REPO.licenseUrl`, where it describes the source rather than a tag.
+		 * A claim about the repository does not belong on a node about a build.
+		 */
 		maintainer: { '@id': SCHEMA_ID.organization },
 		name: SITE.name,
 		/* Google shows a SoftwareApplication rich result only with `offers` or
