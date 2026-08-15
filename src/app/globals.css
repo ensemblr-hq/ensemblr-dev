@@ -415,6 +415,58 @@ body {
 	}
 }
 
+/*
+ * The showcase's two halves, as three numbers read from both sides of the
+ * split.
+ *
+ * The section is one grid cell with a column of copy on one side and the
+ * replica on the other, and they trade sides as the reader scrolls. Nothing
+ * lays them out against each other — the copy sets its own width and the window
+ * takes what is left — so the two have to agree on where the boundary is or the
+ * gutter between them silently closes. Naming the boundary is what makes them
+ * agree: the copy is `--showcase-copy` wide, the window is everything past
+ * `--showcase-copy + --showcase-gap`, and neither restates the other's number.
+ *
+ * 26rem, not 23. The step bodies and their five-bullet lists are the argument
+ * that section makes, and at 23rem nearly every bullet broke to a second line
+ * two or three words in — a column of ragged orphans beside a very wide window.
+ * The replica loses 3rem and is still the larger half by some way.
+ *
+ * `--rail` is how far a section's own content edge sits outside the page's text
+ * rail. The showcase runs at `max-w-[92rem]` where every other section runs at
+ * `max-w-7xl`, because the replica needs the width. Copy that ignored the
+ * difference would start up to 6rem outside every other heading on the page —
+ * the one section that breaks the rail, and the one the reader scrolls longest.
+ * `--rail` is that difference, so a column of copy can be pushed back onto the
+ * rail from either side, and the window can be moved between the two halves by
+ * exactly the distance that leaves it there.
+ *
+ * It is declared twice on purpose. The `0px` here is the real answer for every
+ * element on the page that is not inside a section wide enough to break the
+ * rail — including the showcase itself below 1216px, where the two containers
+ * have not yet diverged. Reading it needs no `var()` fallback anywhere as a
+ * result, and a component that reads it outside `rail-context` gets the
+ * un-railed geometry rather than an invalid `calc()` that would drop its own
+ * `width` and `translate` on the floor.
+ */
+:root {
+	--rail: 0px;
+	--showcase-copy: 26rem;
+	--showcase-gap: 4rem;
+}
+
+/*
+ * Measured in `cqw` rather than in `%` because it is read from a `translate` as
+ * well as from padding, and a percentage inside a transform resolves against
+ * the transformed element's own box rather than against the container it is
+ * being placed in. `76rem` is the page rail's content width: `max-w-7xl` less
+ * the `sm:px-8` gutters either side.
+ */
+@utility rail-context {
+	container-type: inline-size;
+	--rail: max(0px, calc((100cqw - 76rem) / 2));
+}
+
 @utility bloom {
 	background: radial-gradient(
 		ellipse 60% 50% at 50% 0%,
