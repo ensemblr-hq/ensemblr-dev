@@ -1,4 +1,49 @@
 /**
+ * What this website measures about the person reading it.
+ *
+ * `<Analytics />` sits in the root layout, so every visitor is counted whether
+ * or not the page says so. Three separate surfaces here — the hero, the
+ * Credentials section and `TRUST_ITEMS` — sell the app on "no telemetry", and a
+ * page that makes that argument while quietly measuring its own readers has
+ * spent the only thing it was selling. So this is stated, in the footer, next to
+ * the other notices.
+ *
+ * Every clause was read from Vercel's own privacy and compliance page at
+ * `sourceUrl` in the session it was written, not recalled:
+ *
+ * - "without using any third-party cookies, instead end users are identified by
+ *   a hash created from the incoming request" — hence "no third-party cookies"
+ *   and not the broader "no cookies", which that sentence does not support.
+ * - "The lifespan of a visitor session is not stored permanently, it is
+ *   automatically discarded after 24 hours."
+ * - "The recording of data points ... is anonymous, so you have insight into
+ *   your data without it being tied to or associated with any individual,
+ *   customer, or IP address."
+ * - The list in `detail` is that page's own Data Point Information table,
+ *   which is the complete set: timestamp, URL, dynamic path, referrer, filtered
+ *   query params, geolocation to city, device OS and version, browser and
+ *   version, device type, and the script's own version.
+ *
+ * No `beforeSend` redaction is configured, and none is needed today: Vercel's
+ * warning is about paths and query strings that carry a user id or a token, and
+ * this site is one route with no authenticated surface to put one in. A second
+ * route that took a parameter would change that, and the redaction hook is at
+ * vercel.com/docs/analytics/redacting-sensitive-data.
+ *
+ * `legal.test.ts` holds the copy to what the app actually does: the notice says
+ * page views, so importing `track` from `@vercel/analytics` — custom events,
+ * with a payload this paragraph does not describe — fails the suite.
+ */
+export const ANALYTICS = {
+	notice:
+		'This site counts page views with Vercel Web Analytics. It sets no third-party cookies, and no data point it records is tied to your IP address.',
+	detail:
+		'Each view stores a timestamp, the path, the referrer, a country, region and city derived from the connection, and the browser, OS and device type. Visitors are counted by a hash Vercel derives from the request and discards after 24 hours, so there is no identifier that follows you to another site and nothing to build a profile from. This is the website, not the app: Ensemblr sends no telemetry of its own, and none of this measurement follows the download.',
+	sourceLabel: 'What Vercel stores, in Vercel’s words',
+	sourceUrl: 'https://vercel.com/docs/analytics/privacy-policy',
+} as const;
+
+/**
  * The brand-usage terms, stated where a reader who has just been handed the
  * source can see them.
  *
