@@ -2,7 +2,7 @@ import { PixelRule } from '@/components/brand/pixel-rule';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { GitHubIcon } from '@/components/icons/site';
 import { getLatestRelease } from '@/lib/github-release';
-import { THIRD_PARTY, TRADEMARK } from '@/lib/legal';
+import { ANALYTICS, THIRD_PARTY, TRADEMARK } from '@/lib/legal';
 import { releaseYear } from '@/lib/release';
 import { AUTHOR, REPO, SITE } from '@/lib/site';
 
@@ -80,8 +80,38 @@ export async function SiteFooter() {
 			 * line against a 7xl container.
 			 */}
 			<div className='mt-10 border-line/70 border-t pt-8'>
-				<h2 className='sr-only'>Trademarks</h2>
+				{/*
+				 * Analytics first, and at the `text-muted` everything under it steps
+				 * down from. Of the three notices in this block it is the only one
+				 * addressed to the person actually reading the page — the two below
+				 * are written for someone about to fork or redistribute — and the
+				 * only one that concedes something rather than reserving something.
+				 * The page argues "no telemetry" three times above this line, so the
+				 * measurement it does do is not a thing to put last and dimmest.
+				 *
+				 * The link is the substance rather than a courtesy: this paragraph
+				 * paraphrases another company's document, and a reader who cannot
+				 * reach that document has been asked to take the paraphrase on
+				 * trust — the one currency this page does not have.
+				 */}
+				<h2 className='sr-only'>Analytics</h2>
 				<p className='max-w-[80ch] text-pretty text-[0.75rem] text-muted leading-relaxed'>
+					{ANALYTICS.notice}
+				</p>
+				<p className='mt-2 max-w-[80ch] text-pretty text-[0.75rem] text-faint leading-relaxed'>
+					{ANALYTICS.detail}
+				</p>
+				<p className='mt-2 text-[0.75rem] leading-relaxed'>
+					<a
+						className='text-faint underline decoration-line underline-offset-4 transition-colors hover:text-ink hover:decoration-current'
+						href={ANALYTICS.sourceUrl}
+					>
+						{ANALYTICS.sourceLabel}
+					</a>
+				</p>
+
+				<h2 className='sr-only'>Trademarks</h2>
+				<p className='mt-6 max-w-[80ch] text-pretty text-[0.75rem] text-muted leading-relaxed'>
 					{TRADEMARK.notice}
 				</p>
 				<p className='mt-2 max-w-[80ch] text-pretty text-[0.75rem] text-faint leading-relaxed'>
