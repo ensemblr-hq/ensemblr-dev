@@ -81,9 +81,19 @@ export async function Hero() {
 					{/* Both runtimes in the first clause: Claude Code is where the volume
 					    is, Pi is where Ensemblr is the only option, and a reader who has
 					    one of them installed is a reader who can run this today. */}
+					{/*
+					 * The page's one ™, and it belongs here rather than on the h1 or the
+					 * wordmark above it. The headline never says the name, and the
+					 * wordmark is a logo — marking either would put the symbol on
+					 * something that is not a use of the word. This is the first time a
+					 * reader meets "Ensemblr" as a word in prose, which is the occurrence
+					 * a notice attaches to. Every later mention on the page goes unmarked
+					 * on purpose; the footer's trademark notice is the only other place
+					 * the symbol appears, and it is verbatim there.
+					 */}
 					<Reveal index={3}>
 						<p className='max-w-[54ch] text-pretty text-base leading-relaxed text-muted sm:text-lg'>
-							Ensemblr is a macOS orchestrator for the Pi agent harness or the
+							Ensemblr™ is a macOS orchestrator for the Pi agent harness or the
 							Claude Code CLI you already have installed. Every stream of work
 							gets its own git worktree, and the agent inside it can spawn
 							sub-agents, delegate, wait and integrate — then open the diff, run

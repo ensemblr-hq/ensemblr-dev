@@ -42,7 +42,7 @@ export const SITE = {
 	searchDescription:
 		'A macOS orchestrator for Pi and Claude Code. Every stream of work gets its own git worktree, and an agent can spawn sub-agents and drive the app itself.',
 	description:
-		'A macOS orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — spawn sub-agents, delegate, wait, integrate. No account, no tokens stored. Apple silicon, MIT.',
+		'A macOS orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — spawn sub-agents, delegate, wait, integrate. No account, no tokens stored. Apple silicon, Apache 2.0.',
 	/*
 	 * One locale, three spellings of it. `<html lang>` and schema.org want the
 	 * BCP 47 tag, Open Graph wants the underscored form, and the page's own copy
@@ -73,7 +73,18 @@ export const REPO = {
 	changelogUrl:
 		'https://github.com/ensemblr-hq/ensemblr/blob/master/CHANGELOG.md',
 	licenseUrl: 'https://github.com/ensemblr-hq/ensemblr/blob/master/LICENSE',
-	license: 'MIT',
+	/*
+	 * The licence the source carries now, spelled the way a reader says it rather
+	 * than the way SPDX writes it — this string is a link label in the footer, not
+	 * a machine-readable field, and nothing on the site consumes an SPDX id.
+	 *
+	 * It describes the repository at `licenseUrl`, not any particular build. The
+	 * relicence is not retroactive: every release published up to and including
+	 * v0.1.0-beta.4 shipped under MIT and stays MIT, which is why no versioned
+	 * surface on this site prints a licence beside a tag. See the note in
+	 * `structured-data.ts` on the `SoftwareApplication` node.
+	 */
+	license: 'Apache 2.0',
 } as const;
 
 /**

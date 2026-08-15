@@ -72,7 +72,7 @@ uploaded to run the app. Against competitors that run an account and a sync
 service this is a headline, not a footnote, so it appears in the hero as well as
 in the Credentials section.
 
-Fifth: it is a **native macOS app, MIT-licensed, source public** at
+Fifth: it is a **native macOS app, Apache 2.0-licensed, source public** at
 `ensemblr-hq/ensemblr`.
 
 ### Vocabulary
@@ -123,7 +123,15 @@ Product facts the site must state accurately:
   Keychain.
 - Status: public beta, pre-1.0. The current build is a prerelease. The site says
   so plainly and invites bug reports rather than implying stability.
-- License: MIT. Repository public.
+- License: Apache 2.0. Repository public. The relicence is not retroactive —
+  every release published up to and including v0.1.0-beta.4 shipped under MIT
+  and stays MIT, so no versioned surface on the site prints a licence beside a
+  tag.
+- Trademark: "Ensemblr" is a trademark of Philipp Soldunov, EUTM application
+  pending. ™ only — never ®, never "registered", never a registration number.
+  Apache 2.0 section 6 grants no trademark rights, so the site states the
+  code/name split in the footer's legal area. Wording is verbatim in
+  `src/lib/legal.ts` and is not to be reworded in passing.
 
 Technical constraints of this site:
 

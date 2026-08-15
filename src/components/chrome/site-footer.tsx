@@ -2,6 +2,7 @@ import { PixelRule } from '@/components/brand/pixel-rule';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { GitHubIcon } from '@/components/icons/site';
 import { getLatestRelease } from '@/lib/github-release';
+import { TRADEMARK } from '@/lib/legal';
 import { releaseYear } from '@/lib/release';
 import { AUTHOR, REPO, SITE } from '@/lib/site';
 
@@ -42,6 +43,10 @@ export async function SiteFooter() {
 						>
 							Changelog
 						</a>
+						{/* The licence of the source at `licenseUrl`, not of the build
+						    named on the line below it. The relicence to Apache 2.0 does
+						    not reach back over releases that shipped under MIT, which is
+						    why this label links the repository and never a tag. */}
 						<a
 							className='transition-colors hover:text-ink'
 							href={REPO.licenseUrl}
@@ -58,6 +63,30 @@ export async function SiteFooter() {
 						</a>
 					</p>
 				</div>
+			</div>
+
+			{/*
+			 * The legal area. This site is one route, so there is no /legal page to
+			 * hold the brand-usage terms and no link that could reach one — the
+			 * notice lives here, at the foot of the page whose licence link sits
+			 * three lines above it.
+			 *
+			 * Last in the document and quietest on it, but not hidden behind a
+			 * disclosure: the reader it is written for is one who has just followed
+			 * that licence link, and a forker who has to open something to find the
+			 * name terms is a forker who does not find them. `max-w-[80ch]` because
+			 * the second paragraph is four sentences and the footer is otherwise
+			 * short-measure copy — set full width it would run to 150 characters a
+			 * line against a 7xl container.
+			 */}
+			<div className='mt-10 border-line/70 border-t pt-8'>
+				<h2 className='sr-only'>Trademark</h2>
+				<p className='max-w-[80ch] text-pretty text-[0.75rem] text-muted leading-relaxed'>
+					{TRADEMARK.notice}
+				</p>
+				<p className='mt-2 max-w-[80ch] text-pretty text-[0.75rem] text-faint leading-relaxed'>
+					{TRADEMARK.terms}
+				</p>
 			</div>
 		</footer>
 	);
