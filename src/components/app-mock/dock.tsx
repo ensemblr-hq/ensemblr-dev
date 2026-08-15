@@ -1,3 +1,5 @@
+import { cn } from '@/lib/utils';
+
 import { DOCK_FOOTER, DOCK_OUTPUT } from './data';
 import {
 	BoxIcon,
@@ -12,10 +14,20 @@ import { Spinner } from './primitives';
 /**
  * The dock is not a full-width bar: it sits under the review panel, in the
  * right column, with the fixed Setup and Run output panes as tabs.
+ *
+ * Its height is set by the shell rather than here, because it is the pane the
+ * review list gives way to: 11rem is a fifth of the full shell and would be
+ * nearly half of the compact one, which would leave that shell's file list
+ * showing four rows.
  */
-export function MockDock() {
+export function MockDock({ className }: { className?: string }) {
 	return (
-		<div className='flex h-[11rem] shrink-0 flex-col border-line border-t'>
+		<div
+			className={cn(
+				'flex h-[11rem] shrink-0 flex-col border-line border-t',
+				className,
+			)}
+		>
 			<div className='flex h-9 shrink-0 items-center gap-2 px-2.5'>
 				<ChevronIcon className='size-3 shrink-0 rotate-90 text-muted/65' />
 				<span className='flex items-center gap-1.5 rounded-md bg-pane-strong px-1.5 py-0.5 text-[10px] text-ink'>
@@ -26,13 +38,15 @@ export function MockDock() {
 					<Spinner className='size-2.5' />
 					Run
 				</span>
-				<PlusIcon className='size-3 shrink-0 text-muted/65' />
+				<PlusIcon className='@max-[15rem]:hidden size-3 shrink-0 text-muted/65' />
 				<span className='ml-auto flex items-center gap-1.5'>
 					<span className='flex items-center gap-1 rounded-md border border-line px-1.5 py-0.5 font-mono text-[9px] text-muted/75'>
 						<ExternalIcon className='size-2.5' />
 						:3000
 					</span>
-					<BoxIcon className='size-3 text-muted/65' />
+					{/* The port is the line worth keeping — it is the running thing.
+					    The pane toggle beside it goes first when the dock is narrow. */}
+					<BoxIcon className='@max-[15rem]:hidden size-3 text-muted/65' />
 				</span>
 			</div>
 
