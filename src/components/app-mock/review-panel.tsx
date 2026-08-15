@@ -132,13 +132,19 @@ export function MockReviewPanel() {
 						) : null}
 					</span>
 				))}
+				{/* Three tabs, a review toggle, a sort control and an overflow menu do
+				    not fit a 13rem panel. What goes is the two grey icons and the
+				    toggle's label, leaving the tabs — which name what the panel is
+				    for — and one accented glyph. Keeping all of it left "Review"
+				    reading as "R" against the window's edge, which is the picture
+				    this pass exists to remove. */}
 				<span className='ml-auto flex shrink-0 items-center gap-2'>
 					<span className='flex items-center gap-1 whitespace-nowrap text-[10px] text-accent'>
 						<EyeIcon className='size-3' />
-						Review
+						<span className='@max-[15rem]:hidden'>Review</span>
 					</span>
-					<ListIcon className='size-3 shrink-0 text-muted/55' />
-					<DotsIcon className='size-3 shrink-0 text-muted/55' />
+					<ListIcon className='@max-[15rem]:hidden size-3 shrink-0 text-muted/55' />
+					<DotsIcon className='@max-[15rem]:hidden size-3 shrink-0 text-muted/55' />
 				</span>
 			</div>
 

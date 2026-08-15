@@ -191,15 +191,25 @@ export async function Hero() {
 				</div>
 
 				{/*
-				 * Below `lg` only. From `lg` up the showcase's sticky replica is the
+				 * Below `xl` only. From `xl` up the showcase's sticky replica is the
 				 * page's single window, and it arrives on the very next scroll — two
 				 * copies of the same screenshot a few hundred pixels apart reads as a
-				 * mistake, however good each one is. Narrow viewports drop that sticky
-				 * column, so this is where they get their look at the product.
+				 * mistake, however good each one is. Narrower viewports drop that
+				 * sticky column, so this is where they get their look at the product.
+				 *
+				 * The handover used to sit at `lg`, which handed a 1024–1280 laptop
+				 * the showcase's replica in a column too narrow to hold it: the
+				 * conversation was squeezed to ~190px there and to nothing at all
+				 * below 1060. At those widths the compact shell, scaled to the hero's
+				 * own text column, is the better picture by a distance.
 				 */}
-				<div className='mt-14 sm:mt-20 lg:hidden'>
+				{/* Wider than the text column on a phone. The window is scaled to
+				    whatever width it is handed, so the page's 20px gutters cost it
+				    ~5% of its drawn size — which on a 390px screen is the difference
+				    between reading the file names in the review panel and not. */}
+				<div className='-mx-3 mt-14 sm:mx-0 sm:mt-20 xl:hidden'>
 					<HeroWindow>
-						<AppWindow variant='narrow' />
+						<AppWindow variant='compact' />
 					</HeroWindow>
 				</div>
 			</div>

@@ -148,14 +148,25 @@ export function Showcase() {
 				 * replica gives up exactly that much rather than the 6rem it would
 				 * lose by moving to `max-w-7xl` outright.
 				 */}
-				<div className='grid gap-14 lg:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] lg:gap-16 lg:pl-[max(0px,calc((100%-76rem)/2))]'>
-					<div className='hidden lg:order-2 lg:block'>
+				{/*
+				 * `xl`, not `lg`. Two columns arrive here only once the second one can
+				 * hold a window: at `lg` the replica's column was 480px, less than the
+				 * sidebar and review panel take between them, and the shell it was
+				 * given had no conversation left in it at all. The hero's compact
+				 * window covers everything below this breakpoint.
+				 */}
+				<div className='grid gap-14 xl:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] xl:gap-16 xl:pl-[max(0px,calc((100%-76rem)/2))]'>
+					<div className='hidden xl:order-2 xl:block'>
 						{/*
 						 * Parked just above centre rather than at the top of the
 						 * viewport, so the step text beside it lands on the same optical
 						 * line instead of reading as a caption under a pinned header.
+						 *
+						 * The offset is half the window's drawn height, which is now the
+						 * shell's 32.5rem times whatever the column scales it by — a
+						 * little under at `xl`, all of it once the section stops growing.
 						 */}
-						<div className='sticky top-[calc(50vh-17rem)] xl:top-[calc(50vh-19rem)]'>
+						<div className='sticky top-[calc(50vh-14.5rem)] min-[1440px]:top-[calc(50vh-16rem)]'>
 							<AppWindow />
 						</div>
 					</div>
@@ -168,7 +179,7 @@ export function Showcase() {
 					 * replica's optical centre line at every scroll position, instead
 					 * of only at the two where a hand-set gap happens to land.
 					 */}
-					<div className='flex flex-col gap-20 lg:order-1 lg:gap-0'>
+					<div className='flex flex-col gap-20 xl:order-1 xl:gap-0'>
 						{/*
 						 * The id sits on the step block itself, not on an inner wrapper.
 						 * On the wrapper the anchor inherited no scroll margin, so a nav
@@ -178,7 +189,7 @@ export function Showcase() {
 						 */}
 						{STEPS.map((step) => (
 							<FocusStep
-								className='scroll-mt-24 lg:flex lg:min-h-[92vh] lg:items-center'
+								className='scroll-mt-24 xl:flex xl:min-h-[92vh] xl:items-center'
 								id={step.id}
 								key={step.id}
 								region={step.region}

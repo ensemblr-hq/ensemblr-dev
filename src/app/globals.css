@@ -388,6 +388,33 @@ body {
 	}
 }
 
+/*
+ * The app replica's fit scale, for the paint before its observer has measured
+ * anything — server HTML, and readers with JavaScript off.
+ *
+ * `--mock-fallback` is a number chosen to be under the fit at every width the
+ * shell is used at, so the worst it can do is draw the window a little small.
+ * Where CSS can divide one length by another the exact fit is computable in
+ * the cascade and there is nothing to correct: the window is the right size in
+ * the first frame. Chrome and Safari take that path; Firefox has not shipped
+ * typed arithmetic yet and holds the fallback until hydration.
+ *
+ * `ScaledShell` writes the measured scale as an inline custom property, which
+ * outranks both of these.
+ */
+.mock-fit {
+	--mock-scale: var(--mock-fallback);
+}
+
+/* The test multiplies the quotient back into a length, because a bare
+ * `calc(1px / 1px)` is a *number* and `width` does not take one — the query
+ * would report false in engines that do support the division. */
+@supports (width: calc(100px * (1px / 1px))) {
+	.mock-fit {
+		--mock-scale: min(1, calc(100cqw / var(--mock-w)));
+	}
+}
+
 @utility bloom {
 	background: radial-gradient(
 		ellipse 60% 50% at 50% 0%,
