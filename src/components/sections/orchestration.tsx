@@ -44,6 +44,19 @@ const GUARDRAILS = [
 	],
 ] as const;
 
+/*
+ * The delegation fan, drawn outward from the orchestrator: down to the bus at
+ * x=150, then each half of the bus away from that centre, then down each leg.
+ * Direction is load-bearing — a dash travels along its sub-path the way the
+ * sub-path is drawn, so drawing the bus as one left-to-right run sent the dashes
+ * on the left half inward, against the flow of work they stand for. Two halves
+ * from the centre out makes both sides read as delegation leaving the
+ * orchestrator, and mirrors their dash phase for free (SVG restarts the dash
+ * pattern at every sub-path).
+ */
+const CONNECTOR_PATH =
+	'M150 0V18 M150 18H50 M150 18H250 M50 18V40 M150 18V40 M250 18V40';
+
 function Connector() {
 	return (
 		<svg
@@ -61,14 +74,14 @@ function Connector() {
 			    drawn at, a reader who asks for no animation was left with four
 			    disconnected specks where the delegation fan should be. */}
 			<path
-				d='M150 0V18 M50 18H250 M50 18V40 M150 18V40 M250 18V40'
+				d={CONNECTOR_PATH}
 				stroke='currentColor'
 				strokeWidth='1'
 				vectorEffect='non-scaling-stroke'
 			/>
 			<path
 				className='animate-[dash_2.6s_linear_infinite] motion-reduce:animate-none'
-				d='M150 0V18 M50 18H250 M50 18V40 M150 18V40 M250 18V40'
+				d={CONNECTOR_PATH}
 				stroke='var(--accent)'
 				strokeDasharray='10 46'
 				strokeWidth='1'
