@@ -1,8 +1,8 @@
 /**
  * The glyphs the workbench replica draws, and only those.
  *
- * Icons the site itself uses — GitHub, Apple, the nav's menu rules, the shield
- * beside the digest, the tick in the orchestration diagram — live in
+ * Icons the site itself uses — GitHub, the nav's menu rules, the shield beside
+ * the digest, the tick in the orchestration diagram — live in
  * `@/components/icons/site`. They appear nowhere in this replica, and keeping
  * them here is what had eight files in `chrome/`, `download/` and `sections/`
  * importing from a module named after a mock.

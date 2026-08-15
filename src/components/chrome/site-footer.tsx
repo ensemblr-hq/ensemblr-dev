@@ -2,7 +2,7 @@ import { PixelRule } from '@/components/brand/pixel-rule';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { GitHubIcon } from '@/components/icons/site';
 import { getLatestRelease } from '@/lib/github-release';
-import { TRADEMARK } from '@/lib/legal';
+import { THIRD_PARTY, TRADEMARK } from '@/lib/legal';
 import { releaseYear } from '@/lib/release';
 import { AUTHOR, REPO, SITE } from '@/lib/site';
 
@@ -80,12 +80,29 @@ export async function SiteFooter() {
 			 * line against a 7xl container.
 			 */}
 			<div className='mt-10 border-line/70 border-t pt-8'>
-				<h2 className='sr-only'>Trademark</h2>
+				<h2 className='sr-only'>Trademarks</h2>
 				<p className='max-w-[80ch] text-pretty text-[0.75rem] text-muted leading-relaxed'>
 					{TRADEMARK.notice}
 				</p>
 				<p className='mt-2 max-w-[80ch] text-pretty text-[0.75rem] text-faint leading-relaxed'>
 					{TRADEMARK.terms}
+				</p>
+
+				{/*
+				 * Other people's marks, below ours and quieter again. The gap is
+				 * `mt-6` against the `mt-2` that joins the two paragraphs above it:
+				 * four paragraphs of legal copy set at one rhythm read as one
+				 * undifferentiated block, and these two are about different owners
+				 * than those two. The step in spacing is the only thing separating
+				 * "what you may not take from us" from "what we did not take from
+				 * them" — there is no heading to do it, because a visible one would
+				 * put the loudest word in the footer on its least important lines.
+				 */}
+				<p className='mt-6 max-w-[80ch] text-pretty text-[0.75rem] text-faint leading-relaxed'>
+					{THIRD_PARTY.attribution}
+				</p>
+				<p className='mt-2 max-w-[80ch] text-pretty text-[0.75rem] text-faint leading-relaxed'>
+					{THIRD_PARTY.disclaimer}
 				</p>
 			</div>
 		</footer>

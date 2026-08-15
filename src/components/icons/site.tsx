@@ -1,7 +1,7 @@
 /**
  * Icons the *site* draws — nav, footer, hero, download, orchestration.
  *
- * Separate from `@/components/app-mock/icons` on purpose. These five appear
+ * Separate from `@/components/app-mock/icons` on purpose. These four appear
  * nowhere in the workbench replica, and when they lived alongside it eight
  * files in `chrome/`, `download/` and `sections/` reached into the replica
  * module to get a GitHub mark. The import path is documentation: a site
@@ -51,16 +51,16 @@ export function GitHubIcon({ className }: IconProps) {
 	);
 }
 
-export function AppleIcon({ className }: IconProps) {
-	return (
-		<svg
-			aria-hidden='true'
-			className={className}
-			fill='currentColor'
-			viewBox='0 0 16 16'
-			xmlns='http://www.w3.org/2000/svg'
-		>
-			<path d='M11.18 8.42c-.02-1.7 1.39-2.52 1.45-2.56-.79-1.16-2.02-1.32-2.46-1.34-1.05-.1-2.04.61-2.57.61-.53 0-1.35-.6-2.22-.58-1.14.02-2.19.66-2.78 1.68-1.18 2.06-.3 5.1.85 6.77.56.82 1.23 1.73 2.11 1.7.85-.03 1.17-.55 2.19-.55 1.03 0 1.31.55 2.21.53.91-.02 1.49-.83 2.05-1.65.65-.95.91-1.87.93-1.92-.02-.01-1.78-.68-1.8-2.7ZM9.5 3.4c.47-.57.78-1.35.7-2.14-.67.03-1.49.45-1.97 1.01-.43.5-.81 1.3-.71 2.07.75.06 1.51-.38 1.98-.94Z' />
-		</svg>
-	);
-}
+/*
+ * There is no AppleIcon here any more, and adding one back is not a small
+ * decision. A traced Apple logo shipped on the download button until Apple's
+ * "Guidelines for Using Apple Trademarks and Copyrights" were read against it:
+ * the Apple logo "does not appear ... without express written permission from
+ * Apple", and an image asserting compatibility must be "an actual photograph of
+ * the genuine Apple product and not an artist's rendering". The path is deleted
+ * rather than left unexported, because an unused component in this file is an
+ * invitation and the reason it went is not visible from its call site.
+ *
+ * The Apple *word* marks are fine and stay — "macOS", "Apple silicon" — with the
+ * attribution notice `THIRD_PARTY` in `src/lib/legal.ts` prints in the footer.
+ */
