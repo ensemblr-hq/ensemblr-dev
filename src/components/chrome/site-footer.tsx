@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PixelRule } from '@/components/brand/pixel-rule';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { GitHubIcon } from '@/components/icons/site';
@@ -24,43 +25,46 @@ export async function SiteFooter() {
 
 				<div className='flex flex-col gap-3 font-mono text-[0.6875rem] text-faint sm:items-end'>
 					<div className='flex items-center gap-4'>
-						<a
+						<Link
 							className='flex items-center gap-1.5 transition-colors hover:text-ink'
 							href={REPO.url}
 						>
 							<GitHubIcon className='size-3.5' />
 							Source
-						</a>
-						<a
+						</Link>
+						<Link
 							className='transition-colors hover:text-ink'
 							href={REPO.issuesUrl}
 						>
 							Issues
-						</a>
-						<a
+						</Link>
+						<Link
 							className='transition-colors hover:text-ink'
 							href={REPO.changelogUrl}
 						>
 							Changelog
-						</a>
+						</Link>
 						{/* The licence of the source at `licenseUrl`, not of the build
 						    named on the line below it. The relicence to Apache 2.0 does
 						    not reach back over releases that shipped under MIT, which is
 						    why this label links the repository and never a tag. */}
-						<a
+						<Link
 							className='transition-colors hover:text-ink'
 							href={REPO.licenseUrl}
 						>
 							{REPO.license}
-						</a>
+						</Link>
 					</div>
 					{/* Year comes from the cached release rather than the clock: reading
 					    the current time here would make the whole footer dynamic. */}
 					<p>
 						{release.tag} · © {releaseYear(release.publishedAt)}{' '}
-						<a className='transition-colors hover:text-ink' href={AUTHOR.url}>
+						<Link
+							className='transition-colors hover:text-ink'
+							href={AUTHOR.url}
+						>
 							{AUTHOR.name}
-						</a>
+						</Link>
 					</p>
 				</div>
 			</div>
@@ -102,12 +106,12 @@ export async function SiteFooter() {
 					{ANALYTICS.detail}
 				</p>
 				<p className='mt-2 text-[0.75rem] leading-relaxed'>
-					<a
+					<Link
 						className='text-faint underline decoration-line underline-offset-4 transition-colors hover:text-ink hover:decoration-current'
 						href={ANALYTICS.sourceUrl}
 					>
 						{ANALYTICS.sourceLabel}
-					</a>
+					</Link>
 				</p>
 
 				<h2 className='sr-only'>Trademarks</h2>

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PixelField } from '@/components/brand/pixel-field';
 import { SectionHeading } from '@/components/brand/section-heading';
 import { DownloadButton } from '@/components/download/download-button';
@@ -72,12 +73,12 @@ export async function Download() {
 								still pre-1.0. The core loop — isolated workspaces, agent
 								sessions, review, PR — is wired to real services and used daily.
 								Expect rough edges, and{' '}
-								<a
+								<Link
 									className='text-ink underline decoration-line underline-offset-4 transition-colors hover:text-accent'
 									href={REPO.issuesUrl}
 								>
 									file them
-								</a>
+								</Link>
 								.
 							</p>
 						</Reveal>
@@ -146,13 +147,13 @@ export async function Download() {
 							index={3}
 						>
 							<DownloadButton release={release} />
-							<a
+							<Link
 								className='inline-flex min-h-11 items-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
 								href={REPO.releasesUrl}
 							>
 								<GitHubIcon className='size-4' />
 								All releases
-							</a>
+							</Link>
 						</Reveal>
 
 						<Reveal index={4}>
@@ -195,12 +196,12 @@ export async function Download() {
 							<Reveal index={5}>
 								<p className='font-mono text-[0.6875rem] text-faint'>
 									Prefer a zip?{' '}
-									<a
+									<Link
 										className='text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
 										href={release.zip.url}
 									>
 										{release.zip.label} · {formatBytes(release.zip.sizeBytes)}
-									</a>
+									</Link>
 								</p>
 							</Reveal>
 						) : null}
