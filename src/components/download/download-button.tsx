@@ -1,4 +1,3 @@
-import { AppleIcon } from '@/components/icons/site';
 import { formatBytes, type Release } from '@/lib/release';
 import { REPO } from '@/lib/site';
 import { cn } from '@/lib/utils';
@@ -39,14 +38,15 @@ export function DownloadButton({
 			href={href}
 		>
 			{/*
-			 * 18px beside a 15px label, not 16. The Apple mark is a narrow glyph
-			 * with a bite out of one side and a leaf above it, so it carries far
-			 * less visual mass than its box implies — matched to the cap height of
-			 * the words next to it, it reads smaller than them rather than equal.
-			 * Set a step over the text it labels, it finally sits as the platform
-			 * badge on the one control this page exists to get pressed.
+			 * No platform glyph, deliberately. An Apple mark sat here as the
+			 * platform badge until Apple's own guidelines were read: the Apple logo
+			 * "does not appear ... without express written permission from Apple",
+			 * and a compatibility image must be "an actual photograph of the genuine
+			 * Apple product and not an artist's rendering" — which a traced SVG on a
+			 * download button is not. The word mark is the part Apple permits
+			 * referentially, and the label below already carries it, so the glyph was
+			 * saying nothing the words were not. Do not reinstate it.
 			 */}
-			<AppleIcon className={size === 'lg' ? 'size-[1.125rem]' : 'size-4'} />
 			{size === 'lg' ? (
 				<span>Download for macOS</span>
 			) : (
