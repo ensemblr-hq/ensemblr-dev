@@ -1,7 +1,7 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
-
 import { MenuIcon } from '@/components/icons/site';
 import { NAV_SECTIONS } from '@/lib/site';
 import { cn } from '@/lib/utils';
@@ -144,7 +144,7 @@ export function NavLinks() {
 			<ul className='hidden items-center gap-6 lg:flex'>
 				{NAV_SECTIONS.map((section) => (
 					<li key={section.id}>
-						<a
+						<Link
 							aria-current={active === section.id ? 'true' : undefined}
 							className={linkClass(active === section.id)}
 							href={`#${section.id}`}
@@ -159,7 +159,7 @@ export function NavLinks() {
 									active === section.id ? 'opacity-100' : 'opacity-0',
 								)}
 							/>
-						</a>
+						</Link>
 					</li>
 				))}
 			</ul>
@@ -195,7 +195,7 @@ export function NavLinks() {
 					    still covering it. */}
 					{NAV_SECTIONS.map((section) => (
 						<li key={section.id}>
-							<a
+							<Link
 								aria-current={active === section.id ? 'true' : undefined}
 								className={cn(
 									'flex min-h-11 items-center rounded-md px-3 text-[0.875rem] transition-colors',
@@ -207,7 +207,7 @@ export function NavLinks() {
 								onClick={() => closeMenu(false)}
 							>
 								{section.label}
-							</a>
+							</Link>
 						</li>
 					))}
 				</ul>

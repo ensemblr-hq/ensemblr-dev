@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { ClaudeMark, PiMark } from '@/components/icons/runtimes';
 import { Reveal } from '@/components/motion/reveal';
 import { cn } from '@/lib/utils';
@@ -92,7 +93,7 @@ export function RuntimeLinks({
 					 * screen reader with no name at all — the visually-hidden span is
 					 * what keeps "just the logos" from meaning "two unlabelled links".
 					 */}
-					<a
+					<Link
 						className={cn(
 							'flex min-h-11 min-w-11 items-center justify-center rounded-lg text-muted transition-colors',
 							runtime.hover,
@@ -101,7 +102,7 @@ export function RuntimeLinks({
 					>
 						<runtime.Mark className={runtime.size} />
 						<span className='sr-only'>{runtime.name}</span>
-					</a>
+					</Link>
 				</li>
 			))}
 		</Reveal>

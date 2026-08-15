@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { AppWindow } from '@/components/app-mock/window';
 import { PixelField } from '@/components/brand/pixel-field';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
@@ -7,7 +8,6 @@ import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
 import { getLatestRelease } from '@/lib/github-release';
 import { REPO, REQUIREMENTS } from '@/lib/site';
-
 import { HeroWindow } from './hero-window';
 import { RuntimeLinks } from './runtime-links';
 
@@ -33,10 +33,10 @@ export async function Hero() {
 
 	return (
 		<section className='relative overflow-hidden' id='top'>
-			<PixelField className='h-[36rem]' />
+			<PixelField className='h-144' />
 			<div
 				aria-hidden='true'
-				className='bloom pointer-events-none absolute inset-x-0 top-0 h-[42rem]'
+				className='bloom pointer-events-none absolute inset-x-0 top-0 h-168'
 			/>
 
 			<div className='relative mx-auto w-full max-w-7xl px-5 pt-16 pb-16 sm:px-8 sm:pt-24 lg:pb-24'>
@@ -150,13 +150,13 @@ export async function Hero() {
 						index={5}
 					>
 						<DownloadButton className='justify-center' release={release} />
-						<a
+						<Link
 							className='inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
 							href={REPO.url}
 						>
 							<GitHubIcon className='size-4' />
 							View source
-						</a>
+						</Link>
 					</Reveal>
 
 					{/* The separator trails its gate, for the same reason the download

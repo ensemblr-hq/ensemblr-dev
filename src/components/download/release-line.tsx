@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { formatReleaseDate, type Release } from '@/lib/release';
 import { cn } from '@/lib/utils';
 
@@ -36,12 +37,12 @@ export function ReleaseLine({
 			)}
 		>
 			<span className='sr-only'>Version </span>
-			<a
+			<Link
 				className='rounded-sm text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
 				href={release.notesUrl}
 			>
 				{release.tag}
-			</a>
+			</Link>
 			{release.isPrerelease ? (
 				<>
 					<span aria-hidden='true'>·</span>

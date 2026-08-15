@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { PixelRule } from '@/components/brand/pixel-rule';
 import { SiteFooter } from '@/components/chrome/site-footer';
 import { SiteNav } from '@/components/chrome/site-nav';
@@ -39,12 +40,12 @@ export default async function Home() {
 			<JsonLd data={buildHomeGraph(release)} />
 			{/* Seven tab stops sit between the top of the document and the first
 			    heading, and the first of them is the nav's own back-to-top link. */}
-			<a
-				className='sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-[60] focus-visible:rounded-lg focus-visible:bg-accent focus-visible:px-4 focus-visible:py-2 focus-visible:font-medium focus-visible:text-[0.9375rem] focus-visible:text-accent-foreground'
+			<Link
+				className='sr-only focus-visible:not-sr-only focus-visible:fixed focus-visible:top-3 focus-visible:left-3 focus-visible:z-60 focus-visible:rounded-lg focus-visible:bg-accent focus-visible:px-4 focus-visible:py-2 focus-visible:font-medium focus-visible:text-[0.9375rem] focus-visible:text-accent-foreground'
 				href='#main'
 			>
 				Skip to content
-			</a>
+			</Link>
 			<SiteNav />
 			{/*
 			 * Control is the second thing on the page, not the fifth.
