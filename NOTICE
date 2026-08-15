@@ -1,0 +1,38 @@
+Ensemblr
+Copyright 2026 Philipp Soldunov
+
+Licensed under the Apache License, Version 2.0. See LICENSE.
+
+This site bundles the third-party components listed below, each under its own
+license. Their full license texts are in licenses/.
+
+- Geist
+  Copyright (c) 2023 Vercel, in collaboration with basement.studio
+  (https://github.com/vercel/geist-font)
+  Licensed under the SIL Open Font License 1.1.
+  Full text: licenses/Geist-OFL.txt
+
+- JetBrains Mono
+  Copyright 2020 The JetBrains Mono Project Authors
+  (https://github.com/JetBrains/JetBrainsMono)
+  Licensed under the SIL Open Font License 1.1.
+  Full text: licenses/JetBrainsMono-OFL.txt
+
+Neither font is checked into this repository. Both are fetched from Google
+Fonts at build time by next/font/google and self-hosted from this site's own
+origin, so the deployed build redistributes the woff2 files and carries the
+notice obligation in OFL section 2. That is why the two license texts above
+are kept here rather than beside font files that do not exist in the source
+tree.
+
+The remaining dependencies are compiled into the build by Next.js. None of
+them ships a NOTICE file requiring propagation under Apache License 2.0
+section 4(d). Their licenses are declared in each package's own package.json;
+bun.lock does not record license fields, so it is not the place to look.
+
+Marks belonging to others are not bundled components and are not licensed to
+this project. They appear on the site referentially, to identify the runtimes
+Ensemblr drives and the platform it runs on: GITHUB and the INVERTOCAT logo
+design (GitHub, Inc.), Claude and Claude Code (Anthropic, PBC), Apple, Mac and
+macOS (Apple Inc.), and Pi (a project by Mario Zechner). The notice the site
+prints in its footer is in src/lib/legal.ts.
