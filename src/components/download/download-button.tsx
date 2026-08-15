@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { formatBytes, type Release } from '@/lib/release';
 import { REPO } from '@/lib/site';
 import { cn } from '@/lib/utils';
@@ -22,7 +23,7 @@ export function DownloadButton({
 	const href = release.dmg?.url ?? REPO.releasesUrl;
 
 	return (
-		<a
+		<Link
 			className={cn(
 				// The floor is a touch target, not a look: at `py-3` the large button
 				// rendered 32px tall, well under the 44px a thumb needs, and the page's
@@ -30,9 +31,17 @@ export function DownloadButton({
 				'group inline-flex items-center gap-2.5 whitespace-nowrap rounded-lg bg-accent font-medium text-accent-foreground transition-colors hover:bg-accent-strong',
 				size === 'lg'
 					? 'min-h-11 px-5 py-3 text-[0.9375rem]'
-					: // 44px where a thumb is doing the pressing, back to a compact bar
-						// button from `md` up where a pointer is.
-						'min-h-11 px-3 py-1.5 text-sm md:min-h-9',
+					: // 32px in the bar, not 36: the bar is 56px tall, and a control
+						// filling two thirds of its own height reads as the bar rather
+						// than as something sitting in it.
+						//
+						// The touch floor is asked for by input device rather than by
+						// width now. The bar hides this button below `sm` and shows the
+						// repo link instead, but `sm` up still catches a tablet, and 32px
+						// is under the 44px a thumb needs. `pointer-coarse` is the
+						// question that was always being asked; `md` was standing in for
+						// it.
+						'min-h-8 px-3 py-1 text-sm pointer-coarse:min-h-11',
 				className,
 			)}
 			href={href}
@@ -47,18 +56,12 @@ export function DownloadButton({
 			 * referentially, and the label below already carries it, so the glyph was
 			 * saying nothing the words were not. Do not reinstate it.
 			 */}
-			{size === 'lg' ? (
-				<span>Download for macOS</span>
-			) : (
-				<>
-					{/* The bar has a wordmark, a menu and a repo link beside this. At
-					    390px the full label wrapped onto two lines and pushed the bar
-					    out of its own height; the platform is stated everywhere else on
-					    the page, so the short label loses nothing. */}
-					<span className='sm:hidden'>Download</span>
-					<span className='hidden sm:inline'>Download for macOS</span>
-				</>
-			)}
+			{/* One label at both sizes. The bar used to carry a short "Download" for
+			    phones, where the full string wrapped onto two lines and pushed the bar
+			    out of its own height — but the bar now drops this button below `sm`
+			    entirely and shows the repo link in its place, so the only widths this
+			    ever renders at are ones the full label fits. */}
+			<span>Download for macOS</span>
 			{/* /80, not /65. Dark-on-accent has far less headroom than the page's
 			    light-on-dark ramp: the same 65% that reads as a quiet subtitle in
 			    body copy lands at 4.1:1 here, under AA on the one control the page
@@ -68,6 +71,6 @@ export function DownloadButton({
 					{formatBytes(release.dmg.sizeBytes)}
 				</span>
 			) : null}
-		</a>
+		</Link>
 	);
 }
