@@ -10,7 +10,7 @@ import {
 	useState,
 } from 'react';
 
-export type MockRegion = 'sidebar' | 'conversation' | 'review' | 'dock';
+import type { MockRegion } from './regions';
 
 interface FocusValue {
 	readonly focus: MockRegion | null;

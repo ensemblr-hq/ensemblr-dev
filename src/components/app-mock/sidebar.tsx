@@ -93,8 +93,13 @@ export function MockSidebar({ className }: { className?: string }) {
 			)}
 		>
 			{/* Matched to the header beside it: the app hides the native title bar,
-			    so the traffic lights have to land on the breadcrumb's baseline. */}
-			<div className='flex h-12 shrink-0 items-center px-3'>
+			    so the traffic lights have to land on the breadcrumb's baseline — and
+			    close on the same line. The breadcrumb bar and the review panel's
+			    header are both `h-12` over `border-line`, so this row's own rule
+			    continues theirs: one divider straight across the window at the
+			    height the title bar would have ended, rather than a rail that runs
+			    to the top uninterrupted while the two panes beside it do not. */}
+			<div className='flex h-12 shrink-0 items-center border-line border-b px-3'>
 				<div className='flex gap-1.5'>
 					{TRAFFIC_LIGHTS.map((color) => (
 						<span

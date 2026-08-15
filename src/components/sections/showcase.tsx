@@ -1,8 +1,12 @@
-import type { MockRegion } from '@/components/app-mock/focus';
 import { FocusStep, MockFocusProvider } from '@/components/app-mock/focus';
+import type { MockRegion } from '@/components/app-mock/regions';
+import { isRightEdgeRegion } from '@/components/app-mock/regions';
 import { AppWindow } from '@/components/app-mock/window';
 import { SectionHeading } from '@/components/brand/section-heading';
 import { Reveal } from '@/components/motion/reveal';
+import { cn } from '@/lib/utils';
+
+import { ShowcaseReplica } from './showcase-replica';
 
 interface Step {
 	readonly id: string;
@@ -86,7 +90,10 @@ const STEPS: readonly Step[] = [
 
 function StepBody({ step }: { step: Step }) {
 	return (
-		<div className='flex flex-col gap-5'>
+		// The half of the section this column takes is the same fact the window
+		// reads to size itself, so it is one token rather than a number in each
+		// file — see the note beside it in `globals.css` for why it is 26rem.
+		<div className='flex flex-col gap-5 xl:w-[var(--showcase-copy)]'>
 			{/* `step`, not `title`. These four beats are subordinate to the section
 			    they sit in, so the heading and the body drop together — one size
 			    knob rather than a heading scale a caller could mismatch its lede to. */}
@@ -115,8 +122,9 @@ function StepBody({ step }: { step: Step }) {
 
 /**
  * The four core stories, told against a single replica of the workbench. Each
- * step claims the window's highlight as it reaches the middle of the viewport;
- * below `lg` the sticky column is dropped and the hero's window stands in.
+ * step claims the window's highlight as it reaches the middle of the viewport,
+ * and the window slides to the half of the section the copy is not using; below
+ * `xl` the sticky layer is dropped and the hero's window stands in.
  */
 export function Showcase() {
 	return (
@@ -127,49 +135,26 @@ export function Showcase() {
 			    bottom padding, back when this section followed the hero directly.
 			    Control sits between them now, behind a rule of its own, so the
 			    section takes the page's ordinary section padding at the top. */}
-			<section className='mx-auto w-full max-w-[92rem] px-5 py-16 sm:px-8 sm:py-20 lg:pb-24'>
+			{/* `rail-context` is the query container `--rail` is measured against —
+			    see the note beside it in `globals.css`. */}
+			<section className='rail-context mx-auto w-full max-w-[92rem] px-5 py-16 sm:px-8 sm:py-20 lg:pb-24'>
 				{/*
-				 * 26rem, not 23. The step bodies and their five-bullet lists are the
-				 * argument this section makes, and at 23rem nearly every bullet
-				 * broke to a second line two or three words in — a column of ragged
-				 * orphans beside a very wide window. The replica loses 3rem and is
-				 * still the larger half by some way.
-				 */}
-				{/*
-				 * The indent puts the step column back on the page's rail.
-				 *
-				 * Everything else on the page is `max-w-7xl`, so from 1344px up its
-				 * text starts at `(100vw - 80rem) / 2 + gutter`. This section is
-				 * `max-w-[92rem]`, so without the indent its headings started up to
-				 * 96px further left than every other heading — the one section that
-				 * broke the left rail, and the one the reader scrolls longest. The
-				 * calc is the difference between the two containers' content edges;
-				 * it collapses to zero below the width where they diverge, and the
-				 * replica gives up exactly that much rather than the 6rem it would
-				 * lose by moving to `max-w-7xl` outright.
-				 */}
-				{/*
-				 * `xl`, not `lg`. Two columns arrive here only once the second one can
-				 * hold a window: at `lg` the replica's column was 480px, less than the
+				 * `xl`, not `lg`. Two halves arrive here only once the second one can
+				 * hold a window: at `lg` the replica's half was 480px, less than the
 				 * sidebar and review panel take between them, and the shell it was
 				 * given had no conversation left in it at all. The hero's compact
 				 * window covers everything below this breakpoint.
+				 *
+				 * One cell, two layers, rather than a column each: the window and the
+				 * copy swap sides partway down, and neither of them can be pinned to a
+				 * grid column if they are going to trade places. The steps layer is
+				 * second and the replica takes no pointer events, so the copy is what
+				 * the reader's cursor finds anywhere over the row.
 				 */}
-				<div className='grid gap-14 xl:grid-cols-[minmax(0,26rem)_minmax(0,1fr)] xl:gap-16 xl:pl-[max(0px,calc((100%-76rem)/2))]'>
-					<div className='hidden xl:order-2 xl:block'>
-						{/*
-						 * Parked just above centre rather than at the top of the
-						 * viewport, so the step text beside it lands on the same optical
-						 * line instead of reading as a caption under a pinned header.
-						 *
-						 * The offset is half the window's drawn height, which is now the
-						 * shell's 32.5rem times whatever the column scales it by — a
-						 * little under at `xl`, all of it once the section stops growing.
-						 */}
-						<div className='sticky top-[calc(50vh-14.5rem)] min-[1440px]:top-[calc(50vh-16rem)]'>
-							<AppWindow />
-						</div>
-					</div>
+				<div className='xl:grid'>
+					<ShowcaseReplica>
+						<AppWindow />
+					</ShowcaseReplica>
 
 					{/*
 					 * Each step is a screen tall and centres its own content, rather
@@ -179,7 +164,7 @@ export function Showcase() {
 					 * replica's optical centre line at every scroll position, instead
 					 * of only at the two where a hand-set gap happens to land.
 					 */}
-					<div className='flex flex-col gap-20 xl:order-1 xl:gap-0'>
+					<div className='flex flex-col gap-20 xl:col-start-1 xl:row-start-1 xl:gap-0'>
 						{/*
 						 * The id sits on the step block itself, not on an inner wrapper.
 						 * On the wrapper the anchor inherited no scroll margin, so a nav
@@ -189,7 +174,28 @@ export function Showcase() {
 						 */}
 						{STEPS.map((step) => (
 							<FocusStep
-								className='scroll-mt-24 xl:flex xl:min-h-[92vh] xl:items-center'
+								className={cn(
+									'scroll-mt-24 xl:flex xl:min-h-[92vh] xl:items-center',
+									/*
+									 * Which side the copy takes is a fact about the region it
+									 * describes, not a hand-assigned alternation: the two steps
+									 * about the shell's right-hand column sit on the right, so
+									 * the pane being lit is always the one nearest the sentence
+									 * lighting it. The window reads the same rule and moves to
+									 * the other half.
+									 *
+									 * The padding puts the column back on the page's rail.
+									 * Everything else on the page is `max-w-7xl`; this section
+									 * is `max-w-[92rem]`, so without it these headings would
+									 * start up to 6rem outside every other heading — the one
+									 * section that breaks the rail, and the one the reader
+									 * scrolls longest. The window keeps that 6rem on its own
+									 * side rather than giving it back.
+									 */
+									isRightEdgeRegion(step.region)
+										? 'xl:justify-end xl:pr-[var(--rail)]'
+										: 'xl:pl-[var(--rail)]',
+								)}
 								id={step.id}
 								key={step.id}
 								region={step.region}

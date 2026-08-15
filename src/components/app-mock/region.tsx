@@ -2,7 +2,8 @@
 
 import { cn } from '@/lib/utils';
 
-import { type MockRegion, useMockFocus } from './focus';
+import { useMockFocus } from './focus';
+import type { MockRegion } from './regions';
 
 /**
  * Wraps one region of the replica so the showcase can light it while dimming
