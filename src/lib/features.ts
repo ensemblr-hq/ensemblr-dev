@@ -37,18 +37,25 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			'Pasted images and @-mention file payloads',
 			'Auto-generated session names and summaries',
 			'Per-runtime model visibility',
+			'Claude plan usage per rate-limit window, beside the session’s cost',
 			'Workspace toolchain PATH and ENSEMBLR_* variables inherited',
 			'One shared code surface for viewer, diff and tool previews',
 			'File tree with live filesystem watch and lazy-loaded ignores',
 		],
 	},
 	{
-		label: 'Config & diagnostics',
+		// "Settings", not "Config & diagnostics". Beta 5 put two integration rows
+		// in this column — the Linear accounts list and the repository's Infisical
+		// link — and both of them are settings panes rather than diagnostics, so
+		// the label now names the screen all seven rows are reached from.
+		label: 'Settings & integrations',
 		items: [
 			'Layered user / repository / workspace config, live reload',
 			'Per-runtime executable override and readiness checks',
 			'Git defaults: branch prefix, auto-rename, archive on merge',
 			'Appearance: theme, code theme, markdown style, mono fonts',
+			'Any number of Linear organisations connected at once',
+			'Infisical secrets resolved live at launch, never written into the repo',
 			'Setup diagnostics with per-check remediation',
 		],
 	},
@@ -67,6 +74,14 @@ export interface TrustItem {
  * the Agent SDK would bundle, "no Ensemblr backend in the path and no
  * telemetry". None of it is this site's invention, and none of it should be
  * softened into an adjective on the way across.
+ *
+ * Two clauses arrived with 0.1.0-beta.5 and come from
+ * `docs/guide/10-integrations.md` at `34d446b0` rather than the README: Linear's
+ * tokens are now "keyed per account", because several organisations can be
+ * connected at once, and "Infisical secrets are not stored at all — they resolve
+ * live at launch". The second is the stronger claim of the two and is the reason
+ * a new integration did not weaken this section: what reaches the Keychain is
+ * the Machine Identity's client secret and a failure fallback, not the secrets.
  */
 export const TRUST_ITEMS: readonly TrustItem[] = [
 	{
@@ -75,7 +90,7 @@ export const TRUST_ITEMS: readonly TrustItem[] = [
 	},
 	{
 		title: 'Secrets live in the Keychain',
-		body: 'Linear’s OAuth tokens go straight to the macOS Keychain — never a file, never an environment variable. The app can list what it holds without reading it back.',
+		body: 'Linear’s OAuth tokens go straight to the macOS Keychain, keyed per account — never a file, never an environment variable. Infisical secrets are not stored at all: they resolve live at every launch.',
 	},
 	{
 		title: 'No agent binary ships',
@@ -83,6 +98,6 @@ export const TRUST_ITEMS: readonly TrustItem[] = [
 	},
 	{
 		title: 'No account, no server',
-		body: 'Ensemblr talks to GitHub, Linear and your agent CLIs directly — no backend in the path, no telemetry. State is a local SQLite database beside your worktrees.',
+		body: 'Ensemblr talks to GitHub, Linear, Infisical and your agent CLIs directly — no backend in the path, no telemetry. State is a local SQLite database beside your worktrees.',
 	},
 ];

@@ -79,10 +79,12 @@ export const REPO = {
 	 * a machine-readable field, and nothing on the site consumes an SPDX id.
 	 *
 	 * It describes the repository at `licenseUrl`, not any particular build. The
-	 * relicence is not retroactive: every release published up to and including
-	 * v0.1.0-beta.4 shipped under MIT and stays MIT, which is why no versioned
-	 * surface on this site prints a licence beside a tag. See the note in
-	 * `structured-data.ts` on the `SoftwareApplication` node.
+	 * relicence is not retroactive: every release up to and including
+	 * v0.1.0-beta.4 shipped under MIT and stays MIT, and v0.1.0-beta.5 is the
+	 * first build to carry Apache 2.0 — which is why no versioned surface on this
+	 * site prints a licence beside a tag, and why the machine-readable claim in
+	 * `structured-data.ts` is made about the release the page is rendering rather
+	 * than about the download in the abstract.
 	 */
 	license: 'Apache 2.0',
 } as const;
@@ -144,12 +146,19 @@ export const DISTRIBUTION = {
  * that the CLI is yours to supply — the hero's own credentials line already
  * says one paragraph above, in a sentence with room for it.
  *
- * The optional entry carries a `short` it never spends: the hero filters this
- * array on `required`, so Linear's is unreachable today. It stays because the
- * array is read as a table — a member missing the field would make `short`
- * optional for every reader of the type, and a hero that widened its filter
- * would find a hole rather than a string. `required: false` is where the
- * optionality is stated; the `short` obeys the noun-phrase rule like the rest.
+ * The optional entries carry a `short` they never spend: the hero filters this
+ * array on `required`, so neither Linear's nor Infisical's is reachable today.
+ * They stay because the array is read as a table — a member missing the field
+ * would make `short` optional for every reader of the type, and a hero that
+ * widened its filter would find a hole rather than a string. `required: false`
+ * is where the optionality is stated; the `short` obeys the noun-phrase rule
+ * like the rest.
+ *
+ * Infisical joined the table in 0.1.0-beta.5. It is a hard gate for nothing —
+ * an unreachable Infisical never blocks a workspace — but it is now one of the
+ * five things the app talks to outside itself, and a reader deciding whether the
+ * secrets story fits their team needs to see it named beside Linear rather than
+ * discovering it after the download.
  */
 export const REQUIREMENTS = [
 	{
@@ -181,7 +190,15 @@ export const REQUIREMENTS = [
 	{
 		name: 'A Linear account',
 		short: 'Linear',
-		detail: 'OAuth only, with the token held in the macOS Keychain.',
+		detail:
+			'OAuth only, as many organisations as you need, with every token held in the macOS Keychain.',
+		required: false,
+	},
+	{
+		name: 'An Infisical project',
+		short: 'Infisical',
+		detail:
+			'A Machine Identity on your machine, and a project link committed to the repository. Secrets resolve live at every launch.',
 		required: false,
 	},
 ] as const;

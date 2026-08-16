@@ -68,22 +68,22 @@ export interface Release {
  * nothing, on a page whose whole argument is that its claims are checkable.
  */
 export const FALLBACK_RELEASE: Release = {
-	tag: 'v0.1.0-beta.4',
-	version: '0.1.0-beta.4',
+	tag: 'v0.1.0-beta.5',
+	version: '0.1.0-beta.5',
 	isPrerelease: true,
-	publishedAt: '2026-08-14T12:08:49Z',
-	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.4`,
+	publishedAt: '2026-08-16T17:40:54Z',
+	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.5`,
 	dmg: {
 		label: 'Apple silicon .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.4/Ensemblr-0.1.0-beta.4-arm64.dmg`,
-		sizeBytes: 148_561_068,
-		sha256: '3a9fe0f51da728d67454b103f95d6f5f51fd1723ad3fecb8f161c0506c86abd0',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.5/Ensemblr-0.1.0-beta.5-arm64.dmg`,
+		sizeBytes: 148_170_725,
+		sha256: '8615968c4db03f1d3dea4bfdb55aba56fcc7c31bcdbc474091843e88e8504802',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.4/Ensemblr-darwin-arm64-0.1.0-beta.4.zip`,
-		sizeBytes: 150_504_230,
-		sha256: 'e8501efff0ab3cc73e16b294de47b95921f707f1ebcdeba3aa55db298a56ed9c',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.5/Ensemblr-darwin-arm64-0.1.0-beta.5.zip`,
+		sizeBytes: 149_479_460,
+		sha256: '9f700f522fb3f6aacb8e2b25cd6470e2fc47fca92846c0d9717993b9d119dc9c',
 	},
 	isFallback: true,
 };

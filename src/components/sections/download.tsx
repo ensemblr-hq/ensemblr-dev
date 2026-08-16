@@ -121,10 +121,10 @@ export async function Download() {
 									<div className='flex flex-col gap-1'>
 										<dt className='flex flex-wrap items-center gap-2 font-medium text-[0.875rem] text-ink'>
 											{requirement.name}
-											{/* Only the exception is labelled. Four of the five rows
+											{/* Only the exceptions are labelled. Four of the six rows
 											    are hard gates, so badging each of them "REQUIRED"
 											    puts the same word down the card four times and the
-											    one row that differs stops standing out. The accent
+											    two rows that differ stop standing out. The accent
 											    dash carries required; the badge carries optional. */}
 											{requirement.required ? null : (
 												<span className='rounded border border-line px-1 py-px font-mono text-[9px] text-faint uppercase tracking-wider'>
