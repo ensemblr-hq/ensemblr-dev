@@ -42,6 +42,24 @@ const GUARDRAILS = [
 		'Issue writes',
 		'withheld from sub-agents — and agent work stops at In Review, enforced in code',
 	],
+	/*
+	 * 0.1.0-beta.5. The row above says what an agent may not do to a ticket; this
+	 * one says why it does anything to it at all, which is the half that was
+	 * missing. `docs/agent-control.md` is blunt about it — the tools had been
+	 * there since Linear landed, and for as long as nothing told the agent there
+	 * *was* a ticket, every transition happened because someone asked for one by
+	 * hand, "which is the same as it not happening".
+	 *
+	 * "cut to the calls that caller may make" is the load-bearing clause and not
+	 * a flourish: the block is built per caller, so a sub-agent's variant asks it
+	 * to name the state in its report and a planning agent's keeps the read and
+	 * the comment. A brief that named a call the caller would be refused would be
+	 * the guardrails leaking back out as instructions.
+	 */
+	[
+		'Linked issue',
+		'a workspace made from one names it in every agent’s brief, cut to the calls that caller may make',
+	],
 ] as const;
 
 /*

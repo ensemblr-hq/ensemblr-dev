@@ -166,18 +166,25 @@ export function buildSoftwareApplication(release: Release): JsonLdNode {
 		installUrl: DOWNLOAD_URL,
 		isAccessibleForFree: true,
 		/*
-		 * No `license`, deliberately.
+		 * Still no `license`, though the reason has changed.
 		 *
 		 * This node carries `softwareVersion` and `downloadUrl`, so everything on
 		 * it is a claim about one specific build — and the relicence to Apache 2.0
 		 * is not retroactive. v0.1.0-beta.4 and every release before it shipped
 		 * under MIT, so a `license` pointing at the repository's current LICENSE
-		 * would assert, in machine-readable form, an Apache grant over an artefact
-		 * that never carried one.
+		 * would have asserted, in machine-readable form, an Apache grant over an
+		 * artefact that never carried one.
 		 *
-		 * The licence is still stated on the site: the footer links `REPO.license`
-		 * at `REPO.licenseUrl`, where it describes the source rather than a tag.
-		 * A claim about the repository does not belong on a node about a build.
+		 * v0.1.0-beta.5 is the first build that does carry it, and `release` here
+		 * is always the newest published one — so the objection above no longer
+		 * holds and this field could be added. It is left out until someone wants
+		 * it, because adding it means committing to the fact that every future
+		 * release stays Apache: this node has no way to say "the licence of *this*
+		 * tag" other than by pointing at a LICENSE file that moves with `master`.
+		 *
+		 * The licence is stated on the site either way: the footer links
+		 * `REPO.license` at `REPO.licenseUrl`, where it describes the source
+		 * rather than a tag.
 		 */
 		maintainer: { '@id': SCHEMA_ID.organization },
 		name: SITE.name,

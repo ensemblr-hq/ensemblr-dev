@@ -35,7 +35,16 @@ const STEPS: readonly Step[] = [
 			'Adopt an existing branch, or cut a fresh one from the base ref',
 			'Base branch fetched and fast-forwarded before the copy is made',
 			'Branch names derived from your first sentence to the agent',
-			'A board that moves work from Backlog to Done',
+			// The board claim, restated for 0.1.0-beta.5. It used to describe a
+			// board that only held workspaces, so its first column was empty until
+			// you had already started the work — which is the half of the story a
+			// reader deciding where their backlog lives most needs. Backlog now
+			// carries unstarted Linear issues and unassigned open GitHub issues,
+			// and the drag is what creates the workspace. The second bullet is not
+			// a caveat: nothing is written back to either tracker, and a reader
+			// handing an app their issue tracker buys exactly that.
+			'A board whose Backlog holds Linear and GitHub issues no workspace exists for yet',
+			'Drag one rightward to cut its workspace — nothing is written back to the tracker',
 		],
 		region: 'sidebar',
 		title: 'One repo. As many streams as you have ideas.',
