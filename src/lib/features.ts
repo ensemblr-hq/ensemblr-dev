@@ -47,10 +47,18 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 		// "Settings", not "Config & diagnostics". Beta 5 put two integration rows
 		// in this column — the Linear accounts list and the repository's Infisical
 		// link — and both of them are settings panes rather than diagnostics, so
-		// the label now names the screen all seven rows are reached from.
+		// the label names the screen every row here is reached from rather than
+		// the one row that reports on it.
 		label: 'Settings & integrations',
 		items: [
 			'Layered user / repository / workspace config, live reload',
+			// 0.1.0-beta.6, from `docs/guide/11-app-settings.md` and
+			// `12-repository-settings.md`. The schemas themselves have a page of
+			// their own on this site, so the row is deliberately the *product*
+			// claim rather than the publishing one: what a reader gets is an editor
+			// that completes both config files, and the `/schemas` link in the
+			// footer is where someone who wants the two `$id`s goes next.
+			'Both config files carry a published JSON Schema your editor completes against',
 			'Per-runtime executable override and readiness checks',
 			'Git defaults: branch prefix, auto-rename, archive on merge',
 			'Appearance: theme, code theme, markdown style, mono fonts',
