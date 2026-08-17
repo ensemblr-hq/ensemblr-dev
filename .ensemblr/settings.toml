@@ -1,3 +1,49 @@
+#:schema https://www.ensemblr.dev/schemas/settings.schema.json
+
 [scripts]
 setup = "bun install"
-run = "bun run dev"
+
+[scripts.run.dev]
+command = "bun run dev"
+icon = "play"
+default = true
+available_in = ["local"]
+
+[scripts.run.checks]
+command = "bun run lint && bun run typecheck"
+icon = "list-checks"
+available_in = ["local"]
+
+[scripts.run.test]
+command = "bun test"
+icon = "test-tube"
+available_in = ["local"]
+
+# The two surfaces copied out of the app repo: the release the download button
+# pins, and the JSON Schemas this site serves at the $ids they declare. Both
+# checks skip rather than fail when GitHub is unreachable.
+[scripts.run.check-copies]
+command = "bun run check:pin && bun run check:schemas"
+icon = "shield-check"
+available_in = ["local"]
+
+# A production build, then serve it — dev does not exercise the static shell,
+# the response headers from next.config.ts, or the release lookup's caching.
+[scripts.run.preview]
+command = "bun run build && bun run start"
+icon = "globe"
+available_in = ["local"]
+
+[git]
+branch_from = "master"
+
+[prompts]
+general = """
+This repository is the marketing site for an app that lives elsewhere, at
+https://github.com/ensemblr-hq/ensemblr. Read AGENTS.md before writing any claim
+about the app down: nearly every concrete statement on the page — the release
+you can download and its digest, the requirements, the signing story, what the
+window looks like — is copied from that repo and cannot be checked from inside
+this one. Never state a fact about the app from memory; read it from the app
+repo in the same session you write it. "Cannot verify" is not "is unchanged".
+"""
