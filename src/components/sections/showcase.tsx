@@ -70,6 +70,14 @@ const STEPS: readonly Step[] = [
 		points: [
 			'Files, Changes and Checks, remembered per workspace',
 			'Diffs scoped to uncommitted work, a commit, or a whole branch',
+			// 0.1.0-beta.6, from `docs/guide/08-reviewing-changes.md`. It belongs to
+			// this step rather than the feature grid because it is the step's own
+			// argument made mechanical: the panel sits beside the conversation, and
+			// this is the two-click path between them. A file or folder goes across
+			// by reference; a diff has no file of its own, so its patch is written
+			// out as a document and the chip points at that — which is why the line
+			// says "attach a diff" and not "paste a diff".
+			'Attach a file, a folder or a diff to the chat beside it, from the panel’s own right-click menu',
 			'Inline comments anchored to lines, with resolved ones struck through',
 			'PR title and description, live check status, merge — all through gh',
 			'Per-file discard, behind a confirmation',

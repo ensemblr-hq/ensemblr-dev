@@ -60,6 +60,30 @@ const GUARDRAILS = [
 		'Linked issue',
 		'a workspace made from one names it in every agent’s brief, cut to the calls that caller may make',
 	],
+	/*
+	 * 0.1.0-beta.6, from `docs/guide/06-agents.md` and CONTEXT.md's own entry for
+	 * the term at `30b2d945`. The two rows above say what an agent is *told*; this
+	 * one says what it can look up, which is what the chip row on the other side
+	 * of this section has been silently assuming since it was written. Seven tool
+	 * names are a vocabulary an agent either knows or guesses at, and until this
+	 * shipped the honest answer was that it guessed.
+	 *
+	 * "Agent skill" is the app's own word for it — CONTEXT.md warns off "prompt",
+	 * "plugin" and "playbook", the last because the playbook is the text an agent
+	 * always carries and this is the reference it reads on demand. The distinction
+	 * is the reason the row can claim both: a full key reference, and almost no
+	 * context spent until a task needs one.
+	 *
+	 * The second clause is a trust claim standing in a guardrail list on purpose.
+	 * A reader who has just been told the app hands every agent a skill wants to
+	 * know where that skill was installed, and the answer — inside the bundle,
+	 * not in your repository and not in `~/.claude` or `~/.pi` — is the same
+	 * answer the Credentials section gives about the agent binary itself.
+	 */
+	[
+		'Agent skill',
+		'handed to every agent it starts — the tool surface, the worktree model and every settings.toml key, read on demand and shipped inside the app, so nothing is written into your repository or your ~/.claude',
+	],
 ] as const;
 
 /*
