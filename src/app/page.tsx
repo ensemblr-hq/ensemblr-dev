@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { PixelRule } from '@/components/brand/pixel-rule';
+import { SectionRule } from '@/components/brand/section-rule';
 import { SiteFooter } from '@/components/chrome/site-footer';
 import { SiteNav } from '@/components/chrome/site-nav';
 import { Download } from '@/components/sections/download';
@@ -11,20 +11,6 @@ import { Trust } from '@/components/sections/trust';
 import { JsonLd } from '@/components/seo/json-ld';
 import { getLatestRelease } from '@/lib/github-release';
 import { buildHomeGraph } from '@/lib/structured-data';
-
-/**
- * Every seam between the prose sections carries the same rule. Three sections
- * that each open with an eyebrow and a display heading, separated by nothing
- * but their own padding, read as one undifferentiated column however well each
- * is set — the rule is what makes them chapters.
- */
-function SectionRule() {
-	return (
-		<div className='mx-auto w-full max-w-7xl px-5 sm:px-8'>
-			<PixelRule />
-		</div>
-	);
-}
 
 export default async function Home() {
 	/*

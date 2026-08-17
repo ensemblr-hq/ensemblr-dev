@@ -1,9 +1,12 @@
 import { describe, expect, test } from 'bun:test';
 
 import { FALLBACK_RELEASE, type Release } from './release';
+import { SCHEMA_DIALECT, SCHEMAS, SCHEMAS_PAGE } from './schemas';
 import { REQUIREMENTS, SITE } from './site';
 import {
 	buildHomeGraph,
+	buildSchemasGraph,
+	buildSchemasPage,
 	buildSiteGraph,
 	buildSoftwareApplication,
 	buildWebPage,
@@ -159,5 +162,83 @@ describe('buildHomeGraph', () => {
 
 		expect(ids).toEqual([SCHEMA_ID.webpage, SCHEMA_ID.app]);
 		expect(new Set(ids).size).toBe(ids.length);
+	});
+});
+
+describe('buildSchemasPage', () => {
+	/* Two page nodes sharing one `@id` would collapse into a single node
+	 * describing whichever document a consumer read last. */
+	test('is a different node from the home page', () => {
+		expect(buildSchemasPage()['@id']).not.toBe(SCHEMA_ID.webpage);
+		expect(buildSchemasPage()['@id']).toBe(`${SCHEMAS_PAGE.url}#webpage`);
+	});
+
+	test('joins the site and the application by id', () => {
+		const node = buildSchemasPage();
+
+		expect(node.isPartOf).toEqual({ '@id': SCHEMA_ID.website });
+		expect(node.about).toEqual({ '@id': SCHEMA_ID.app });
+		expect(node.inLanguage).toBe(SITE.locale);
+		expect(node.url).toBe(SCHEMAS_PAGE.url);
+	});
+
+	/*
+	 * The page changes when the app repo changes its schemas and nothing here
+	 * knows when that was — the same reason `sitemap.ts` omits `lastModified` for
+	 * this route. A date invented to fill the field is the one failure this whole
+	 * module is written to avoid.
+	 */
+	test('asserts no date it cannot know', () => {
+		const node = buildSchemasPage();
+
+		expect(node).not.toHaveProperty('datePublished');
+		expect(node).not.toHaveProperty('dateModified');
+	});
+
+	test('describes every schema the manifest publishes, in order', () => {
+		const list = buildSchemasPage().mainEntity as Record<string, unknown>;
+		const items = list.itemListElement as Record<string, unknown>[];
+
+		expect(list.numberOfItems).toBe(SCHEMAS.length);
+		expect(items).toHaveLength(SCHEMAS.length);
+		expect(items.map((entry) => entry.position)).toEqual(
+			SCHEMAS.map((_, index) => index + 1),
+		);
+		expect(
+			items.map((entry) => (entry.item as Record<string, unknown>)['@id']),
+		).toEqual(SCHEMAS.map((schema) => schema.id));
+	});
+
+	/*
+	 * `encodingFormat` has to be what `next.config.ts` actually sends, not the
+	 * registered `application/schema+json` that reads better — a header the
+	 * response contradicts is a claim, not a description. The format itself is
+	 * stated as `conformsTo`.
+	 */
+	test('states the media type the site really serves', () => {
+		const items = (
+			buildSchemasPage().mainEntity as {
+				itemListElement: Record<string, unknown>[];
+			}
+		).itemListElement;
+
+		for (const entry of items) {
+			const item = entry.item as Record<string, unknown>;
+
+			expect(item.encodingFormat).toBe('application/json');
+			expect(item.conformsTo).toBe(SCHEMA_DIALECT);
+			expect(item.contentUrl).toBe(item['@id']);
+		}
+	});
+});
+
+describe('buildSchemasGraph', () => {
+	test('carries the page node under the shared context', () => {
+		const graph = buildSchemasGraph();
+
+		expect(graph['@context']).toBe('https://schema.org');
+		expect(
+			(graph['@graph'] as Record<string, unknown>[]).map((n) => n['@id']),
+		).toEqual([SCHEMA_ID.schemasPage]);
 	});
 });

@@ -15,6 +15,7 @@
 
 import { FEATURE_GROUPS } from './features';
 import { formatBytes, type Release } from './release';
+import { SCHEMA_DIALECT, SCHEMAS, SCHEMAS_PAGE } from './schemas';
 import { REPO, REQUIREMENTS, SITE } from './site';
 
 export type JsonLdNode = Record<string, unknown>;
@@ -27,6 +28,8 @@ export type JsonLdNode = Record<string, unknown>;
 export const SCHEMA_ID = {
 	app: `${SITE.url}/#software`,
 	organization: `${SITE.url}/#organization`,
+	/** The schemas route's own page node, distinct from the home page's. */
+	schemasPage: `${SCHEMAS_PAGE.url}#webpage`,
 	webpage: `${SITE.url}/#webpage`,
 	website: `${SITE.url}/#website`,
 } as const;
@@ -132,6 +135,75 @@ export function buildWebPage(release: Release): JsonLdNode {
 	});
 }
 
+/**
+ * The two published documents, as the thing the schemas route is *about*.
+ *
+ * `DataDownload` rather than `CreativeWork`: these are files served at a URL,
+ * and `contentUrl`/`encodingFormat` are the properties that say so. The node id
+ * is the schema's own `$id` — which is that same URL, and is the one identifier
+ * a resolver arriving here already holds.
+ *
+ * `encodingFormat` is `application/json` because that is the `Content-Type`
+ * `next.config.ts` actually sends. `application/schema+json` is the registered
+ * type for the format and would read better, and would be this file asserting
+ * something the response contradicts. The format itself is stated instead as
+ * `conformsTo`, pointing at the dialect `schemas.test.ts` asserts each file
+ * declares.
+ */
+function schemaDocuments(): JsonLdNode {
+	return {
+		'@type': 'ItemList',
+		itemListElement: SCHEMAS.map((schema, index) => ({
+			'@type': 'ListItem',
+			item: {
+				'@id': schema.id,
+				'@type': 'DataDownload',
+				conformsTo: SCHEMA_DIALECT,
+				contentUrl: schema.id,
+				description: schema.summary,
+				encodingFormat: 'application/json',
+				name: schema.title,
+			},
+			position: index + 1,
+		})),
+		numberOfItems: SCHEMAS.length,
+	};
+}
+
+/**
+ * The schemas route, which had no page node of its own at all.
+ *
+ * The layout emits `buildSiteGraph()` on every route, so this page arrived
+ * carrying an `Organization` and a `WebSite` that both describe the site and
+ * nothing whatsoever describing the page — a document whose only self-assertion
+ * was a `WebSite` node pointing at a different URL.
+ *
+ * No `datePublished`/`dateModified`. This page changes when the app repo changes
+ * its schemas and nothing here knows when that was, which is the same reason
+ * `sitemap.ts` leaves `lastModified` off this route. No `primaryImageOfPage`
+ * either: the generated OG card serves this route, but it is the site's title
+ * card, and a sub-page claiming it as its own primary image is a claim the page
+ * does not make out loud.
+ */
+export function buildSchemasPage(): JsonLdNode {
+	return {
+		'@id': SCHEMA_ID.schemasPage,
+		'@type': 'WebPage',
+		/* Defined on the home page rather than here. That is what the stable ids
+		 * are for — the two documents resolve into one graph instead of each
+		 * describing an unrelated island. */
+		about: { '@id': SCHEMA_ID.app },
+		description: SCHEMAS_PAGE.description,
+		inLanguage: SITE.locale,
+		isPartOf: { '@id': SCHEMA_ID.website },
+		mainEntity: schemaDocuments(),
+		/* The rendered `<title>` exactly: the layout's template is `%s — Ensemblr`
+		 * and the page's own metadata sets the `%s`. */
+		name: `${SCHEMAS_PAGE.title} — ${SITE.name}`,
+		url: SCHEMAS_PAGE.url,
+	};
+}
+
 /** Every long-tail capability the page lists, flattened for `featureList`. */
 function featureList(): readonly string[] {
 	return FEATURE_GROUPS.flatMap((group) => group.items);
@@ -221,5 +293,17 @@ export function buildHomeGraph(release: Release): JsonLdNode {
 	return {
 		'@context': 'https://schema.org',
 		'@graph': [buildWebPage(release), buildSoftwareApplication(release)],
+	};
+}
+
+/**
+ * The schemas route's own nodes. No release argument, because nothing on that
+ * page describes a build — the two documents it publishes are versioned by the
+ * app repo, not by a tag this site can read.
+ */
+export function buildSchemasGraph(): JsonLdNode {
+	return {
+		'@context': 'https://schema.org',
+		'@graph': [buildSchemasPage()],
 	};
 }

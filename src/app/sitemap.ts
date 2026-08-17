@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 import { getLatestRelease } from '@/lib/github-release';
+import { SCHEMAS_PAGE } from '@/lib/schemas';
 import { SITE } from '@/lib/site';
 
 /**
@@ -25,6 +26,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			lastModified: release.publishedAt ?? undefined,
 			priority: 1,
 			url: SITE.url,
+		},
+		/*
+		 * The schema page, not the schema files. `/schemas/*.schema.json` are
+		 * documents for a resolver following a `$id`, and a crawler that indexed
+		 * 24 KB of JSON Schema would be indexing something no reader searches for.
+		 *
+		 * No `lastModified`: this page changes when the app repo changes its
+		 * schemas, and nothing here knows when that was. The release date would be
+		 * a guess dressed as a fact, and an absent field is the honest answer.
+		 */
+		{
+			changeFrequency: 'monthly',
+			priority: 0.5,
+			url: SCHEMAS_PAGE.url,
 		},
 	];
 }

@@ -45,6 +45,25 @@ Without `gh`, the same data is at
 `https://api.github.com/repos/ensemblr-hq/ensemblr/releases?per_page=5` — 60 unauthenticated
 requests an hour per IP, so expect to be refused if you lean on it.
 
+## Before you touch the published schemas
+
+`public/schemas/*.schema.json` are the app's own JSON Schemas, republished here because each one
+declares a canonical `$id` on this domain. They are copies, and the only ones in this repo that are
+byte-for-byte checked — Biome is told to leave them alone in `biome.json` for exactly that reason.
+
+Never hand-edit one. Re-copy it:
+
+```bash
+gh api "repos/ensemblr-hq/ensemblr/contents/schemas/config.schema.json?ref=master" \
+  --jq '.content' | base64 -d > public/schemas/config.schema.json
+bun run check:schemas
+```
+
+`check:schemas` fails on any difference and skips when GitHub is unreachable. Adding or retiring a
+schema means editing `SCHEMAS` in `src/lib/schemas.ts` too — the manifest drives the page, the
+response headers in `next.config.ts`, the tests and that check, and `schemas.test.ts` fails on a
+file the manifest does not list.
+
 ## The other things copied from the app repo
 
 Each of these is a copy with no automated link back to its source. Re-read the source before
@@ -52,6 +71,7 @@ editing, and prefer re-copying to hand-editing:
 
 | Here | Source of truth in the app repo |
 | --- | --- |
+| `public/schemas/*.schema.json` | `schemas/*.schema.json` — copy verbatim, then `bun run check:schemas` |
 | `FALLBACK_RELEASE` in `src/lib/release.ts` | the newest published release |
 | `REQUIREMENTS`, `DISTRIBUTION` in `src/lib/site.ts` | the app's README and its signing/notarisation setup |
 | `FEATURE_GROUPS` in `src/lib/features.ts` | the app's README and `docs/product/current-shell-inventory.md` |

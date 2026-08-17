@@ -19,6 +19,17 @@ interface SectionHeadingProps {
 	titleClassName?: string;
 	align?: 'left' | 'center';
 	size?: 'title' | 'step';
+	/**
+	 * The level this heading renders at, independent of the size it renders at.
+	 *
+	 * `h2` is the default because every section that uses this on the home page
+	 * sits under the hero's own `h1`. A route that has no hero has to say so:
+	 * `/schemas` opens on this component, and left at the default it shipped a
+	 * document whose every heading — the page title, both card titles and the
+	 * provenance note — was an `h2` peer of the others, with no `h1` anywhere.
+	 * Size and level are set separately for exactly this reason.
+	 */
+	as?: 'h1' | 'h2';
 }
 
 /*
@@ -46,6 +57,7 @@ const LEDE_CLASS = {
 
 export function SectionHeading({
 	align = 'left',
+	as: Heading = 'h2',
 	className,
 	eyebrow,
 	lede,
@@ -69,9 +81,11 @@ export function SectionHeading({
 				<span className='eyebrow'>{eyebrow}</span>
 			</Reveal>
 			<Reveal index={1}>
-				<h2 className={cn('text-balance', TITLE_CLASS[size], titleClassName)}>
+				<Heading
+					className={cn('text-balance', TITLE_CLASS[size], titleClassName)}
+				>
 					{title}
-				</h2>
+				</Heading>
 			</Reveal>
 			{lede ? (
 				<Reveal index={2}>

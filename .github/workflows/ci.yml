@@ -45,11 +45,18 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Scheduled and manual runs only. The PR path already ends `check` with
-  # check:pin, and a cron run has no reason to lint, test and build the site to
-  # answer one question about a repo it does not contain. A failure here mails
-  # the owner rather than blocking anything, which is the right severity for a
-  # pin that has drifted: the site still builds, it just serves a stale version.
+      # Same placement, same reasoning. bun test already proves the copies are
+      # self-consistent offline — that each declares the $id the site serves it
+      # at; this is the half of the question that needs the app repo.
+      - run: bun run check:schemas
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Scheduled and manual runs only. The PR path already ends `check` with both
+  # of these, and a cron run has no reason to lint, test and build the site to
+  # answer two questions about a repo it does not contain. A failure here mails
+  # the owner rather than blocking anything, which is the right severity for
+  # either drift: the site still builds, it just serves something stale.
   pin:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -64,5 +71,13 @@ jobs:
       - run: bun install --frozen-lockfile
 
       - run: bun run check:pin
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # `if: always()`, because these answer about different files and a stale
+      # pin says nothing about a stale schema. Without it a drifted release pin
+      # would hide a drifted schema for as long as it took to fix the first.
+      - run: bun run check:schemas
+        if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
