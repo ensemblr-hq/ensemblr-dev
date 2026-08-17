@@ -24,7 +24,19 @@ export async function SiteFooter() {
 				</div>
 
 				<div className='flex flex-col gap-3 font-mono text-[0.6875rem] text-faint sm:items-end'>
-					<div className='flex items-center gap-4'>
+					{/*
+					 * Wrapping, since Schemas made it five. Four links at `gap-4` fitted
+					 * a 320px viewport with 15px to spare; the fifth took the row to
+					 * 308px of min-content inside a 265px box, and because a `flex` row
+					 * that cannot wrap sets its parent's floor, that put a horizontal
+					 * scrollbar under *every* page on the site — 320px being the width
+					 * WCAG's reflow criterion is measured at.
+					 *
+					 * `gap-y-2` rather than the bare `gap-4` the row had: wrapped at
+					 * 16px the two lines read as two separate rows of links, and this
+					 * is one row that happens to fold.
+					 */}
+					<div className='flex flex-wrap items-center gap-x-4 gap-y-2 sm:justify-end'>
 						<Link
 							className='flex items-center gap-1.5 transition-colors hover:text-ink'
 							href={REPO.url}
@@ -43,6 +55,12 @@ export async function SiteFooter() {
 							href={REPO.changelogUrl}
 						>
 							Changelog
+						</Link>
+						{/* The only link in this row that stays on the site, and the only
+						    way to reach the page at all — nothing in the nav points at it,
+						    because the bar carries the home page's section anchors. */}
+						<Link className='transition-colors hover:text-ink' href='/schemas'>
+							Schemas
 						</Link>
 						{/* The licence of the source at `licenseUrl`, not of the build
 						    named on the line below it. The relicence to Apache 2.0 does

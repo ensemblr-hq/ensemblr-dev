@@ -7,8 +7,24 @@ import { REPO } from '@/lib/site';
 import { NavLinks } from './nav-links';
 import { NavShell } from './nav-shell';
 
-export async function SiteNav() {
+interface SiteNavProps {
+	/**
+	 * `home` is the bar the section anchors belong to. `page` is the same bar on
+	 * a route that has none of those sections in it.
+	 *
+	 * `NavLinks` renders `NAV_SECTIONS` as in-page anchors and marks the one the
+	 * reader is in by looking each `id` up in the document. On a second route
+	 * every lookup misses: no crash — the hook gives up on an empty list — but
+	 * five links that scroll nowhere and a wordmark pointing at a `#top` that
+	 * only exists on the home page. So off the home page the anchors go, and the
+	 * wordmark becomes the way back to the page they belong to.
+	 */
+	variant?: 'home' | 'page';
+}
+
+export async function SiteNav({ variant = 'home' }: SiteNavProps = {}) {
 	const release = await getLatestRelease();
+	const atHome = variant === 'home';
 
 	return (
 		<NavShell>
@@ -28,14 +44,14 @@ export async function SiteNav() {
 				 * effect belongs where the glyphs are big enough to survive it.
 				 */}
 				<Link
-					aria-label='Ensemblr, back to top'
+					aria-label={atHome ? 'Ensemblr, back to top' : 'Ensemblr, home'}
 					className='flex min-h-11 shrink-0 items-center'
-					href='#top'
+					href={atHome ? '#top' : '/'}
 				>
 					<EnsemblrWordmark className='h-3.5 sm:h-3.5' static />
 				</Link>
 
-				<NavLinks />
+				{atHome ? <NavLinks /> : null}
 
 				<div className='ml-auto flex items-center gap-3'>
 					{/*
