@@ -35,7 +35,7 @@ export function IntegrityNote({ release }: { release: Release }) {
 
 			{sha256 ? (
 				<div className='flex flex-col gap-1.5 border-line/70 border-t pt-3'>
-					<p className='font-mono text-[0.6875rem] text-faint'>
+					<p className='font-mono text-[0.75rem] text-ink'>
 						Check it before you open it:
 					</p>
 					{/*
@@ -43,10 +43,10 @@ export function IntegrityNote({ release }: { release: Release }) {
 					 * missing is a digest nobody can compare — the one string on the
 					 * page where wrapping ugly beats fitting neatly.
 					 */}
-					<code className='break-all font-mono text-[0.6875rem] leading-relaxed text-muted'>
+					<code className='break-all font-mono text-[0.75rem] leading-relaxed text-ink'>
 						shasum -a 256 ~/Downloads/{release.dmg?.url.split('/').pop()}
 						<br />
-						<span className='text-faint'>{sha256}</span>
+						<span className='text-ink'>{sha256}</span>
 					</code>
 				</div>
 			) : null}
