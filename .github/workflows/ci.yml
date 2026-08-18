@@ -7,6 +7,11 @@ on:
   # The pin is otherwise only verified when someone opens a PR, and a release
   # can ship on a week nobody does. Note GitHub disables scheduled workflows in
   # a repo with 60 days of no commit activity, and mails the owner about it.
+  #
+  # 07:17 UTC sits after the app's nightly cron at 04:00, so a run here reads a
+  # settled release list rather than one mid-publish. Nothing fires this from
+  # the app repo and nothing here bumps the pin — re-pinning is a manual ask,
+  # per docs/re-pinning.md, and this job only ever reports.
   schedule:
     - cron: "17 7 * * *"
   workflow_dispatch:
@@ -57,6 +62,11 @@ jobs:
   # answer two questions about a repo it does not contain. A failure here mails
   # the owner rather than blocking anything, which is the right severity for
   # either drift: the site still builds, it just serves something stale.
+  #
+  # This job asks about the release pin only. The app publishes a rolling
+  # `nightly` tag most mornings and the site pins nothing but its URL, so a
+  # fresh nightly is not drift and must not turn this red — see the header of
+  # scripts/check-pinned-release.ts for how that is kept true.
   pin:
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

@@ -3,10 +3,11 @@ import { PixelField } from '@/components/brand/pixel-field';
 import { SectionHeading } from '@/components/brand/section-heading';
 import { DownloadButton } from '@/components/download/download-button';
 import { IntegrityNote } from '@/components/download/integrity-note';
+import { NightlyDownload } from '@/components/download/nightly-download';
 import { ReleaseLine } from '@/components/download/release-line';
 import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
-import { getLatestRelease } from '@/lib/github-release';
+import { getSiteReleases } from '@/lib/github-release';
 import { formatBytes } from '@/lib/release';
 import { REPO, REQUIREMENTS } from '@/lib/site';
 
@@ -24,7 +25,7 @@ const TRUST_ECHO = [
 ] as const;
 
 export async function Download() {
-	const release = await getLatestRelease();
+	const { nightly, stable: release } = await getSiteReleases();
 
 	return (
 		<section
@@ -170,16 +171,16 @@ export async function Download() {
 							 * wrapped line ends on the dot, which is what a run-on line of
 							 * metadata is supposed to look like.
 							 */}
-							<ul className='flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.6875rem] text-faint'>
+							<ul className='flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.75rem] text-ink'>
 								{TRUST_ECHO.map((claim, index) => (
 									<li className='flex items-center gap-2' key={claim}>
 										{claim}
-										{/* /55, matching the hero's gate list, which runs the same
-										    idiom over the same tier. At /45 the dot measured 2.58:1
-										    against the canvas and less than that here, where the
-										    bloom lifts the surface under it. */}
+										{/* `muted` under an `ink` run, matching the hero's gate list,
+										    which runs the same idiom over the same tier. One step
+										    down is all a separator needs; the fraction it used to
+										    carry was measured against far quieter text. */}
 										{index < TRUST_ECHO.length - 1 ? (
-											<span aria-hidden='true' className='text-muted/55'>
+											<span aria-hidden='true' className='text-muted'>
 												·
 											</span>
 										) : null}
@@ -194,7 +195,7 @@ export async function Download() {
 
 						{release.zip ? (
 							<Reveal index={5}>
-								<p className='font-mono text-[0.6875rem] text-faint'>
+								<p className='font-mono text-[0.75rem] text-ink'>
 									Prefer a zip?{' '}
 									<Link
 										className='text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
@@ -203,6 +204,25 @@ export async function Download() {
 										{release.zip.label} · {formatBytes(release.zip.sizeBytes)}
 									</Link>
 								</p>
+							</Reveal>
+						) : null}
+
+						{/*
+						 * Last, and visibly subordinate. Two buttons of equal weight would
+						 * ask a first-time visitor to pick a channel before they have
+						 * opened the app once — and the honest recommendation for almost
+						 * everyone is the release directly above. This row is here for the
+						 * reader who wants what landed on `master` today and knows what
+						 * that costs.
+						 *
+						 * Rendered only when there is one. `null` means the lookup
+						 * succeeded and GitHub had no `nightly` tag, which is a verified
+						 * absence — the pinned copy shows only when the lookup itself
+						 * failed. See `getSiteReleases`.
+						 */}
+						{nightly ? (
+							<Reveal index={5}>
+								<NightlyDownload nightly={nightly} />
 							</Reveal>
 						) : null}
 					</div>

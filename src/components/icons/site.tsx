@@ -29,6 +29,16 @@ export function ShieldCheckIcon(props: IconProps) {
 	);
 }
 
+/** Marks the nightly row. A crescent, not a warning triangle: the build is
+    untested, which is what it is for, rather than broken. */
+export function MoonIcon(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<path d='M13.25 9.6A5.75 5.75 0 0 1 6.4 2.75a5.75 5.75 0 1 0 6.85 6.85Z' />
+		</Icon>
+	);
+}
+
 export function CheckIcon(props: IconProps) {
 	return (
 		<Icon {...props}>
