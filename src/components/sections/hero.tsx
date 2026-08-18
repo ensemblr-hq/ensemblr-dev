@@ -6,7 +6,7 @@ import { DownloadButton } from '@/components/download/download-button';
 import { ReleaseLine } from '@/components/download/release-line';
 import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
-import { getLatestRelease } from '@/lib/github-release';
+import { getSiteReleases } from '@/lib/github-release';
 import { REPO, REQUIREMENTS } from '@/lib/site';
 import { HeroWindow } from './hero-window';
 import { RuntimeLinks } from './runtime-links';
@@ -29,7 +29,7 @@ const GATES = REQUIREMENTS.filter((requirement) => requirement.required).map(
  * lookup independently.
  */
 export async function Hero() {
-	const release = await getLatestRelease();
+	const { stable: release } = await getSiteReleases();
 
 	return (
 		<section className='relative overflow-hidden' id='top'>
@@ -165,18 +165,20 @@ export async function Hero() {
 					{/* Gates and release line share a step on purpose: they are one band
 					    of fine print under the button, not two beats. */}
 					<Reveal index={6}>
-						<ul className='flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[0.6875rem] text-faint'>
+						<ul className='flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[0.75rem] text-ink'>
 							{GATES.map((gate, index) => (
 								<li className='flex items-center gap-2' key={gate}>
 									{gate}
-									{/* /55, not /45. The middot is what keeps four constraints
-									    from reading as one run-on phrase, and at /45 it measured
-									    2.58:1 on the canvas — under the 3:1 a graphical mark
-									    needs, on the line that names the three things that
-									    disqualify a reader outright. /55 clears it at 3.29:1 and
-									    is still the quietest thing in the band. */}
+									{/* Full `muted`, not a /55 of it. The middot is what keeps
+									    four constraints from reading as one run-on phrase, and it
+									    only has to sit a step under its neighbours to do that —
+									    which it now does by being `muted` under an `ink` run. At
+									    /55 of `muted` it measured 3.29:1 against the canvas, just
+									    over the 3:1 a graphical mark needs, and under text this
+									    bright it read as dirt on the screen rather than a
+									    separator. */}
 									{index < GATES.length - 1 ? (
-										<span aria-hidden='true' className='text-muted/55'>
+										<span aria-hidden='true' className='text-muted'>
 											·
 										</span>
 									) : null}

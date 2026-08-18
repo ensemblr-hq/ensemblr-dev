@@ -1,12 +1,16 @@
 import { describe, expect, test } from 'bun:test';
 
 import {
+	FALLBACK_NIGHTLY,
 	FALLBACK_RELEASE,
 	FOUNDED_YEAR,
 	findAsset,
 	formatBytes,
 	formatReleaseDate,
+	NIGHTLY_TAG,
 	releaseYear,
+	selectNightly,
+	selectStableRelease,
 	toRelease,
 	toSha256,
 } from './release';
@@ -208,5 +212,133 @@ describe('FALLBACK_RELEASE', () => {
 		for (const download of [FALLBACK_RELEASE.dmg, FALLBACK_RELEASE.zip]) {
 			expect(download?.url).toContain(FALLBACK_RELEASE.tag);
 		}
+	});
+
+	test('is a release tag, not the nightly', () => {
+		expect(FALLBACK_RELEASE.tag).not.toBe(NIGHTLY_TAG);
+	});
+});
+
+describe('FALLBACK_NIGHTLY', () => {
+	test('points at the rolling tag rather than a version', () => {
+		expect(FALLBACK_NIGHTLY.tag).toBe(NIGHTLY_TAG);
+		expect(FALLBACK_NIGHTLY.dmg.url).toContain(`/download/${NIGHTLY_TAG}/`);
+	});
+
+	/*
+	 * The asset name is what makes this pin safe to hold forever: the canary
+	 * artifacts are renamed to fixed filenames before upload precisely so the
+	 * rolling tag's download URLs never move. A versioned name here would mean
+	 * the pin rots overnight.
+	 */
+	test('names an asset with no version in it', () => {
+		expect(FALLBACK_NIGHTLY.dmg.url).toEndWith('Ensemblr-Canary-arm64.dmg');
+		expect(FALLBACK_NIGHTLY.dmg.url).not.toContain(FALLBACK_RELEASE.version);
+	});
+});
+
+/*
+ * Selection is by tag, never by list position — see `selectStableRelease`. The
+ * fixtures below are therefore deliberately in the *wrong* order: GitHub sorts
+ * `/releases` by `created_at`, the nightly's tag is force-moved rather than
+ * recreated so its `created_at` never advances, and the two can tie outright.
+ * Any test that passes only because the fixture is well-ordered is testing the
+ * fixture.
+ */
+describe('selectStableRelease and selectNightly', () => {
+	function entry(
+		tag: string,
+		overrides: { draft?: boolean; assets?: string[] } = {},
+	) {
+		const assets = overrides.assets ?? [`Ensemblr-${tag}-arm64.dmg`, 'app.zip'];
+		return {
+			tag_name: tag,
+			name: tag,
+			draft: overrides.draft ?? false,
+			prerelease: true,
+			published_at: '2026-08-18T13:07:24Z',
+			html_url: `https://example.test/releases/tag/${tag}`,
+			assets: assets.map((name) => ({
+				name,
+				browser_download_url: `https://example.test/download/${tag}/${name}`,
+				size: 1,
+				digest: null,
+			})),
+		};
+	}
+
+	test('picks the newest v* release however the list is ordered', () => {
+		const list = [
+			entry('v0.1.0-beta.6'),
+			entry('v0.1.0-beta.7'),
+			entry('v0.1.0-beta.5'),
+		];
+		expect(selectStableRelease(list)?.tag).toBe('v0.1.0-beta.7');
+		expect(selectStableRelease([...list].reverse())?.tag).toBe('v0.1.0-beta.7');
+	});
+
+	/* The trap the whole selector exists for, three releases out from today. */
+	test('prefers beta.10 to beta.9, where a string sort would not', () => {
+		const list = [entry('v0.1.0-beta.9'), entry('v0.1.0-beta.10')];
+		expect(selectStableRelease(list)?.tag).toBe('v0.1.0-beta.10');
+	});
+
+	test('never serves the nightly as the stable download', () => {
+		const list = [entry(NIGHTLY_TAG), entry('v0.1.0-beta.7')];
+		expect(selectStableRelease(list)?.tag).toBe('v0.1.0-beta.7');
+		expect(selectStableRelease([entry(NIGHTLY_TAG)])).toBeNull();
+	});
+
+	test('ignores drafts and tags that are not v<semver>', () => {
+		const list = [
+			entry('v0.2.0', { draft: true }),
+			entry('latest'),
+			entry('v0.1.0-beta.7'),
+		];
+		expect(selectStableRelease(list)?.tag).toBe('v0.1.0-beta.7');
+	});
+
+	/*
+	 * A failed artifact upload costs the visitor the previous release — live,
+	 * checkable — rather than the pin, which may be older still.
+	 */
+	test('skips a release whose .dmg never uploaded', () => {
+		const list = [
+			entry('v0.1.0-beta.7', { assets: ['app.zip'] }),
+			entry('v0.1.0-beta.6'),
+		];
+		expect(selectStableRelease(list)?.tag).toBe('v0.1.0-beta.6');
+	});
+
+	test('finds the nightly by its literal tag', () => {
+		const nightly = selectNightly([entry('v0.1.0-beta.7'), entry(NIGHTLY_TAG)]);
+		expect(nightly?.tag).toBe(NIGHTLY_TAG);
+		expect(nightly?.isFallback).toBe(false);
+		expect(nightly?.dmg.url).toContain(`/download/${NIGHTLY_TAG}/`);
+	});
+
+	test('reports a missing nightly as absent rather than guessing at one', () => {
+		expect(selectNightly([entry('v0.1.0-beta.7')])).toBeNull();
+		expect(selectNightly([entry(NIGHTLY_TAG, { draft: true })])).toBeNull();
+	});
+
+	/*
+	 * Exact match, not a prefix or a case fold. `isReservedTag()` was a skip rule
+	 * where over-matching was harmless; this is a lookup, and over-matching would
+	 * put some other build on the page under the word "nightly".
+	 */
+	test.each(['Nightly', 'nightly-20260818', 'v1.0.0-nightly'])(
+		'does not treat %s as the nightly',
+		(tag) => {
+			expect(selectNightly([entry(tag)])).toBeNull();
+		},
+	);
+
+	test('the nightly carries no size or digest to print', () => {
+		const nightly = selectNightly([entry(NIGHTLY_TAG)]);
+		expect(nightly?.dmg).toEqual({
+			label: 'Apple silicon .dmg',
+			url: `https://example.test/download/nightly/Ensemblr-${NIGHTLY_TAG}-arm64.dmg`,
+		});
 	});
 });

@@ -2,13 +2,13 @@ import Link from 'next/link';
 import { PixelRule } from '@/components/brand/pixel-rule';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { GitHubIcon } from '@/components/icons/site';
-import { getLatestRelease } from '@/lib/github-release';
+import { getSiteReleases } from '@/lib/github-release';
 import { ANALYTICS, THIRD_PARTY, TRADEMARK } from '@/lib/legal';
 import { releaseYear } from '@/lib/release';
 import { AUTHOR, REPO, SITE } from '@/lib/site';
 
 export async function SiteFooter() {
-	const release = await getLatestRelease();
+	const { stable: release } = await getSiteReleases();
 
 	return (
 		<footer className='mx-auto w-full max-w-7xl px-5 pb-12 sm:px-8'>

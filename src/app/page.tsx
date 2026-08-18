@@ -9,7 +9,7 @@ import { Orchestration } from '@/components/sections/orchestration';
 import { Showcase } from '@/components/sections/showcase';
 import { Trust } from '@/components/sections/trust';
 import { JsonLd } from '@/components/seo/json-ld';
-import { getLatestRelease } from '@/lib/github-release';
+import { getSiteReleases } from '@/lib/github-release';
 import { buildHomeGraph } from '@/lib/structured-data';
 
 export default async function Home() {
@@ -19,7 +19,7 @@ export default async function Home() {
 	 * a fourth request — and the structured data has to describe the build the
 	 * button actually serves, not a version literal that can drift from it.
 	 */
-	const release = await getLatestRelease();
+	const { stable: release } = await getSiteReleases();
 
 	return (
 		<>

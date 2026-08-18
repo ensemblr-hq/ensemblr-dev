@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-import { getLatestRelease } from '@/lib/github-release';
+import { getSiteReleases } from '@/lib/github-release';
 import { SCHEMAS_PAGE } from '@/lib/schemas';
 import { SITE } from '@/lib/site';
 
@@ -13,12 +13,12 @@ import { SITE } from '@/lib/site';
  * release date is the honest answer: the version, the size and the SHA-256 are
  * the only things on this page that move, and they move with it.
  *
- * `getLatestRelease` carries its own `'use cache'`, so awaiting it here keeps
+ * `getSiteReleases` carries its own `'use cache'`, so awaiting it here keeps
  * the sitemap cacheable and never throws — a failed lookup falls back to the
  * pinned release.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-	const release = await getLatestRelease();
+	const { stable: release } = await getSiteReleases();
 
 	return [
 		{

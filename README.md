@@ -3,8 +3,8 @@
 The marketing site for [Ensemblr](https://github.com/ensemblr-hq/ensemblr) — a macOS orchestrator for
 isolated, multi-agent coding workflows.
 
-One route. It explains the product, shows a recreation of the app's workbench, and hands over the
-latest macOS build.
+One route. It explains the product, shows a recreation of the app's workbench, and hands over two
+macOS builds: the newest release, and the rolling nightly.
 
 ## Stack
 
@@ -27,19 +27,19 @@ Open http://localhost:3000.
 
 `GITHUB_TOKEN` is optional locally and expected in deployment.
 
-The download button reads the newest release from the public GitHub API, which allows 60
-unauthenticated requests per hour **per IP**. On your own machine that budget is yours alone. On a
-hosted build the address is shared, so an unauthenticated lookup is likely to be refused — and the
-failure is quiet: it falls back to the release pinned in `src/lib/release.ts`, `cacheLife('hours')`
-caches that fallback exactly as durably as a success, and the build stays green while serving a
-stale version, size and digest for the whole revalidation window.
+The download rows read the releases list from the public GitHub API, which allows 60 unauthenticated
+requests per hour **per IP**. On your own machine that budget is yours alone. On a hosted build the
+address is shared, so an unauthenticated lookup is likely to be refused — and the failure is quiet:
+it falls back to the copies pinned in `src/lib/release.ts`, `cacheLife('hours')` caches that
+fallback exactly as durably as a success, and the build stays green while serving a stale version,
+size and digest for the whole revalidation window.
 
 ```bash
 # .env.local — any classic token with no scopes will do
 GITHUB_TOKEN="ghp_..."
 ```
 
-## The release the page shows
+## The two builds the page shows
 
 Everything under the download button — tag, date, size, SHA-256 — describes a real published release
 of the app in [ensemblr-hq/ensemblr](https://github.com/ensemblr-hq/ensemblr). Check it there before
@@ -51,15 +51,26 @@ gh release view <tag> --repo ensemblr-hq/ensemblr \
   --json tagName,publishedAt,isPrerelease,url,assets
 ```
 
-The pin itself is checked rather than trusted. `bun run check:pin` fails when the newest published
-release no longer matches it, or when the pinned `.dmg` stops resolving; CI runs it on every PR and
-once a day on a schedule, because a release can ship on a week nobody opens one. If GitHub cannot be
-reached the check warns and passes, because *cannot verify* is not *is stale*.
+Both rows are selected **by tag** and never by list position: the stable download is the newest tag
+matching `v<semver>`, compared as parsed semver so `v0.1.0-beta.10` outranks `v0.1.0-beta.9`, and
+the nightly is the literal tag `nightly`. `/releases` is ordered by `created_at`, and the app's
+nightly tag is force-moved rather than recreated, so its `created_at` never advances and the two can
+tie outright — position would be right by luck. `selectStableRelease` and `selectNightly` in
+`src/lib/release.ts` are the only place either rule is written, and `check:pin` calls the same two.
 
-When it does fail, update `FALLBACK_RELEASE` in `src/lib/release.ts` from the `gh release view`
-output above — tag, version, `publishedAt`, `notesUrl`, and both assets' url, size and `sha256`.
-Each digest is that asset's `digest` field with the `sha256:` prefix stripped, and `bun test` will
-reject any that a reader could not check with `shasum -a 256`.
+The nightly is pinned by URL alone. Its assets are renamed to fixed, version-free filenames before
+upload, so that URL never moves — while the bytes behind it are replaced most nights, which is why
+no size or digest is pinned for it and why the row on the page says so rather than leaving a gap.
+
+The release pin is checked rather than trusted. `bun run check:pin` fails when the newest `v*`
+release no longer matches it, when any value it copied disagrees with that release, or when either
+pinned `.dmg` stops resolving; CI runs it on every PR and once a day on a schedule, because a
+release can ship on a week nobody opens one. If GitHub cannot be reached the check warns and passes,
+because *cannot verify* is not *is stale*.
+
+Nothing updates the pin automatically — no bump PR, no cross-repo token, no dispatch from the app
+repo. It is a manual ask, once per release, and **[`docs/re-pinning.md`](docs/re-pinning.md) is the
+paste-ready version of it.**
 
 The release is not the only thing this site copies from the app repo — requirements, distribution
 claims, feature copy, palette tokens, icons and the workbench replica all come from there too.
@@ -106,9 +117,11 @@ drift apart.
 uses belong in `components/icons/site.tsx`, so a nav or footer never imports from the mock.
 
 **The release is fetched once per subtree and passed down.** `Hero`, `SiteNav`, `SiteFooter` and the
-`Download` section each await `getLatestRelease()` and hand the result to their children as a prop.
+`Download` section each await `getSiteReleases()` and hand the result to their children as a prop.
 That is what guarantees the digest `IntegrityNote` prints describes the file `DownloadButton` links
-to — an invariant worth holding in the code rather than in the cache.
+to — an invariant worth holding in the code rather than in the cache. The nightly is a different
+type from a release, with no size or digest field anywhere on it, so a component cannot print a
+stale digest for it even by accident.
 
 ## Scripts
 

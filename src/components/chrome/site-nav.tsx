@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { DownloadButton } from '@/components/download/download-button';
 import { GitHubIcon } from '@/components/icons/site';
-import { getLatestRelease } from '@/lib/github-release';
+import { getSiteReleases } from '@/lib/github-release';
 import { REPO } from '@/lib/site';
 import { NavLinks } from './nav-links';
 import { NavShell } from './nav-shell';
@@ -23,7 +23,7 @@ interface SiteNavProps {
 }
 
 export async function SiteNav({ variant = 'home' }: SiteNavProps = {}) {
-	const release = await getLatestRelease();
+	const { stable: release } = await getSiteReleases();
 	const atHome = variant === 'home';
 
 	return (

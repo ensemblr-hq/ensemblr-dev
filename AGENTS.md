@@ -43,7 +43,26 @@ bun run check:pin
 
 Without `gh`, the same data is at
 `https://api.github.com/repos/ensemblr-hq/ensemblr/releases?per_page=5` — 60 unauthenticated
-requests an hour per IP, so expect to be refused if you lean on it.
+requests an hour per IP, so expect to be refused if you lean on it. Note `/releases/latest` **404s**
+for this repo: every Ensemblr build so far is a prerelease and that endpoint excludes prereleases.
+The list endpoint is the only one that works.
+
+The whole procedure is written out, paste-ready, in [`docs/re-pinning.md`](docs/re-pinning.md).
+Nothing automates it — there is no bump PR, no cross-repo token and no dispatch from the app repo,
+by decision. Read that file before re-pinning; do not rebuild the automation.
+
+Two more things about that endpoint, both of which have already caused bugs:
+
+- **It is ordered by `created_at`, not `published_at`, and position is never the answer.** The app
+  publishes a rolling `nightly` tag most mornings, force-moved rather than recreated, so its
+  `created_at` is frozen at whenever the tag was first cut and it can tie with a release outright.
+  Pick by tag: `selectStableRelease` takes the newest `v<semver>` compared as *parsed* semver, and
+  `selectNightly` takes the literal tag `nightly`. Both live in `src/lib/release.ts` and both are
+  called by the page and by `check:pin`, so they cannot drift.
+- **The nightly is pinned by URL only.** `FALLBACK_NIGHTLY` carries no size and no digest, because
+  the bytes behind that fixed URL are replaced most nights. The `Nightly` type has no field to put
+  one in. Do not add one, and do not let the nightly row print a number it cannot stand behind — the
+  row says why it has no digest instead.
 
 ## Before you touch the published schemas
 
@@ -72,7 +91,9 @@ editing, and prefer re-copying to hand-editing:
 | Here | Source of truth in the app repo |
 | --- | --- |
 | `public/schemas/*.schema.json` | `schemas/*.schema.json` — copy verbatim, then `bun run check:schemas` |
-| `FALLBACK_RELEASE` in `src/lib/release.ts` | the newest published release |
+| `FALLBACK_RELEASE` in `src/lib/release.ts` | the newest published `v*` release |
+| `FALLBACK_NIGHTLY` in `src/lib/release.ts` | the rolling `nightly` tag — URL only, never its bytes |
+| the nightly copy in `src/components/download/nightly-download.tsx` | `.github/workflows/nightly.yml` |
 | `REQUIREMENTS`, `DISTRIBUTION` in `src/lib/site.ts` | the app's README and its signing/notarisation setup |
 | `FEATURE_GROUPS` in `src/lib/features.ts` | the app's README and `docs/product/current-shell-inventory.md` |
 | `TRUST_ITEMS` in `src/lib/features.ts` | the README's "What it stores, and where", and `SECURITY.md` |
