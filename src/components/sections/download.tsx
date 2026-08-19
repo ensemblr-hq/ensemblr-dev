@@ -66,6 +66,17 @@ export async function Download() {
 						 * — a version number and a link to file bugs against it — rather
 						 * than the sentence that explains the section, so it keeps body
 						 * measure and body size instead of taking the lede's `sm:text-lg`.
+						 *
+						 * The last sentence arrived with 0.1.0-beta.8, from that release's
+						 * notes and `docs/guide/01-install.md`, and it lands here rather
+						 * than in the feature grid because it answers the objection this
+						 * paragraph raises. A page that admits to rough edges and weekly
+						 * betas has just told the reader they are signing up to re-download
+						 * this by hand; they are not, and the sentence that says so belongs
+						 * against the one that provoked it. "Offers to restart" is the
+						 * mechanism, not a softening: the download is background, the
+						 * restart is the visitor's, and an agent still working is asked
+						 * about first.
 						 */}
 						<Reveal index={2}>
 							<p className='max-w-xl text-pretty text-base leading-relaxed text-muted'>
@@ -80,7 +91,9 @@ export async function Download() {
 								>
 									file them
 								</Link>
-								.
+								. Once installed it keeps up on its own: newer builds download
+								in the background, and it offers to restart into one when you
+								say so.
 							</p>
 						</Reveal>
 					</div>
