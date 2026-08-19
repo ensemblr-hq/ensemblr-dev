@@ -116,13 +116,21 @@ export const NAV_SECTIONS = [
  * page cannot answer that with an adjective, so it answers with the mechanism:
  * who signed it, whether Apple has seen it, and the digest they can check
  * themselves before it ever opens.
+ *
+ * "Both the .app and the disk image" is newly true and deliberately specific.
+ * Releases build in CI as of 0.1.0-beta.7, and that is where the `.dmg` started
+ * being codesigned before notarisation — stapling a ticket to an unsigned image
+ * leaves Gatekeeper nothing to assess, and every earlier beta shipped that way.
+ * The claim is `docs/guide/01-install.md` at `4d719d35`: "both the `.app` and
+ * the `.dmg` carry their own ticket, so Gatekeeper clears them on first open
+ * without a network round-trip."
  */
 export const DISTRIBUTION = {
 	signed: true,
 	notarised: true,
 	summary: 'Signed with an Apple Developer ID and notarised by Apple.',
 	detail:
-		'Hardened runtime, and the notarisation ticket is stapled to the build — so macOS validates it offline on first launch. No Gatekeeper override, no right-click → Open, no quarantine flag to strip.',
+		'Hardened runtime, and the notarisation ticket is stapled to both the .app and the disk image it arrives in — so macOS validates each of them offline, on first open. No Gatekeeper override, no right-click → Open, no quarantine flag to strip.',
 } as const;
 
 /**
