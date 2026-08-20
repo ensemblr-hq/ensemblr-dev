@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { AppWindow } from '@/components/app-mock/window';
 import { PixelField } from '@/components/brand/pixel-field';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
+import { CopyCommand } from '@/components/download/copy-command';
 import { DownloadButton } from '@/components/download/download-button';
 import { ReleaseLine } from '@/components/download/release-line';
 import { GitHubIcon } from '@/components/icons/site';
@@ -176,13 +177,21 @@ export async function Hero() {
 					 * with only the `or` stepped back: this is a line to be copied, and
 					 * the contrast pass that lifted this whole band to `ink` did it
 					 * because 11px of `faint` is not a size anyone reads a command at.
-					 * The cost is that it takes two lines on a phone, breaking on the
-					 * hyphen in `ensemblr-hq` — a break that copies back correctly, and
-					 * the same trade the digest in the download section already makes.
+					 *
+					 * And a line to be copied, so it copies — one click instead of a drag
+					 * across a wrapped command.
 					 */}
-					<Reveal index={5}>
+					{/*
+					 * Gone below `sm`, where it wrapped onto two lines and spent a second
+					 * row of the first screenful on the install path a phone reader is
+					 * least likely to take: `brew` is a desktop act, and the terminal it
+					 * runs in is not the device holding this page. Nothing is lost — the
+					 * Download section carries the same command with the tap, the cask's
+					 * gates and the upgrade line beside it, and it copies there too.
+					 */}
+					<Reveal className='hidden sm:block' index={5}>
 						<p className='max-w-full break-words px-2 font-mono text-[0.75rem] text-muted'>
-							or <span className='text-ink'>{HOMEBREW.install}</span>
+							or <CopyCommand command={HOMEBREW.install} variant='inline' />
 						</p>
 					</Reveal>
 

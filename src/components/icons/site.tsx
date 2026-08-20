@@ -1,8 +1,8 @@
 /**
  * Icons the *site* draws — nav, footer, hero, download, orchestration.
  *
- * Separate from `@/components/app-mock/icons` on purpose. These four appear
- * nowhere in the workbench replica, and when they lived alongside it eight
+ * Separate from `@/components/app-mock/icons` on purpose. None of these appear
+ * in the workbench replica, and when they lived alongside it eight
  * files in `chrome/`, `download/` and `sections/` reached into the replica
  * module to get a GitHub mark. The import path is documentation: a site
  * component asking `app-mock` for an icon reads as the site depending on the
@@ -35,6 +35,17 @@ export function MoonIcon(props: IconProps) {
 	return (
 		<Icon {...props}>
 			<path d='M13.25 9.6A5.75 5.75 0 0 1 6.4 2.75a5.75 5.75 0 1 0 6.85 6.85Z' />
+		</Icon>
+	);
+}
+
+/** Two sheets, Lucide's `copy` — the mark every reader already reads as
+    "puts this on my clipboard". */
+export function CopyIcon(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<rect height='8.5' rx='2' width='8.5' x='5.5' y='5.5' />
+			<path d='M10.5 5.5V3.75a2 2 0 0 0-2-2H3.75a2 2 0 0 0-2 2V8.5a2 2 0 0 0 2 2H5.5' />
 		</Icon>
 	);
 }

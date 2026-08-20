@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { CopyCommand } from '@/components/download/copy-command';
 import { HOMEBREW } from '@/lib/site';
 
 /**
@@ -28,12 +29,13 @@ export function HomebrewNote() {
 			 * `…/tap/en | semblr`. This one has spaces and a real hyphen to break at,
 			 * and does, on the phone widths where it does not fit a line.
 			 *
+			 * Which is where `CopyCommand` earns itself: the width that wraps this
+			 * into three lines is the width where selecting it by hand is worst.
+			 *
 			 * No version in it, and none printed beside it: the cask resolves its own
 			 * from the tap.
 			 */}
-			<code className='break-words font-mono text-[0.75rem] leading-relaxed text-ink'>
-				{HOMEBREW.install}
-			</code>
+			<CopyCommand command={HOMEBREW.install} />
 
 			<p className='border-line/70 border-t pt-3 text-[0.8125rem] leading-relaxed text-muted'>
 				<Link
@@ -67,9 +69,7 @@ export function HomebrewNote() {
 			 * flag the reader is missing. Starting a line of its own, what it wraps at
 			 * on a narrow phone is a space instead.
 			 */}
-			<code className='break-words font-mono text-[0.75rem] leading-relaxed text-ink'>
-				{HOMEBREW.upgrade}
-			</code>
+			<CopyCommand command={HOMEBREW.upgrade} />
 		</div>
 	);
 }
