@@ -58,6 +58,15 @@ const STEPS: readonly Step[] = [
 			'Plan mode holds an agent — and every sub-agent it spawns — to read-only tools',
 			'Git-backed checkpoints restore the tree to an earlier turn',
 			'Sessions persist to SQLite, with tree-structured branching',
+			// 0.1.0-beta.9, from `docs/guide/06-agents.md`'s own "When a turn fails".
+			// It belongs to this step because the step's claim is the surface, and a
+			// turn that dies is part of the surface — it used to be the one place the
+			// two runtimes stopped agreeing, each leaking its provider's English under
+			// the last tool card. What makes it a bullet rather than a changelog line
+			// is the second clause: the row offers only the recoveries its failure
+			// class earns, so the app is deciding what you can do next rather than
+			// offering a retry that would earn the same refusal twice.
+			'A failed turn is a designed row offering only the recoveries it earns — a refusal hands your prompt back to edit, a blocked tool call routes at the repository’s Security settings',
 			'Codex, Vibe and the claude TUI also run as terminal harnesses',
 		],
 		region: 'conversation',
@@ -79,6 +88,15 @@ const STEPS: readonly Step[] = [
 			// says "attach a diff" and not "paste a diff".
 			'Attach a file, a folder or a diff to the chat beside it, from the panel’s own right-click menu',
 			'Inline comments anchored to lines, with resolved ones struck through',
+			// 0.1.0-beta.9, from `docs/guide/08-reviewing-changes.md`. The bullet
+			// above says an agent's findings land on the line; this one says you are
+			// taken to them, which is the half a reader who has just delegated a
+			// review actually asks about. Checks is the roll-up — "what did it leave
+			// me, and what is still open" — rather than six files to scroll. The
+			// coalescing clause is why it is not an annoyance: the pull is per
+			// workspace on a rolling window, so a pass that files ten comments takes
+			// focus once, and a resolve batch that closed nothing takes it never.
+			'An agent’s comment pass pulls the Checks roll-up forward — once per pass, however many it files',
 			'PR title and description, live check status, merge — all through gh',
 			'Per-file discard, behind a confirmation',
 		],
