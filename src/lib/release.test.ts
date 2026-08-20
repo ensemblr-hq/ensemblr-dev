@@ -119,10 +119,6 @@ describe('toRelease', () => {
 		expect(toRelease({ ...raw, tag_name: 'vv1.0.0' }).version).toBe('v1.0.0');
 	});
 
-	test('marks a live lookup as not a fallback', () => {
-		expect(toRelease(raw).isFallback).toBe(false);
-	});
-
 	test('reports a missing platform artifact as null rather than throwing', () => {
 		expect(toRelease({ ...raw, assets: [] }).dmg).toBeNull();
 		expect(toRelease({ ...raw, assets: [] }).zip).toBeNull();
@@ -182,15 +178,12 @@ describe('releaseYear', () => {
 });
 
 /*
- * The pinned release ships to real visitors whenever GitHub is unreachable, so
- * it is held to the same standard as a live one. `scripts/check-pinned-release`
- * covers the half that needs the network — whether it has gone stale.
+ * The pinned release ships to real visitors whenever GitHub is unreachable, and
+ * renders indistinguishably from a live one, so it is held to the same standard
+ * as a live one. `scripts/check-pinned-release` covers the half that needs the
+ * network — whether it has gone stale.
  */
 describe('FALLBACK_RELEASE', () => {
-	test('says that it is a fallback, so the release line can admit it', () => {
-		expect(FALLBACK_RELEASE.isFallback).toBe(true);
-	});
-
 	test('carries a macOS artifact — a fallback without one is not one', () => {
 		expect(FALLBACK_RELEASE.dmg).not.toBeNull();
 	});
@@ -313,7 +306,6 @@ describe('selectStableRelease and selectNightly', () => {
 	test('finds the nightly by its literal tag', () => {
 		const nightly = selectNightly([entry('v0.1.0-beta.7'), entry(NIGHTLY_TAG)]);
 		expect(nightly?.tag).toBe(NIGHTLY_TAG);
-		expect(nightly?.isFallback).toBe(false);
 		expect(nightly?.dmg.url).toContain(`/download/${NIGHTLY_TAG}/`);
 	});
 
