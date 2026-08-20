@@ -64,6 +64,26 @@ Two more things about that endpoint, both of which have already caused bugs:
   one in. Do not add one, and do not let the nightly row print a number it cannot stand behind — the
   row says why it has no digest instead.
 
+## Before you touch the brew line
+
+`HOMEBREW` in `src/lib/site.ts` is copied from a cask in a *second* repository,
+[`ensemblr-hq/homebrew-tap`](https://github.com/ensemblr-hq/homebrew-tap) — not from the app repo,
+and not from `brew info`, which reports whatever the reader's own tap has fetched:
+
+```bash
+gh api "repos/ensemblr-hq/homebrew-tap/contents/Casks/ensemblr.rb?ref=main" --jq '.content' | base64 -d
+```
+
+Every claim the page makes beside the command is a line in that file: `depends_on arch:`,
+`depends_on macos:`, `auto_updates`. Read them there before you restate them.
+
+**The command carries no version, and nothing beside it may print one.** The cask resolves its own
+version from the tap and the app's release workflow rewrites it there, so a tag repeated on this
+page is a second thing to bump on every release — the exact chore the tap was built to remove. Add
+one and it goes stale on the next release with nothing to catch it: `check:pin` watches
+`FALLBACK_RELEASE`, not this. The `sha256` in the cask is the tap's business for the same reason;
+the digest this page prints belongs to `IntegrityNote` and describes the `.dmg` the button links to.
+
 ## Before you touch the published schemas
 
 `public/schemas/*.schema.json` are the app's own JSON Schemas, republished here because each one
@@ -95,6 +115,7 @@ editing, and prefer re-copying to hand-editing:
 | `FALLBACK_NIGHTLY` in `src/lib/release.ts` | the rolling `nightly` tag — URL only, never its bytes |
 | the nightly copy in `src/components/download/nightly-download.tsx` | `.github/workflows/nightly.yml` |
 | `REQUIREMENTS`, `DISTRIBUTION` in `src/lib/site.ts` | the app's README and its signing/notarisation setup |
+| `HOMEBREW` in `src/lib/site.ts` | **a different repo:** `Casks/ensemblr.rb` in [`ensemblr-hq/homebrew-tap`](https://github.com/ensemblr-hq/homebrew-tap) |
 | `FEATURE_GROUPS` in `src/lib/features.ts` | the app's README and `docs/product/current-shell-inventory.md` |
 | `TRUST_ITEMS` in `src/lib/features.ts` | the README's "What it stores, and where", and `SECURITY.md` |
 | `SITE.tagline`, `SITE.description`, the h1 and the Control section | the README's opening block and `docs/agent-control.md` |
