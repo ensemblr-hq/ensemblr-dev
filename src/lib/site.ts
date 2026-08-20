@@ -134,6 +134,36 @@ export const DISTRIBUTION = {
 } as const;
 
 /**
+ * The other way to install it, copied from the cask rather than recalled.
+ *
+ * `ensemblr-hq/homebrew-tap` is a second, public repository holding one cask on
+ * the stable channel. Every claim the page makes about it is a line in that
+ * file: `depends_on arch: :arm64` and `depends_on macos: :monterey`, so brew
+ * refuses on a machine that cannot open the app instead of installing it
+ * anyway, and `auto_updates true`, which is why a plain `brew upgrade` leaves
+ * the bundle to Ensemblr's own updater — two updaters writing one bundle is how
+ * an install gets corrupted.
+ *
+ * `install` carries no version, and nothing on the page may print one beside
+ * it. The cask resolves its own version from the tap, and the app's release
+ * workflow rewrites it there; a tag repeated here would be a second thing to
+ * bump on every release, which is the per-release chore the tap was built to
+ * remove.
+ *
+ * This is an alternative path, never a replacement for the `.dmg`. The button
+ * is the page's one conversion event, and the digest printed beneath it
+ * describes the file that button links to.
+ */
+export const HOMEBREW = {
+	tapUrl: 'https://github.com/ensemblr-hq/homebrew-tap',
+	install: 'brew install --cask ensemblr-hq/tap/ensemblr',
+	/** Only meaningful once the in-app updater has been turned off. */
+	upgrade: 'brew upgrade --cask --greedy ensemblr',
+	/** The toggle to turn off first, named as the app's own menu spells it. */
+	autoUpdateSetting: 'Settings → General → Update Ensemblr automatically',
+} as const;
+
+/**
  * What you need installed before Ensemblr is useful. Stated on the page rather
  * than buried, because several of these are hard gates: the app refuses to run
  * agent sessions without a runtime CLI present.

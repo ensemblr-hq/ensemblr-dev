@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { PixelField } from '@/components/brand/pixel-field';
 import { SectionHeading } from '@/components/brand/section-heading';
 import { DownloadButton } from '@/components/download/download-button';
+import { HomebrewNote } from '@/components/download/homebrew-note';
 import { IntegrityNote } from '@/components/download/integrity-note';
 import { NightlyDownload } from '@/components/download/nightly-download';
 import { ReleaseLine } from '@/components/download/release-line';
@@ -204,6 +205,17 @@ export async function Download() {
 
 						<Reveal index={5}>
 							<IntegrityNote release={release} />
+						</Reveal>
+
+						{/*
+						 * First of the three alternates to the button, and on their shared
+						 * beat. It leads them because it is the only one that is a
+						 * different way to install the same build a reader already wants —
+						 * the zip under it is that download in a wrapper needing no mount,
+						 * and the nightly below is a different build entirely.
+						 */}
+						<Reveal index={5}>
+							<HomebrewNote />
 						</Reveal>
 
 						{release.zip ? (

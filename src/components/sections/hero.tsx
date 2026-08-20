@@ -7,7 +7,7 @@ import { ReleaseLine } from '@/components/download/release-line';
 import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
 import { getSiteReleases } from '@/lib/github-release';
-import { REPO, REQUIREMENTS } from '@/lib/site';
+import { HOMEBREW, REPO, REQUIREMENTS } from '@/lib/site';
 import { HeroWindow } from './hero-window';
 import { RuntimeLinks } from './runtime-links';
 
@@ -157,6 +157,33 @@ export async function Hero() {
 							<GitHubIcon className='size-4' />
 							View source
 						</Link>
+					</Reveal>
+
+					{/*
+					 * The brew line, at the button rather than only in the Download
+					 * section eight screens down. A reader who installs Mac apps with
+					 * `brew` reaches for it before a disk image, and there is nothing on
+					 * the way down this page that would tell them the tap exists.
+					 *
+					 * The button's beat, not the fine print's: this is the same act by
+					 * another route, and the gates below it qualify both. It stays one
+					 * line of mono with no version, no digest and no explanation — what
+					 * the cask declares and which updater owns the bundle afterwards are
+					 * the download section's to answer, at the length that needs.
+					 */}
+					{/*
+					 * Set at the size the gates and the release line under it now take,
+					 * with only the `or` stepped back: this is a line to be copied, and
+					 * the contrast pass that lifted this whole band to `ink` did it
+					 * because 11px of `faint` is not a size anyone reads a command at.
+					 * The cost is that it takes two lines on a phone, breaking on the
+					 * hyphen in `ensemblr-hq` — a break that copies back correctly, and
+					 * the same trade the digest in the download section already makes.
+					 */}
+					<Reveal index={5}>
+						<p className='max-w-full break-words px-2 font-mono text-[0.75rem] text-muted'>
+							or <span className='text-ink'>{HOMEBREW.install}</span>
+						</p>
 					</Reveal>
 
 					{/* The separator trails its gate, for the same reason the download

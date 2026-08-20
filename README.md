@@ -77,6 +77,23 @@ claims, feature copy, palette tokens, icons and the workbench replica all come f
 `AGENTS.md` lists each one against its source. Same rule for all of them: read the source, don't
 recall it.
 
+## The brew line
+
+The download section and the hero both offer the tap as an alternative to the `.dmg`:
+
+```bash
+brew install --cask ensemblr-hq/tap/ensemblr
+```
+
+It lives once, in `HOMEBREW` in `src/lib/site.ts`, and both surfaces read it from there. The cask
+itself is in a second repository, [`ensemblr-hq/homebrew-tap`](https://github.com/ensemblr-hq/homebrew-tap),
+and so is everything the page says about it — the architecture and macOS floor it declares, and the
+`auto_updates` flag that keeps `brew upgrade` out of a bundle the app updates itself.
+
+That command deliberately carries **no version**. The cask resolves its own from the tap, bumped
+there by the app's release workflow; a tag printed here would be a second thing to update on every
+release, and nothing in this repo checks it. `check:pin` covers `FALLBACK_RELEASE` and nothing else.
+
 ## How it is put together
 
 ```
