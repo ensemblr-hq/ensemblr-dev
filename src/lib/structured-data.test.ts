@@ -17,7 +17,6 @@ import {
 /** A release with nothing GitHub is allowed to omit, to prove the nulls drop. */
 const BARE_RELEASE: Release = {
 	dmg: null,
-	isFallback: true,
 	isPrerelease: true,
 	notesUrl: FALLBACK_RELEASE.notesUrl,
 	publishedAt: null,

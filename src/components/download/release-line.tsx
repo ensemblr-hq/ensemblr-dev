@@ -5,13 +5,12 @@ import { cn } from '@/lib/utils';
 /**
  * Version, channel and date, stated plainly under the download button.
  *
- * Every fact here is read off the release at build time, so the line has to be
- * able to say when it *could not* read one. When the GitHub API rate-limits,
- * `getSiteReleases` serves a pinned copy — and a pinned copy rendered with a
- * confident publication date is the page asserting a freshness the build never
- * confirmed. On a site whose first principle is that every claim is checkable,
- * that is the worst available failure, so the fallback drops the date and says
- * what it is instead.
+ * Every fact here is read off a release — the live one when GitHub answers, the
+ * pinned copy `getSiteReleases` serves when it does not — and the two render
+ * identically. The pin is not hedged on the page because it is not hedged in
+ * the repo: `check:pin` fails CI the moment any value in it stops matching the
+ * release it names, so a visitor cannot be shown a version, a date or a digest
+ * that disagrees with the tag this line links to.
  *
  * The parts are separated for a screen reader too. Read as one undifferentiated
  * run it announces "v0.1.0-beta.4 beta Apple silicon 14 Aug 2026", which is four
@@ -38,9 +37,7 @@ export function ReleaseLine({
 	/** Same object the button beside this one links to. */
 	release: Release;
 }) {
-	const published = release.isFallback
-		? null
-		: formatReleaseDate(release.publishedAt);
+	const published = formatReleaseDate(release.publishedAt);
 
 	return (
 		<p
@@ -77,14 +74,6 @@ export function ReleaseLine({
 					<span>
 						<span className='sr-only'>Published </span>
 						{published}
-					</span>
-				</>
-			) : null}
-			{release.isFallback ? (
-				<>
-					<span aria-hidden='true'>·</span>
-					<span className='text-warning'>
-						pinned build — GitHub was unreachable at build time
 					</span>
 				</>
 			) : null}

@@ -55,8 +55,6 @@ export interface Release {
 	readonly notesUrl: string;
 	readonly dmg: ReleaseDownload | null;
 	readonly zip: ReleaseDownload | null;
-	/** True when GitHub could not be reached and the pinned copy is showing. */
-	readonly isFallback: boolean;
 }
 
 /**
@@ -81,8 +79,6 @@ export interface Nightly {
 		readonly label: string;
 		readonly url: string;
 	};
-	/** True when GitHub could not be reached and the pinned copy is showing. */
-	readonly isFallback: boolean;
 }
 
 /** The rolling tag the app's `nightly.yml` republishes; never a release. */
@@ -93,6 +89,9 @@ export const NIGHTLY_TAG = 'nightly';
  * point of the page, so it must render something real even when the GitHub API
  * rate-limits an unauthenticated build.
  *
+ * It is rendered exactly as a live lookup would be — the page does not mark a
+ * pinned render as second-class, because a pin that is correct is not
+ * second-class. What keeps that honest is that it stays correct:
  * `scripts/check-pinned-release.ts` fails CI when this drifts behind the newest
  * published release, when any of the three values it copies stops matching what
  * GitHub returns, or when its asset stops resolving. A stale pin is not a
@@ -101,24 +100,23 @@ export const NIGHTLY_TAG = 'nightly';
  * checkable. Nothing updates this automatically — see `docs/re-pinning.md`.
  */
 export const FALLBACK_RELEASE: Release = {
-	tag: 'v0.1.0-beta.9',
-	version: '0.1.0-beta.9',
+	tag: 'v0.1.0-beta.10',
+	version: '0.1.0-beta.10',
 	isPrerelease: true,
-	publishedAt: '2026-08-20T12:29:27Z',
-	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.9`,
+	publishedAt: '2026-08-20T16:42:35Z',
+	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.10`,
 	dmg: {
 		label: 'Apple silicon .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.9/Ensemblr-0.1.0-beta.9-arm64.dmg`,
-		sizeBytes: 149_452_515,
-		sha256: '7aa6c31493146765f82055447325d975d0350f0c5a26e6142e9160d3c39323b7',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.10/Ensemblr-0.1.0-beta.10-arm64.dmg`,
+		sizeBytes: 149_453_648,
+		sha256: '49447be4f4643b21b511e9027bf132e8aeac1783741c3618b400c775ecac0563',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.9/Ensemblr-darwin-arm64-0.1.0-beta.9.zip`,
-		sizeBytes: 150_777_487,
-		sha256: 'ae2c61a88af5f9df114d47f6913a1beed7ffa78f6a7703bd9b7299fa7e96bed4',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.10/Ensemblr-darwin-arm64-0.1.0-beta.10.zip`,
+		sizeBytes: 150_781_198,
+		sha256: 'aedda036a08153bec489f44cb14a4644e0077240d36e8fbac3b6f344974ca30f',
 	},
-	isFallback: true,
 };
 
 /**
@@ -137,7 +135,6 @@ export const FALLBACK_NIGHTLY: Nightly = {
 		label: 'Apple silicon .dmg',
 		url: `${REPO.releasesUrl}/download/${NIGHTLY_TAG}/Ensemblr-Canary-arm64.dmg`,
 	},
-	isFallback: true,
 };
 
 /**
@@ -176,7 +173,6 @@ export function findAsset(
 export function toRelease(release: z.infer<typeof releaseSchema>): Release {
 	return {
 		dmg: findAsset(release.assets, '.dmg', 'Apple silicon .dmg'),
-		isFallback: false,
 		isPrerelease: release.prerelease,
 		notesUrl: release.html_url,
 		publishedAt: release.published_at,
@@ -195,7 +191,6 @@ export function toNightly(
 	}
 	return {
 		dmg: { label: dmg.label, url: dmg.url },
-		isFallback: false,
 		notesUrl: release.html_url,
 		tag: release.tag_name,
 	};
