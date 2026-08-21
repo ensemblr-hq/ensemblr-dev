@@ -53,10 +53,14 @@ by decision. Read that file before re-pinning; do not rebuild the automation.
 
 Two more things about that endpoint, both of which have already caused bugs:
 
-- **It is ordered by `created_at`, not `published_at`, and position is never the answer.** The app
-  publishes a rolling `nightly` tag most mornings, force-moved rather than recreated, so its
-  `created_at` is frozen at whenever the tag was first cut and it can tie with a release outright.
-  Pick by tag: `selectStableRelease` takes the newest `v<semver>` compared as *parsed* semver, and
+- **Position is never the answer, and neither timestamp rescues it.** The order returned is not
+  newest-first: read on 2026-08-21 it ran beta.12, beta.11, **beta.9, beta.10**, `nightly`, beta.8 —
+  the older release ahead of the newer, and the rolling tag wedged between two releases. Sorting on
+  a date is no better. The app force-moves `nightly` onto a new commit most mornings and re-uploads
+  its assets onto the same release, so `published_at` is what freezes at the first publish while
+  `created_at` follows the commit the tag now points at; that day it read `created_at`
+  2026-08-20T19:14:31Z against `published_at` 2026-08-18T13:12:43Z. Pick by tag:
+  `selectStableRelease` takes the newest `v<semver>` compared as *parsed* semver, and
   `selectNightly` takes the literal tag `nightly`. Both live in `src/lib/release.ts` and both are
   called by the page and by `check:pin`, so they cannot drift.
 - **The nightly is pinned by URL only.** `FALLBACK_NIGHTLY` carries no size and no digest, because

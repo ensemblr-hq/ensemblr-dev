@@ -100,22 +100,22 @@ export const NIGHTLY_TAG = 'nightly';
  * checkable. Nothing updates this automatically — see `docs/re-pinning.md`.
  */
 export const FALLBACK_RELEASE: Release = {
-	tag: 'v0.1.0-beta.11',
-	version: '0.1.0-beta.11',
+	tag: 'v0.1.0-beta.12',
+	version: '0.1.0-beta.12',
 	isPrerelease: true,
-	publishedAt: '2026-08-21T14:38:43Z',
-	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.11`,
+	publishedAt: '2026-08-21T16:48:06Z',
+	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.12`,
 	dmg: {
 		label: 'Apple silicon .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.11/Ensemblr-0.1.0-beta.11-arm64.dmg`,
-		sizeBytes: 149_478_332,
-		sha256: '69dedbc99017454625112140966bf533561bc3f1e2b7f56212ff2b84dfa53da0',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.12/Ensemblr-0.1.0-beta.12-arm64.dmg`,
+		sizeBytes: 149_474_466,
+		sha256: 'a20e7d1e7b51285447148cb50a253fa7e794fd45974f9f3fb22858c6a34ead37',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.11/Ensemblr-darwin-arm64-0.1.0-beta.11.zip`,
-		sizeBytes: 150_788_318,
-		sha256: '4bccd0c8c52749de9e47c4826c9cecfcfa73d6d22e2af8cd0b5bee6977efde54',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.12/Ensemblr-darwin-arm64-0.1.0-beta.12.zip`,
+		sizeBytes: 150_783_693,
+		sha256: 'f7086afe462faf77d4e846a71035e0e02164bfe62f618fb9cb8563f362174d42',
 	},
 };
 
@@ -200,11 +200,21 @@ export function toNightly(
  * The two lookups the page makes, and the only place either rule is written.
  *
  * Both pick by tag. Neither reads position, and that is the whole point: the
- * list endpoint orders by `created_at`, the nightly's tag is force-moved rather
- * than recreated so its `created_at` is frozen at whenever the tag was first
- * cut, and the two entries can therefore tie. Today `v0.1.0-beta.7` and
- * `nightly` share a `created_at` to the second and the release happens to sort
- * first — an ordering that is correct by luck and would flip without warning.
+ * order the list endpoint returns is not newest-first, by tag or by either
+ * timestamp. Read on 2026-08-21 it ran beta.12, beta.11, beta.9, beta.10,
+ * `nightly`, beta.8 — the older release ahead of the newer one, and the rolling
+ * tag wedged between two releases rather than at either end. Position is right
+ * often enough to look load-bearing and wrong without warning: on the evening of
+ * 2026-08-20, with that same ordering, index 0 was beta.9 while beta.10 was the
+ * release that had just shipped.
+ *
+ * Nor do the timestamps rescue it. `nightly` is force-moved onto a new commit
+ * most mornings and its assets re-uploaded onto the same release, so it is
+ * `published_at` that freezes at the first publish while `created_at` tracks
+ * whatever commit the tag now points at — on 2026-08-21 it read
+ * `created_at` 2026-08-20T19:14:31Z against `published_at` 2026-08-18T13:12:43Z,
+ * created two days *after* it was published. Sorting on either field puts the
+ * canary somewhere in the stable list.
  *
  * `check-pinned-release.ts` imports these too. One selector, so what the page
  * serves and what CI checks cannot drift into disagreeing.
