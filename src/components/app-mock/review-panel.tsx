@@ -93,8 +93,9 @@ function ChangeRow({ change }: { change: (typeof CHANGES)[number] }) {
  * The header above the review sidebar: the workspace's git state resolved to
  * one line, and the primary action on the right — which an agent turn replaces
  * with a spinner, because whatever that action would commit or merge is about
- * to move under it. At this width the app's container query has already
- * dropped the spinner's label, leaving the arc alone.
+ * to move under it. The arc stands alone because the app's own spinner does:
+ * it names the run in `aria-label` and draws nothing but the icon. See
+ * `REVIEW_HEADER` in `data.ts` for where that was read from.
  */
 function ReviewHeader() {
 	return (
