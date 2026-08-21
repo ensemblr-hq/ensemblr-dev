@@ -116,11 +116,11 @@ editing, and prefer re-copying to hand-editing:
 | the nightly copy in `src/components/download/nightly-download.tsx` | `.github/workflows/nightly.yml` |
 | `REQUIREMENTS`, `DISTRIBUTION` in `src/lib/site.ts` | the app's README and its signing/notarisation setup |
 | `HOMEBREW` in `src/lib/site.ts` | **a different repo:** `Casks/ensemblr.rb` in [`ensemblr-hq/homebrew-tap`](https://github.com/ensemblr-hq/homebrew-tap) |
-| `FEATURE_GROUPS` in `src/lib/features.ts` | the app's README and `docs/product/current-shell-inventory.md` |
+| `FEATURE_GROUPS` in `src/lib/features.ts` | the app's README and `docs/ux-conventions.md` |
 | `TRUST_ITEMS` in `src/lib/features.ts` | the README's "What it stores, and where", and `SECURITY.md` |
 | `SITE.tagline`, `SITE.description`, the h1 and the Control section | the README's opening block and `docs/agent-control.md` |
 | `GUARDRAILS`, `TOOLS` in `src/components/sections/orchestration.tsx` | `docs/agent-control.md` and the README's orchestration paragraph |
-| `src/components/app-mock/data.ts` | `docs/product/current-shell-inventory.md`, and the running app |
+| `src/components/app-mock/data.ts` | `docs/ux-conventions.md`'s "Current Shell Contract", and the running app |
 | the oklch tokens in `src/app/globals.css` | the app's own token sheet |
 | `src/app/icon.svg`, `src/app/apple-icon.png` | `assets/icon.svg`, `assets/icon.png` — copy verbatim, then `bun run gen:favicon` |
 | `REPO` links in `src/lib/site.ts` | the changelog and licence paths those URLs point at |

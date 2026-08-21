@@ -112,6 +112,16 @@ const STEPS: readonly Step[] = [
 			'A fingerprinted setup script that skips an unchanged workspace',
 			'Real PTY terminals that survive an app restart with clean scrollback',
 			'Detected dev-server ports surface as an Open :PORT action',
+			// 0.1.0-beta.11, from `docs/guide/07-terminals-and-run-scripts.md`. It
+			// belongs to this step rather than the feature grid for the same reason
+			// the Review step keeps its own attach bullet: the step's argument is
+			// that the terminal sits inside the workspace, and this is the two-click
+			// path from a failing run back to the agent that caused it. The second
+			// clause is what makes it a capability rather than a shortcut for ⌘C —
+			// an attachment has a path the agent can re-read, and the filename says
+			// which pane produced the output, so two panes printing the same bytes
+			// stay two chips.
+			'Attach a terminal’s selection to the chat as a file the agent can re-read, named for the pane it came off',
 			// "the app", not "the workbench". The rest of the page dropped Ensemblr's
 			// own word for itself when the copy moved to "orchestrator"; this was the
 			// one line of visible text still carrying it, so the page named itself

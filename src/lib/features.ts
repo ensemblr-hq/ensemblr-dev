@@ -1,7 +1,10 @@
 /**
  * Long-tail capability copy for the closing feature grid. Sourced from the
- * app's own README and `docs/product/current-shell-inventory.md`, kept out of
- * the section components so the prose can be corrected in one place.
+ * app's own README and the "Current Shell Contract" section of
+ * `docs/ux-conventions.md`, kept out of the section components so the prose can
+ * be corrected in one place. That section is where `docs/product/current-shell-
+ * inventory.md` went — the path this file and `AGENTS.md` both used to name now
+ * 404s in the app repo, which is worth knowing before the next re-pin cites it.
  *
  * Strictly the *rest* of it. Every claim the showcase already makes in
  * `sections/showcase.tsx` is deliberately absent here — an earlier cut of this
@@ -35,6 +38,14 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 		label: 'Sessions & composer',
 		items: [
 			'Pasted images and @-mention file payloads',
+			// 0.1.0-beta.11, from `docs/guide/06-agents.md`'s "Right-clicking text".
+			// Electron draws no context menu unless the app builds one, so until this
+			// release right-clicking the composer did nothing at all — which is why
+			// the row names the spellchecker rather than the clipboard verbs: Cut,
+			// Copy and Paste are what a reader assumes a text box already has, and
+			// the suggestions plus **Add to dictionary** are the half that only
+			// exists because the app forwards Chromium's uncancelled verdict.
+			'Composer right-click menu with spellchecker suggestions and Add to dictionary',
 			'Auto-generated session names and summaries',
 			'Per-runtime model visibility',
 			'Claude plan usage per rate-limit window, beside the session’s cost',

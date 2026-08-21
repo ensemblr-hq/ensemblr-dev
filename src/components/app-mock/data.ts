@@ -357,8 +357,17 @@ export const REVIEW_TABS = [
 /**
  * The review sidebar's header resolves the workspace's git and PR state to one
  * line, with the primary action on the right. Here a second tab's agent is
- * mid-turn, so the action is frozen behind a spinner — and at this width the
- * app's container query has already dropped the spinner's label.
+ * mid-turn, so the action is frozen behind a spinner.
+ *
+ * The spinner carries no visible text at any width, and that is the app's own
+ * shape rather than this mock's simplification: `HeaderActivitySpinner` in the
+ * app's `right-sidebar-header/header-action-buttons.tsx` is an `<output>` whose
+ * only child is the spinning icon, with the run named in `aria-label`. Checked
+ * at 0.1.0-beta.11, which is the release that moved a running action's label
+ * into the accessible name across the app. An earlier note here explained the
+ * missing label as a container query dropping it at this width; there is no
+ * such query, and a mock that draws the right pixels for the wrong reason is
+ * one redesign away from drawing the wrong ones.
  */
 export const REVIEW_HEADER = {
 	label: 'Working…',
