@@ -76,6 +76,11 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			'Any number of Linear organisations connected at once',
 			'Infisical secrets resolved live at launch, never written into the repo',
 			'Setup diagnostics with per-check remediation',
+			// 0.1.0-beta.15, from `docs/guide/11-app-settings.md`'s "Concierge
+			// settings". `app.concierge` is a top-level sibling of `app.models`,
+			// not a key inside it — the model that suits supervising a dozen
+			// workspaces is not the one that suits editing a file in any of them.
+			'Concierge runtime, model and thinking level as their own setting, separate from workspace defaults',
 		],
 	},
 ];
