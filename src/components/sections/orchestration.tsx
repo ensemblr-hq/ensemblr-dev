@@ -84,6 +84,20 @@ const GUARDRAILS = [
 		'Agent skill',
 		'handed to every agent it starts — the tool surface, the worktree model and every settings.toml key, read on demand and shipped inside the app, so nothing is written into your repository or your ~/.claude',
 	],
+	/*
+	 * 0.1.0-beta.15's own containment story, and a different one from the six
+	 * rows above: those all gate an agent that has a workspace. The Concierge —
+	 * `docs/agent-control.md`'s "The Concierge's own surface" and
+	 * `docs/guide/06-agents.md`'s "The Concierge" — does not, so it is held by
+	 * refusal rather than by mode. `bash` is read-only and a file write outside
+	 * its own folder is refused outright; the only way it changes anything is to
+	 * spawn an orchestrator into the workspace that needs it and brief it, and
+	 * that orchestrator is a peer, never the Concierge's own sub-agent.
+	 */
+	[
+		'The Concierge',
+		'reads across every workspace, project and terminal; writes nothing outside its own folder — real change goes through an orchestrator it spawns into the workspace that needs it',
+	],
 ] as const;
 
 /*
