@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { SectionRule } from '@/components/brand/section-rule';
 import { SiteFooter } from '@/components/chrome/site-footer';
 import { SiteNav } from '@/components/chrome/site-nav';
+import { Concierge } from '@/components/sections/concierge';
 import { Download } from '@/components/sections/download';
 import { FeatureGrid } from '@/components/sections/feature-grid';
 import { Hero } from '@/components/sections/hero';
@@ -51,12 +52,23 @@ export default async function Home() {
 			 * button by the entire seventeen-item feature grid, so the argument was
 			 * made and then left to cool for a couple of thousand pixels. The long
 			 * tail is the right thing to defer; the reason to click is not.
+			 *
+			 * The Concierge follows the showcase rather than Control, though it is
+			 * the same argument one storey up. Its pitch — the only agent that can
+			 * see all your work at once — answers a question the showcase creates
+			 * and nothing before it does: a reader who has just been walked through
+			 * one workspace in four screens is exactly the reader wondering how you
+			 * keep track of eight. Placed above the showcase it would be answering
+			 * that before it had been asked, and it would put two abstract sections
+			 * back to back ahead of the first sight of the app.
 			 */}
 			<main id='main'>
 				<Hero />
 				<Orchestration />
 				<SectionRule />
 				<Showcase />
+				<SectionRule />
+				<Concierge />
 				<SectionRule />
 				<FeatureGrid />
 				<SectionRule />
