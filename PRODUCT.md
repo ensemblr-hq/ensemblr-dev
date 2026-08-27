@@ -169,9 +169,10 @@ Real and usable:
   obtainable.
 - A hand-built, high-fidelity replica of the app shell in
   `src/components/app-mock/`, driven by the product's own tokens.
-- Public GitHub releases, README, CHANGELOG.md, LICENSE, and the app's
-  `docs/product/current-shell-inventory.md`, which is the source of the
-  long-tail capability copy in `src/lib/features.ts`.
+- Public GitHub releases, README, CHANGELOG.md, LICENSE, and the "Current Shell
+  Contract" section of the app's `docs/ux-conventions.md`, which is the source
+  of the long-tail capability copy in `src/lib/features.ts`. That section is
+  where `docs/product/current-shell-inventory.md` went; the old path 404s.
 
 Explicitly absent — must never be fabricated:
 
