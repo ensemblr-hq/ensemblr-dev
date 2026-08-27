@@ -85,19 +85,20 @@ const GUARDRAILS = [
 		'handed to every agent it starts — the tool surface, the worktree model and every settings.toml key, read on demand and shipped inside the app, so nothing is written into your repository or your ~/.claude',
 	],
 	/*
-	 * 0.1.0-beta.15's own containment story, and a different one from the six
-	 * rows above: those all gate an agent that has a workspace. The Concierge —
-	 * `docs/agent-control.md`'s "The Concierge's own surface" and
-	 * `docs/guide/06-agents.md`'s "The Concierge" — does not, so it is held by
-	 * refusal rather than by mode. `bash` is read-only and a file write outside
-	 * its own folder is refused outright; the only way it changes anything is to
-	 * spawn an orchestrator into the workspace that needs it and brief it, and
-	 * that orchestrator is a peer, never the Concierge's own sub-agent.
+	 * The Concierge row that used to close this list is now a section of its own,
+	 * `sections/concierge.tsx`, two rules further down the page.
+	 *
+	 * It never quite belonged here. Every row above gates an agent that *has* a
+	 * workspace — a mode it runs under, a depth it cannot exceed, a state it
+	 * cannot move a ticket into. The Concierge has no workspace, so none of those
+	 * axes reach it and it is held by refusal instead, which the row had to spend
+	 * its whole length explaining before it could make a claim. Its own comment
+	 * said as much: "a different one from the six rows above".
+	 *
+	 * What it stated in one line the section now states in three blocks, with the
+	 * middle one — that it changes things constantly, just never with its own
+	 * hands — that no single row had room for.
 	 */
-	[
-		'The Concierge',
-		'reads across every workspace, project and terminal; writes nothing outside its own folder — real change goes through an orchestrator it spawns into the workspace that needs it',
-	],
 ] as const;
 
 /*

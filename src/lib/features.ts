@@ -80,6 +80,13 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			// settings". `app.concierge` is a top-level sibling of `app.models`,
 			// not a key inside it — the model that suits supervising a dozen
 			// workspaces is not the one that suits editing a file in any of them.
+			//
+			// This survived the Concierge getting a section of its own, and the
+			// no-repeats rule at the top of this file is why: that section states
+			// what the Concierge *is* and never once names a settings key, so this
+			// is not a second telling. It is also the row a reader hunting for the
+			// pane would look under, which is this column and not a section three
+			// rules up.
 			'Concierge runtime, model and thinking level as their own setting, separate from workspace defaults',
 		],
 	},

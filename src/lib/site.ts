@@ -106,6 +106,12 @@ export const NAV_SECTIONS = [
 	{ id: 'workspaces', label: 'Workspaces' },
 	{ id: 'runtimes', label: 'Runtimes' },
 	{ id: 'review', label: 'Review' },
+	// A sixth label, and the bar still opens as a row at `lg`. The note in
+	// `chrome/nav-links.tsx` measures five at ~813px of min-content beside the
+	// wordmark, the repo link and the CTA; "Concierge" and its gap add ~90px, so
+	// the row lands near 900 and clears 1024 with room. A seventh would not be
+	// free — that is the label to weigh against the disclosure moving to `xl`.
+	{ id: 'concierge', label: 'Concierge' },
 	{ id: 'trust', label: 'Credentials' },
 ] as const;
 
