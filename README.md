@@ -128,8 +128,9 @@ icon changes rather than editing them here. `src/app/favicon.ico` cannot be a co
 constants. The `.ico` is generated but committed, and `generate-favicon.test.ts` fails if the two
 drift apart.
 
-**Nothing in `app-mock/` is a screenshot.** It is real DOM built from
-`docs/product/current-shell-inventory.md` in the app repo. All of its content lives in
+**Nothing in `app-mock/` is a screenshot.** It is real DOM built from the "Current Shell Contract"
+section of `docs/ux-conventions.md` in the app repo — the path this file used to name,
+`docs/product/current-shell-inventory.md`, now 404s there. All of its content lives in
 `src/components/app-mock/data.ts`. It draws its own glyphs in `app-mock/icons.tsx`; icons the *site*
 uses belong in `components/icons/site.tsx`, so a nav or footer never imports from the mock.
 
