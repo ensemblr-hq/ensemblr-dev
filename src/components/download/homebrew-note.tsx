@@ -44,7 +44,7 @@ export function HomebrewNote() {
 				>
 					The cask
 				</Link>{' '}
-				declares Apple silicon and macOS 12, so brew refuses on a machine that
+				declares Apple silicon and macOS 13, so brew refuses on a machine that
 				cannot open the app rather than installing it anyway. It is marked{' '}
 				{/* Short enough to hold a line at any width the card has, and both read
 				    as one token — `brew | upgrade` split across two lines is a command

@@ -152,11 +152,16 @@ export const DISTRIBUTION = {
  *
  * `ensemblr-hq/homebrew-tap` is a second, public repository holding one cask on
  * the stable channel. Every claim the page makes about it is a line in that
- * file: `depends_on arch: :arm64` and `depends_on macos: :monterey`, so brew
+ * file: `depends_on arch: :arm64` and `depends_on macos: :ventura`, so brew
  * refuses on a machine that cannot open the app instead of installing it
  * anyway, and `auto_updates true`, which is why a plain `brew upgrade` leaves
  * the bundle to Ensemblr's own updater — two updaters writing one bundle is how
  * an install gets corrupted.
+ *
+ * That floor was `:monterey` until 0.1.0-beta.20, which moved the shell to
+ * Electron 44 and lost macOS 12 with it. It is declared in the cask and nowhere
+ * in the app repo, so the tap is the only place to read it — and it is the one
+ * version number this page prints about the Homebrew path, in `HomebrewNote`.
  *
  * `install` carries no version, and nothing on the page may print one beside
  * it. The cask resolves its own version from the tap, and the app's release
