@@ -14,6 +14,28 @@ describes that repo and cannot be checked from inside this one.
 So: **never state a fact about the app from memory.** Read it from the app repo in the same session
 you write it down. Your training data is older than the product.
 
+## The site is macOS-only on purpose
+
+The app ships a Linux x86-64 `.AppImage` as of `v0.1.0-beta.19`, and its README leads with "A desktop
+orchestrator" and a two-row platform table. **This site does not mention that yet, by decision.** Every
+surface here describes the one download the page offers: the Apple silicon `.dmg`.
+
+That makes this the one place where "copy it from the app repo" is not the instruction. Reading the
+README and widening the copy to match is the mistake to avoid — `SITE.tagline`, `SITE.description`,
+`REQUIREMENTS`, the hero, the download section, `structured-data.ts`'s `operatingSystem` and the
+Homebrew note are all deliberately narrower than their source. Leave them narrow unless you were
+asked to announce the platform, and then change all of them in one pass.
+
+Two things enforce it rather than trusting the copy:
+
+- `appleSiliconAssets()` in `src/lib/release.ts` filters the live asset list on `arm64` before
+  `findAsset` runs. Until beta.19 the extension *was* the platform test; it is not one any more, and
+  a Linux artifact sharing an extension with a macOS one would otherwise be printed under a label
+  reading "Apple silicon" — beside a digest that matches it.
+- `public/schemas/config.schema.json` is exempt: it is the app's file, republished byte-for-byte, and
+  `appearance.titleBar` documents itself as Linux-only. Copy it verbatim anyway. `check:schemas`
+  compares bytes and a hand-edit to hide a word would fail it.
+
 ## Before you touch the download surface
 
 `FALLBACK_RELEASE` in `src/lib/release.ts` is not a developer convenience. It is what real visitors
