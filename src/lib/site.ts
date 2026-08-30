@@ -11,10 +11,18 @@
  * "Claude Code" is where the search volume is, "Pi" is where Ensemblr is the
  * only answer.
  *
- * The app's README leads the same way as of `4c17975`: "A macOS orchestrator
- * for multi-agent coding work, driving the Pi CLI or the Claude Code CLI —
+ * The app's README led the same way as of `4c17975`: "A macOS orchestrator for
+ * multi-agent coding work, driving the Pi CLI or the Claude Code CLI —
  * whichever you already run." This is that sentence cut to a length a `<title>`
- * survives. Google renders about sixty characters and `Ensemblr — ` spends
+ * survives.
+ *
+ * It now reads "A desktop orchestrator", and the word here stays "macOS"
+ * anyway. That is a decision, not drift: the second platform is not being
+ * advertised on this site yet, so every surface here describes the one download
+ * the page offers. Widening this line is what announcing Linux looks like —
+ * along with the platform table in the README, `REQUIREMENTS` below, the
+ * download section and `structured-data.ts`'s `operatingSystem`. Do not do it
+ * piecemeal because the README says something broader. Google renders about sixty characters and `Ensemblr — ` spends
  * eleven, so both runtimes are kept — "Ensemblr — A macOS orchestrator for Pi
  * and Claude Code." lands at 55 and neither name is truncated away — and
  * "multi-agent coding work" is carried by the descriptions and the keywords
@@ -208,7 +216,11 @@ export const REQUIREMENTS = [
 	{
 		name: 'macOS on Apple silicon',
 		short: 'Apple silicon only',
-		detail: 'Builds are arm64-only.',
+		// Scoped to macOS on purpose. "Builds are arm64-only" was a true sentence
+		// about the whole product for as long as macOS was the whole product; it
+		// stopped being one and this is the same constraint stated about the
+		// download this page actually offers, which is the .dmg above.
+		detail: 'macOS builds are arm64-only.',
 		required: true,
 	},
 	{

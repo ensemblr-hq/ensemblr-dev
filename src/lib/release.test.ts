@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 
 import {
+	appleSiliconAssets,
 	FALLBACK_NIGHTLY,
 	FALLBACK_RELEASE,
 	FOUNDED_YEAR,
@@ -85,6 +86,65 @@ describe('findAsset', () => {
 		const found = findAsset(assets, '.txt', 'Checksums');
 		expect(found?.url).toBe('https://example.test/checksums.txt');
 		expect(found?.sha256).toBeNull();
+	});
+});
+
+/*
+ * Extension stopped being a platform test the day a release carried an artifact
+ * for a second platform, and both labels on this page say "Apple silicon". The
+ * fixtures below are the shapes that would have been served under the old rule:
+ * an artifact with an extension the page does not look for, and — the one that
+ * would actually have reached a visitor — one that shares an extension with a
+ * macOS asset and sorts ahead of it.
+ */
+describe('appleSiliconAssets', () => {
+	function asset(name: string) {
+		return {
+			name,
+			browser_download_url: `https://example.test/${name}`,
+			size: 1,
+			digest: null,
+		};
+	}
+
+	test('keeps every macOS artifact the app publishes', () => {
+		const names = [
+			'Ensemblr-0.1.0-beta.19-arm64.dmg',
+			'Ensemblr-darwin-arm64-0.1.0-beta.19.zip',
+			'Ensemblr-Canary-arm64.dmg',
+		];
+		expect(appleSiliconAssets(names.map(asset)).map((a) => a.name)).toEqual(
+			names,
+		);
+	});
+
+	test.each([
+		'Ensemblr-0.1.0-beta.19-x64.AppImage',
+		'Ensemblr-Canary-x86_64.AppImage',
+		'Ensemblr-linux-x64-0.1.0-beta.19.zip',
+	])('drops %s', (name) => {
+		expect(appleSiliconAssets([asset(name)])).toEqual([]);
+	});
+
+	test('a non-arm64 artifact never becomes a download, whatever its position', () => {
+		const assets = [
+			asset('Ensemblr-linux-x64-0.1.0-beta.19.zip'),
+			asset('Ensemblr-0.1.0-beta.19-arm64.dmg'),
+			asset('Ensemblr-darwin-arm64-0.1.0-beta.19.zip'),
+		];
+		const release = toRelease({
+			tag_name: 'v0.1.0-beta.19',
+			name: null,
+			draft: false,
+			prerelease: true,
+			published_at: '2026-08-30T17:06:49Z',
+			html_url: 'https://example.test/releases/tag/v0.1.0-beta.19',
+			assets,
+		});
+		expect(release.zip?.url).toEndWith(
+			'Ensemblr-darwin-arm64-0.1.0-beta.19.zip',
+		);
+		expect(release.dmg?.url).toEndWith('Ensemblr-0.1.0-beta.19-arm64.dmg');
 	});
 });
 

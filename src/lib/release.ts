@@ -100,22 +100,22 @@ export const NIGHTLY_TAG = 'nightly';
  * checkable. Nothing updates this automatically — see `docs/re-pinning.md`.
  */
 export const FALLBACK_RELEASE: Release = {
-	tag: 'v0.1.0-beta.18',
-	version: '0.1.0-beta.18',
+	tag: 'v0.1.0-beta.19',
+	version: '0.1.0-beta.19',
 	isPrerelease: true,
-	publishedAt: '2026-08-30T07:03:24Z',
-	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.18`,
+	publishedAt: '2026-08-30T17:06:49Z',
+	notesUrl: `${REPO.releasesUrl}/tag/v0.1.0-beta.19`,
 	dmg: {
 		label: 'Apple silicon .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.18/Ensemblr-0.1.0-beta.18-arm64.dmg`,
-		sizeBytes: 149_517_578,
-		sha256: '2f838dfa99ab724c09837384ad42d69096e9c3aca47d57b4aef3345b15e4d711',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.19/Ensemblr-0.1.0-beta.19-arm64.dmg`,
+		sizeBytes: 149_682_739,
+		sha256: 'f31ec2f79e19b177d6ea19291ed0708c005df679af487edeff085ce12711c8ee',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.0-beta.18/Ensemblr-darwin-arm64-0.1.0-beta.18.zip`,
-		sizeBytes: 150_833_463,
-		sha256: '60a5821e795e9b53040df7f930d4b58f9718a95a152398ef53722207fa71f15c',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.19/Ensemblr-darwin-arm64-0.1.0-beta.19.zip`,
+		sizeBytes: 150_950_801,
+		sha256: '1de56f86005b7d8e136401fac401c67312151994f1cbbd7d256c539546c2d63b',
 	},
 };
 
@@ -151,6 +151,30 @@ export function toSha256(digest: string | null | undefined): string | null {
 	return /^[0-9a-f]{64}$/.test(hex) ? hex : null;
 }
 
+/**
+ * The assets this page is allowed to answer with.
+ *
+ * `findAsset` matches on extension, and for every release up to 0.1.0-beta.18
+ * that *was* a platform test: a release held macOS artifacts and nothing else,
+ * so `.dmg` and `.zip` could only be the Apple silicon build. That stopped being
+ * true the day a release carried an artifact for a second platform. Extension
+ * alone would then hand `findAsset` whichever one it happened to reach first,
+ * and the page would print `Apple silicon .zip` over a file that is nothing of
+ * the kind — beside a digest that matches it, which is the worse version of the
+ * failure: checkable, and still a lie.
+ *
+ * So the platform question is answered here, once, by name. `arm64` is in every
+ * macOS artifact the app publishes — `Ensemblr-<version>-arm64.dmg`,
+ * `Ensemblr-darwin-arm64-<version>.zip`, and the canary's
+ * `Ensemblr-Canary-arm64.dmg` — and in nothing else. An asset without it is not
+ * this page's to offer, whatever it is named after.
+ */
+export function appleSiliconAssets(
+	assets: readonly z.infer<typeof assetSchema>[],
+): readonly z.infer<typeof assetSchema>[] {
+	return assets.filter((asset) => /arm64/i.test(asset.name));
+}
+
 export function findAsset(
 	assets: readonly z.infer<typeof assetSchema>[],
 	extension: string,
@@ -171,21 +195,26 @@ export function findAsset(
 }
 
 export function toRelease(release: z.infer<typeof releaseSchema>): Release {
+	const assets = appleSiliconAssets(release.assets);
 	return {
-		dmg: findAsset(release.assets, '.dmg', 'Apple silicon .dmg'),
+		dmg: findAsset(assets, '.dmg', 'Apple silicon .dmg'),
 		isPrerelease: release.prerelease,
 		notesUrl: release.html_url,
 		publishedAt: release.published_at,
 		tag: release.tag_name,
 		version: release.tag_name.replace(/^v/, ''),
-		zip: findAsset(release.assets, '.zip', 'Apple silicon .zip'),
+		zip: findAsset(assets, '.zip', 'Apple silicon .zip'),
 	};
 }
 
 export function toNightly(
 	release: z.infer<typeof releaseSchema>,
 ): Nightly | null {
-	const dmg = findAsset(release.assets, '.dmg', 'Apple silicon .dmg');
+	const dmg = findAsset(
+		appleSiliconAssets(release.assets),
+		'.dmg',
+		'Apple silicon .dmg',
+	);
 	if (!dmg) {
 		return null;
 	}
