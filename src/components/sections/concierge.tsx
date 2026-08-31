@@ -157,8 +157,17 @@ function ConciergePanel() {
 			<div className='flex items-center justify-between gap-3'>
 				<span className='eyebrow'>Concierge</span>
 				{/* `kbd`, not a span: it is a key to press, and the element is what
-				    says so to anything not looking at the page. */}
-				<kbd className='rounded-md border border-line px-1.5 py-0.5 font-mono text-[10px] text-muted/80'>
+				    says so to anything not looking at the page.
+
+				    `font-key`, not `font-mono`: neither webfont draws ⌘ or ⇧ at the
+				    latin subset they are loaded with, so the mono set this string in
+				    two typefaces at once — Menlo modifiers beside a JetBrains Mono C.
+				    A keycap is not a code token anyway; it is a picture of a key, and
+				    the system font is where those three glyphs are drawn as a set.
+				    The extra pixel and the tracking are what that swap costs: SF Pro's
+				    modifiers are proportional and smaller on the body than a mono
+				    cell's, so at 10px flush they read as specks. */}
+				<kbd className='rounded-md border border-line px-1.5 py-0.5 font-key text-[11px] leading-none tracking-[0.08em] text-muted/80'>
 					⌘⇧C
 				</kbd>
 			</div>

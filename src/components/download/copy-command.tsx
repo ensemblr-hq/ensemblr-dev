@@ -158,7 +158,21 @@ export function CopyCommand({
 					) : (
 						<CopyIcon className={markSize} />
 					)}
-					{variant === 'block' ? <span>{LABEL[state]}</span> : null}
+					{/*
+					 * The failed label is the one that carries a ⌘, and JetBrains Mono
+					 * is loaded at a latin subset that has no U+2318 — so in the mono
+					 * the glyph dropped through to Menlo and sat beside a JetBrains
+					 * Mono C in a different weight. `font-key` sets the whole phrase in
+					 * the font that draws all of it, which is the right voice for it
+					 * anyway: this state is an instruction, not a code token like the
+					 * command it sits beside. The reserved `9ch` stays on the parent so
+					 * the swap cannot move the command's wrap point.
+					 */}
+					{variant === 'block' ? (
+						<span className={cn(state === 'failed' && 'font-key')}>
+							{LABEL[state]}
+						</span>
+					) : null}
 				</span>
 			</button>
 

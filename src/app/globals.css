@@ -143,6 +143,24 @@
 	--font-mono:
 		var(--font-jetbrains-mono), ui-monospace, "SF Mono", Menlo, Consolas,
 		monospace;
+	/*
+	 * Keycaps — and *only* keycaps. Both webfonts are loaded with `subsets:
+	 * ['latin']`, and the Google latin subset stops at U+2215: it carries ↑ and
+	 * ↓ and nothing else from the arrows, so ⌘ U+2318 and ⇧ U+21E7 are covered
+	 * by neither Geist nor JetBrains Mono. Font fallback is per glyph, not per
+	 * run, so `font-mono` on a `⌘⇧C` set three characters in two typefaces: the
+	 * modifiers dropped through to Menlo or SF Mono while the C stayed in
+	 * JetBrains Mono, a weight and a width apart from each other.
+	 *
+	 * The system UI font is the fix rather than a heavier webfont, because it is
+	 * the one family that draws ⌘, ⇧ and C as a set — and on the only platform
+	 * this page offers a download for, it is the exact rendering the reader has
+	 * in their own menu bar. The Windows and Linux names are there for the
+	 * reader who is deciding whether to buy the Mac; both carry U+2318.
+	 */
+	--font-key:
+		ui-sans-serif, system-ui, -apple-system, "Segoe UI Symbol", "Segoe UI",
+		"DejaVu Sans", sans-serif;
 
 	/*
 	 * The display scale. The page uses exactly these — no arbitrary
