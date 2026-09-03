@@ -1,20 +1,24 @@
 /**
- * Long-tail capability copy for the closing feature grid. Sourced from the
- * app's own README and the "Current Shell Contract" section of
- * `docs/ux-conventions.md`, kept out of the section components so the prose can
- * be corrected in one place. That section is where `docs/product/current-shell-
- * inventory.md` went — the path this file and `AGENTS.md` both used to name now
- * 404s in the app repo, which is worth knowing before the next re-pin cites it.
+ * Long-tail capability copy. Sourced from the app's own README and the "Current
+ * Shell Contract" section of `docs/ux-conventions.md`, kept in one place so the
+ * prose can be corrected in one place. That section is where
+ * `docs/product/current-shell-inventory.md` went — the path this file and
+ * `AGENTS.md` both used to name now 404s in the app repo, which is worth
+ * knowing before the next re-pin cites it.
  *
- * Strictly the *rest* of it. Every claim the showcase already makes in
- * `sections/showcase.tsx` is deliberately absent here — an earlier cut of this
- * file repeated most of those bullets almost verbatim a screen and a half
- * later, which is what made the page read as padded however well each section
- * was set. A reader who has scrolled the four steps should meet nothing twice.
+ * **Nothing renders this any more, and it is not dead.** The seventeen-item
+ * grid that closed the page was deleted in the cut that took the page from
+ * ~2,200 rendered words to ~1,000: it was the longest thing on it and the least
+ * read, three columns of capability rows a visitor scrolled past on the way to
+ * the download. `featureList()` in `structured-data.ts` still flattens this into
+ * the `SoftwareApplication` node's `featureList`, so the long tail keeps its
+ * machine-readable home while the page loses the scroll. Keep it current; just
+ * do not put it back on the page without deciding to.
  *
- * Three groups, not six: `lg:grid-cols-3` then lands them in a single row
- * instead of two ragged ones, and each column carries enough weight to justify
- * its rule.
+ * Strictly the *rest* of it. Every claim the showcase makes in
+ * `sections/showcase.tsx` is deliberately absent here — an earlier cut repeated
+ * most of those bullets almost verbatim a screen and a half later, which is
+ * what made the page read as padded however well each section was set.
  */
 
 export interface FeatureGroup {
@@ -117,18 +121,24 @@ export interface TrustItem {
 export const TRUST_ITEMS: readonly TrustItem[] = [
 	{
 		title: 'GitHub tokens stay with gh',
-		body: 'Ensemblr stores none. No token field in settings, no OAuth screen, no second place one can leak from — it shells out to the CLI you already authenticated.',
+		body: 'Ensemblr stores none. No token field in settings, no OAuth screen, no second place one can leak from.',
 	},
 	{
-		title: 'Secrets live in the Keychain',
-		body: 'Linear’s OAuth tokens go straight to the macOS Keychain, keyed per account — never a file, never an environment variable. Infisical secrets are not stored at all: they resolve live at every launch.',
+		// "The OS keyring", not "the Keychain", since the page offers a Linux
+		// download. ADR 0056 is the source: Linux has no Keychain to shell out to,
+		// so the app wraps Electron's `safeStorage` — gnome-keyring under GNOME,
+		// KWallet under KDE — and the ciphertext lands in `ensemblr.db`. Naming
+		// the macOS mechanism for both platforms would be the one kind of claim
+		// this section cannot afford: a specific, checkable, wrong one.
+		title: 'Secrets live in the OS keyring',
+		body: 'Linear’s OAuth tokens go to the macOS Keychain, or gnome-keyring or KWallet on Linux — never a file, never an environment variable. Infisical secrets are not stored at all: they resolve live at launch.',
 	},
 	{
 		title: 'No agent binary ships',
-		body: 'Your pi and claude installs, your credentials, your models, your config. The ~260 MB the Claude Agent SDK would bundle is deliberately left out.',
+		body: 'Your pi and claude installs, your credentials, your models. The ~260 MB the Claude Agent SDK would bundle is left out.',
 	},
 	{
 		title: 'No account, no server',
-		body: 'Ensemblr talks to GitHub, Linear, Infisical and your agent CLIs directly — no backend in the path, no telemetry. State is a local SQLite database beside your worktrees.',
+		body: 'Ensemblr talks to GitHub, Linear, Infisical and your CLIs directly — no backend in the path, no telemetry. State is a local SQLite database.',
 	},
 ];

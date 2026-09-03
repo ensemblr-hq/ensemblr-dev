@@ -1,3 +1,5 @@
+import { ConciergeOverlay } from '@/components/app-mock/concierge-overlay';
+import { ConciergePanel } from '@/components/app-mock/concierge-panel';
 import { FocusStep, MockFocusProvider } from '@/components/app-mock/focus';
 import type { MockRegion } from '@/components/app-mock/regions';
 import { isRightEdgeRegion } from '@/components/app-mock/regions';
@@ -25,111 +27,109 @@ interface Step {
  * "this is a heading". It is spent twice on the page now: the h1, and the trust
  * heading beside the button.
  */
+/*
+ * Five bullets a step, not seven, and none over twelve words.
+ *
+ * Three rows went in the cut that took the page to a readable length, and each
+ * was dropped for a reason rather than for size. The base branch being fetched
+ * and fast-forwarded is implementation the reader never has to think about;
+ * "sessions persist to SQLite" is the Credentials section's sentence one screen
+ * down, and this page says a fact once; the review panel's three tabs are drawn
+ * in the replica beside the step that names them.
+ */
 const STEPS: readonly Step[] = [
 	{
-		body: 'The worktree manager underneath Control. A workspace is a real git worktree, not a branch you keep switching between, so a fan-out of agents cannot collide — two of them rewrite the same file at the same time and never see each other.',
+		body: 'A workspace is a real git worktree, not a branch you keep switching between. Two agents can rewrite the same file at once and never see each other.',
 		eyebrow: 'Workspaces',
 		id: 'workspaces',
 		points: [
 			'Start from a branch, a GitHub PR, or a Linear issue',
-			'Adopt an existing branch, or cut a fresh one from the base ref',
-			'Base branch fetched and fast-forwarded before the copy is made',
+			'Adopt an existing branch, or cut one from the base ref',
 			'Branch names derived from your first sentence to the agent',
-			// The board claim, restated for 0.1.0-beta.5. It used to describe a
-			// board that only held workspaces, so its first column was empty until
-			// you had already started the work — which is the half of the story a
-			// reader deciding where their backlog lives most needs. Backlog now
-			// carries unstarted Linear issues and unassigned open GitHub issues,
-			// and the drag is what creates the workspace. The second bullet is not
-			// a caveat: nothing is written back to either tracker, and a reader
-			// handing an app their issue tracker buys exactly that.
-			'A board whose Backlog holds Linear and GitHub issues no workspace exists for yet',
-			'Drag one rightward to cut its workspace — nothing is written back to the tracker',
+			// The board's first column holds work that has no workspace yet —
+			// unstarted Linear issues and unassigned open GitHub issues — which is
+			// the half a reader deciding where their backlog lives most needs. The
+			// second bullet is not a caveat: nothing is written back to either
+			// tracker, and a reader handing an app their issue tracker buys that.
+			'A Backlog holding Linear and GitHub issues no workspace exists for',
+			'Drag one rightward to cut its workspace; nothing is written back',
 		],
 		region: 'sidebar',
 		title: 'One repo. As many streams as you have ideas.',
 	},
 	{
-		body: 'Pi runs as a CLI over RPC; Claude Code runs in-process through the Agent SDK against the binary you already have on PATH. The wiring differs, the surface does not — both land on the same timeline with the same tools, approvals and checkpoints, and a chat tab keeps the runtime it was opened with.',
+		body: 'Pi runs as a CLI over RPC; Claude Code runs through the Agent SDK against the binary you already have. The wiring differs, the surface does not.',
 		eyebrow: 'Runtimes',
 		id: 'runtimes',
 		points: [
-			'One timeline, tool cards, approval prompts and context gauge for both',
-			'Plan mode holds an agent — and every sub-agent it spawns — to read-only tools',
+			'One timeline, tool cards, approvals and context gauge for both',
+			'Plan mode holds an agent and every sub-agent to read-only tools',
 			'Git-backed checkpoints restore the tree to an earlier turn',
-			'Sessions persist to SQLite, with tree-structured branching',
-			// 0.1.0-beta.9, from `docs/guide/06-agents.md`'s own "When a turn fails".
-			// It belongs to this step because the step's claim is the surface, and a
-			// turn that dies is part of the surface — it used to be the one place the
-			// two runtimes stopped agreeing, each leaking its provider's English under
-			// the last tool card. What makes it a bullet rather than a changelog line
-			// is the second clause: the row offers only the recoveries its failure
-			// class earns, so the app is deciding what you can do next rather than
-			// offering a retry that would earn the same refusal twice.
-			'A failed turn is a designed row offering only the recoveries it earns — a refusal hands your prompt back to edit, a blocked tool call routes at the repository’s Security settings',
-			'Codex, Vibe and the claude TUI also run as terminal harnesses',
+			// `docs/guide/06-agents.md`'s "When a turn fails". It belongs to this
+			// step because the step's claim is the surface, and a turn that dies is
+			// part of it — the one place the two runtimes used to stop agreeing,
+			// each leaking its provider's English under the last tool card. The
+			// clause that matters is the second: the row offers only what its
+			// failure class earns, rather than a retry that would be refused again.
+			'A failed turn offers only the recoveries its failure class earns',
+			'Codex, Vibe and the claude TUI run as terminal harnesses',
 		],
 		region: 'conversation',
 		title: 'Two runtimes. One surface.',
 	},
 	{
-		body: 'The review panel sits beside the conversation that produced the change, so reading the diff never means leaving the agent that wrote it.',
+		body: 'The review panel sits beside the conversation that produced the change. Reading the diff never means leaving the agent that wrote it.',
 		eyebrow: 'Review',
 		id: 'review',
 		points: [
-			'Files, Changes and Checks, remembered per workspace',
 			'Diffs scoped to uncommitted work, a commit, or a whole branch',
-			// 0.1.0-beta.6, from `docs/guide/08-reviewing-changes.md`. It belongs to
-			// this step rather than the feature grid because it is the step's own
-			// argument made mechanical: the panel sits beside the conversation, and
-			// this is the two-click path between them. A file or folder goes across
-			// by reference; a diff has no file of its own, so its patch is written
-			// out as a document and the chip points at that — which is why the line
-			// says "attach a diff" and not "paste a diff".
-			'Attach a file, a folder or a diff to the chat beside it, from the panel’s own right-click menu',
-			'Inline comments anchored to lines, with resolved ones struck through',
-			// 0.1.0-beta.9, from `docs/guide/08-reviewing-changes.md`. The bullet
-			// above says an agent's findings land on the line; this one says you are
-			// taken to them, which is the half a reader who has just delegated a
-			// review actually asks about. Checks is the roll-up — "what did it leave
-			// me, and what is still open" — rather than six files to scroll. The
-			// coalescing clause is why it is not an annoyance: the pull is per
-			// workspace on a rolling window, so a pass that files ten comments takes
-			// focus once, and a resolve batch that closed nothing takes it never.
-			'An agent’s comment pass pulls the Checks roll-up forward — once per pass, however many it files',
-			'PR title and description, live check status, merge — all through gh',
-			'Per-file discard, behind a confirmation',
+			// `docs/guide/08-reviewing-changes.md`. It belongs to this step rather
+			// than the long tail because it is the step's own argument made
+			// mechanical: the panel sits beside the conversation, and this is the
+			// two-click path between them. A diff has no file of its own, so its
+			// patch is written out as a document and the chip points at that —
+			// which is why it says "attach a diff" and not "paste a diff".
+			'Attach a file, a folder or a diff to the chat beside it',
+			'Inline comments anchored to lines, resolved ones struck through',
+			// The coalescing clause is what keeps this from being an annoyance: the
+			// pull is per workspace on a rolling window, so a pass that files ten
+			// comments takes focus once and a resolve batch that closed nothing
+			// takes it never.
+			'An agent’s comment pass pulls Checks forward once, however many it files',
+			'PR title, description, live check status and merge, all through gh',
 		],
 		region: 'review',
 		title: 'Review the change where you made it.',
 	},
+	/*
+	 * The Concierge, which used to be a section of its own two rules further
+	 * down and had no picture at all — the newest thing in the app, and the only
+	 * claim on the page the reader had to take on trust.
+	 *
+	 * It replaces the "Scripts & terminals" step rather than joining it. That
+	 * step described a pane the replica draws, which is the best kind of step
+	 * this section has; it also described the least surprising thing in the
+	 * product, and every neighbouring tool runs scripts in a terminal. Its rows
+	 * live on in `FEATURE_GROUPS`, which still reaches JSON-LD.
+	 *
+	 * The `points` are what survived the section: the three "Cannot" claims,
+	 * which are the most distinctive thing it said, plus the one that explains
+	 * how something that writes nothing gets anything done.
+	 */
 	{
-		body: 'A repository declares its scripts once in .ensemblr/settings.toml and every workspace gets them, pointed at its own copy of the tree.',
-		eyebrow: 'Scripts & terminals',
-		id: 'run',
+		body: 'A panel that belongs to the app rather than to a workspace. It reads everywhere and changes nothing by hand: real work goes to an orchestrator it spawns.',
+		eyebrow: 'The Concierge',
+		id: 'concierge',
 		points: [
-			'Any number of named run scripts, each with its own command and icon',
-			'A fingerprinted setup script that skips an unchanged workspace',
-			'Real PTY terminals that survive an app restart with clean scrollback',
-			'Detected dev-server ports surface as an Open :PORT action',
-			// 0.1.0-beta.11, from `docs/guide/07-terminals-and-run-scripts.md`. It
-			// belongs to this step rather than the feature grid for the same reason
-			// the Review step keeps its own attach bullet: the step's argument is
-			// that the terminal sits inside the workspace, and this is the two-click
-			// path from a failing run back to the agent that caused it. The second
-			// clause is what makes it a capability rather than a shortcut for ⌘C —
-			// an attachment has a path the agent can re-read, and the filename says
-			// which pane produced the output, so two panes printing the same bytes
-			// stay two chips.
-			'Attach a terminal’s selection to the chat as a file the agent can re-read, named for the pane it came off',
-			// "the app", not "the workbench". The rest of the page dropped Ensemblr's
-			// own word for itself when the copy moved to "orchestrator"; this was the
-			// one line of visible text still carrying it, so the page named itself
-			// two different things depending on how far you had scrolled.
-			'⌘R toggles the default run script from anywhere in the app',
+			'Reads every workspace’s files, diff, review comments and terminals',
+			'Replays any conversation, tool calls included',
+			'Spawns a root orchestrator into a workspace, and briefs it',
+			'Cannot write a file in any workspace; its bash is read-only',
+			'Cannot open a terminal or launch a harness',
+			'Cannot act on a workspace without naming one',
 		],
-		region: 'dock',
-		title: 'Run it without leaving the workspace.',
+		region: 'concierge',
+		title: 'Every workspace at once. Write access to none.',
 	},
 ];
 
@@ -139,6 +139,20 @@ function StepBody({ step }: { step: Step }) {
 		// reads to size itself, so it is one token rather than a number in each
 		// file — see the note beside it in `globals.css` for why it is 26rem.
 		<div className='flex flex-col gap-5 xl:w-[var(--showcase-copy)]'>
+			{/*
+			 * Below `xl` the sticky replica is dropped, so the panel drawn over it
+			 * would be invisible on a phone — the newest feature in the app, on the
+			 * device most visitors arrive with. The same component renders here
+			 * instead, at the column's own width, which is what the standalone card
+			 * this step replaced already was.
+			 *
+			 * First in the column rather than after the bullets: it is the picture
+			 * the copy is about, and the three "Cannot" rows read differently once
+			 * you have seen the thing they are about.
+			 */}
+			{step.id === 'concierge' ? (
+				<ConciergePanel className='h-[22rem] w-full xl:hidden' />
+			) : null}
 			{/* `step`, not `title`. These four beats are subordinate to the section
 			    they sit in, so the heading and the body drop together — one size
 			    knob rather than a heading scale a caller could mismatch its lede to. */}
@@ -166,10 +180,15 @@ function StepBody({ step }: { step: Step }) {
 }
 
 /**
- * The four core stories, told against a single replica of the workbench. Each
- * step claims the window's highlight as it reaches the middle of the viewport,
- * and the window slides to the half of the section the copy is not using; below
+ * The four core stories, told against a single replica of the app. Each step
+ * claims the window's highlight as it reaches the middle of the viewport, and
+ * the window slides to the half of the section the copy is not using; below
  * `xl` the sticky layer is dropped and the hero's window stands in.
+ *
+ * The last step is the Concierge, and it is the one that is not a pane. Its
+ * region is claimed by no pane at all, so `Region` dims the whole shell and the
+ * panel drawn over it is what stays lit — the panel arriving and the app
+ * receding, out of the rule that was already there.
  */
 export function Showcase() {
 	return (
@@ -198,7 +217,33 @@ export function Showcase() {
 				 */}
 				<div className='xl:grid'>
 					<ShowcaseReplica>
-						<AppWindow />
+						{/*
+						 * The panel is in the markup at every scroll position and only
+						 * *shown* at its own step — see `ConciergeOverlay`. It is a card
+						 * the reader opens from a launcher, so drawing it open through
+						 * three steps that are not about it would be the wrong picture of
+						 * the app, and over panes those steps are pointing at.
+						 *
+						 * `Region` does the other half: no pane claims `'concierge'`, so
+						 * focusing it dims all four at once — the app receding as the
+						 * panel arrives, out of a rule that was already there.
+						 *
+						 * Proportions are the app's. The real panel docks at 416×512 CSS
+						 * pixels, 16px in from the right edge and 96 up from the bottom;
+						 * against this 832×520 shell, drawn at the scale a desktop window
+						 * would be, that is a card a little over half the shell's height
+						 * inset from the bottom-right corner.
+						 */}
+						<AppWindow
+							overlay={
+								<ConciergeOverlay>
+									<ConciergePanel
+										className='absolute right-3 bottom-14 h-[19.5rem] w-64'
+										lit
+									/>
+								</ConciergeOverlay>
+							}
+						/>
 					</ShowcaseReplica>
 
 					{/*

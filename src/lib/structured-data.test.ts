@@ -16,6 +16,7 @@ import {
 
 /** A release with nothing GitHub is allowed to omit, to prove the nulls drop. */
 const BARE_RELEASE: Release = {
+	appImage: null,
 	dmg: null,
 	isPrerelease: true,
 	notesUrl: FALLBACK_RELEASE.notesUrl,
@@ -100,11 +101,18 @@ describe('buildSoftwareApplication', () => {
 		expect(offers.availability).toBe('https://schema.org/InStock');
 	});
 
-	test('states the platform the builds actually run on', () => {
+	/*
+	 * Two platforms since Linux was announced, and both have to appear. A node
+	 * that named one of them would be structured data narrower than the page —
+	 * the mirror of the mistake this file's header warns about, and the one that
+	 * costs a Linux reader the result rather than costing us a penalty.
+	 */
+	test('states both platforms the builds actually run on', () => {
 		const node = buildSoftwareApplication(FALLBACK_RELEASE);
 
-		expect(node.operatingSystem).toBe('macOS');
+		expect(node.operatingSystem).toBe('macOS, Linux');
 		expect(node.processorRequirements).toContain('arm64');
+		expect(node.processorRequirements).toContain('x86-64');
 		expect(node.softwareRequirements).toContain('git');
 	});
 

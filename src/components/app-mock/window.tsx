@@ -65,6 +65,15 @@ const SHELL = {
 interface AppWindowProps {
 	className?: string;
 	/**
+	 * Drawn over the shell rather than beside it: the Concierge panel, which
+	 * floats above whatever workspace is open instead of taking a column.
+	 *
+	 * Absolutely positioned by the caller, so the shell's own layout is
+	 * untouched when nothing is passed — the hero renders no overlay at all and
+	 * gets the same three-pane box it always did.
+	 */
+	overlay?: React.ReactNode;
+	/**
 	 * `full` is the desktop shell, drawn at the width the showcase column
 	 * reaches on a large screen so it lands there at 1:1.
 	 *
@@ -75,7 +84,11 @@ interface AppWindowProps {
 	variant?: 'full' | 'compact';
 }
 
-export function AppWindow({ className, variant = 'full' }: AppWindowProps) {
+export function AppWindow({
+	className,
+	overlay,
+	variant = 'full',
+}: AppWindowProps) {
 	const shell = SHELL[variant];
 
 	return (
@@ -94,13 +107,22 @@ export function AppWindow({ className, variant = 'full' }: AppWindowProps) {
 			width={shell.width}
 		>
 			<div
-				// "app", not "workbench" — the same word the visible copy settled on.
-				// This label is the entire description of the replica for a reader who
-				// is not looking at it, so it is user-facing text and was the last
-				// unmigrated instance of the product's old name for itself.
-				aria-label='The Ensemblr app: project sidebar, agent conversation, review panel, and script dock.'
+				// The entire description of the replica for a reader who is not looking
+				// at it, so it names what is actually drawn — including the panel,
+				// when there is one. "app", not "workbench": the same word the visible
+				// copy settled on.
+				aria-label={
+					overlay
+						? 'The Ensemblr app with the Concierge panel open over it: project sidebar, agent conversation, review panel, and script dock.'
+						: 'The Ensemblr app: project sidebar, agent conversation, review panel, and script dock.'
+				}
 				className={cn(
-					'app-chrome flex h-full w-full overflow-hidden rounded-xl bg-canvas',
+					// `relative` for the overlay alone: it is the box the Concierge
+					// panel hangs its corner off, and the `overflow-hidden` beside it
+					// clips the panel to the window frame — which is correct, because a
+					// panel spilling past the window's rounded corner would be a picture
+					// of something the app cannot do.
+					'app-chrome relative flex h-full w-full overflow-hidden rounded-xl bg-canvas',
 					// The frame's own marks — an edge and a hairline of light along the
 					// top — stay inside the scale, because they are part of the window
 					// being drawn rather than of the light it sits in.
@@ -133,6 +155,16 @@ export function AppWindow({ className, variant = 'full' }: AppWindowProps) {
 						<MockDock className={shell.dock} />
 					</Region>
 				</div>
+
+				{/* Last in the tree and above `Region`'s `z-10` lit edge, so the panel
+				    sits over a dimmed pane rather than under its highlight. Positioning
+				    only — whether the overlay is visible at a given scroll position is
+				    the overlay's own business. */}
+				{overlay ? (
+					<div className='pointer-events-none absolute inset-0 z-20'>
+						{overlay}
+					</div>
+				) : null}
 			</div>
 		</ScaledShell>
 	);

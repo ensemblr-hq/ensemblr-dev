@@ -1,6 +1,18 @@
 import Link from 'next/link';
+import type { Platform } from '@/lib/platform';
 import { formatReleaseDate, type Release } from '@/lib/release';
 import { cn } from '@/lib/utils';
+
+/**
+ * The architecture, per platform, in the words the app's own README uses. It is
+ * the one field on this line that is not read off the release object — the
+ * release does not carry an architecture, the asset name does, and this line
+ * sits under a button that already knows which asset it points at.
+ */
+const ARCHITECTURE: Record<Platform, string> = {
+	linux: 'x86-64',
+	macos: 'Apple silicon',
+};
 
 /**
  * Version, channel and date, stated plainly under the download button.
@@ -14,7 +26,9 @@ import { cn } from '@/lib/utils';
  *
  * The parts are separated for a screen reader too. Read as one undifferentiated
  * run it announces "v0.1.0-beta.4 beta Apple silicon 14 Aug 2026", which is four
- * facts and no labels; the visually-hidden prefixes name each one.
+ * facts and no labels; the visually-hidden prefixes name each one. The
+ * architecture is one of them, and it is the field that differs between the two
+ * copies of this line the download section renders.
  *
  * `ink` at 12px, not `faint` at 11px, and the same on the hero's gate list, the
  * trust echo, the zip line and the digest — the runs of metadata that sit under
@@ -31,9 +45,12 @@ import { cn } from '@/lib/utils';
  */
 export function ReleaseLine({
 	className,
+	platform,
 	release,
 }: {
 	className?: string;
+	/** Same build the button beside this one links to. */
+	platform: Platform;
 	/** Same object the button beside this one links to. */
 	release: Release;
 }) {
@@ -66,7 +83,8 @@ export function ReleaseLine({
 			) : null}
 			<span aria-hidden='true'>·</span>
 			<span>
-				<span className='sr-only'>Architecture: </span>Apple silicon
+				<span className='sr-only'>Architecture: </span>
+				{ARCHITECTURE[platform]}
 			</span>
 			{published ? (
 				<>

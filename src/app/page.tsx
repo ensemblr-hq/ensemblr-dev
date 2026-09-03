@@ -2,9 +2,7 @@ import Link from 'next/link';
 import { SectionRule } from '@/components/brand/section-rule';
 import { SiteFooter } from '@/components/chrome/site-footer';
 import { SiteNav } from '@/components/chrome/site-nav';
-import { Concierge } from '@/components/sections/concierge';
 import { Download } from '@/components/sections/download';
-import { FeatureGrid } from '@/components/sections/feature-grid';
 import { Hero } from '@/components/sections/hero';
 import { Orchestration } from '@/components/sections/orchestration';
 import { Showcase } from '@/components/sections/showcase';
@@ -46,31 +44,27 @@ export default async function Home() {
 			 * *supports* that claim rather than competing with it: this is the
 			 * surface those sub-agents are driving.
 			 *
-			 * Trust still sits immediately before Download, not two sections up. It
-			 * answers the visitor's second question — can I trust this with my
-			 * credentials and my machine — and it used to be separated from the
-			 * button by the entire seventeen-item feature grid, so the argument was
-			 * made and then left to cool for a couple of thousand pixels. The long
-			 * tail is the right thing to defer; the reason to click is not.
+			 * Trust sits immediately before Download and now follows the showcase
+			 * directly. The seventeen-item feature grid that used to sit between
+			 * them is gone: the argument was made and then left to cool for a couple
+			 * of thousand pixels, and nobody scrolled the long tail. `FEATURE_GROUPS`
+			 * stays in `features.ts` and still reaches `featureList()`, so the
+			 * machine-readable long tail survives while the page loses the scroll.
 			 *
-			 * The Concierge follows the showcase rather than Control, though it is
-			 * the same argument one storey up. Its pitch — the only agent that can
-			 * see all your work at once — answers a question the showcase creates
-			 * and nothing before it does: a reader who has just been walked through
-			 * one workspace in four screens is exactly the reader wondering how you
-			 * keep track of eight. Placed above the showcase it would be answering
-			 * that before it had been asked, and it would put two abstract sections
-			 * back to back ahead of the first sight of the app.
+			 * The Concierge is no longer a section. It is the showcase's last step,
+			 * which is where its argument was always heading: a reader who has just
+			 * been walked through one workspace in three screens is exactly the
+			 * reader wondering how you keep track of eight. As a section of its own
+			 * it made that case in prose beside a bespoke card; as a step it makes it
+			 * over the replica the reader has been watching, with the panel drawn on
+			 * top and the app dimmed behind it. The `#concierge` anchor moved with
+			 * it, so `NAV_SECTIONS` is unchanged.
 			 */}
 			<main id='main'>
 				<Hero />
 				<Orchestration />
 				<SectionRule />
 				<Showcase />
-				<SectionRule />
-				<Concierge />
-				<SectionRule />
-				<FeatureGrid />
 				<SectionRule />
 				<Trust />
 				<Download />

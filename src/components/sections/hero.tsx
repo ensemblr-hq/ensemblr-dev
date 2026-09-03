@@ -4,10 +4,12 @@ import { PixelField } from '@/components/brand/pixel-field';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { CopyCommand } from '@/components/download/copy-command';
 import { DownloadButton } from '@/components/download/download-button';
+import { PlatformChoice } from '@/components/download/platform-choice';
 import { ReleaseLine } from '@/components/download/release-line';
 import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
 import { getSiteReleases } from '@/lib/github-release';
+import { LINUX_INSTALL } from '@/lib/install-scripts';
 import { HOMEBREW, REPO, REQUIREMENTS } from '@/lib/site';
 import { HeroWindow } from './hero-window';
 import { RuntimeLinks } from './runtime-links';
@@ -15,14 +17,19 @@ import { RuntimeLinks } from './runtime-links';
 /*
  * The hard gates, in the first screenful rather than only at the button.
  *
- * Three of these four disqualify a reader outright — an Intel Mac, no agent CLI
- * on PATH, no authenticated `gh` — and a page that withholds them until the
- * download section has spent the reader's whole scroll on a product they cannot
- * install. Said up front they cost one line and buy the rest of the page.
+ * Three of these four disqualify a reader outright — an Intel Mac or an arm64
+ * Linux box, no agent CLI on PATH, no authenticated `gh` — and a page that
+ * withholds them until the download section has spent the reader's whole scroll
+ * on a product they cannot install. Said up front they cost one line and buy the
+ * rest of the page.
  */
 const GATES = REQUIREMENTS.filter((requirement) => requirement.required).map(
 	(requirement) => requirement.short,
 );
+
+/** The one-line install, at both platforms' widths. */
+const INSTALL_LINE =
+	'max-w-full break-words px-2 font-mono text-[0.75rem] text-muted';
 
 /*
  * One await for the whole hero. The button and the line beneath it describe the
@@ -94,9 +101,9 @@ export async function Hero() {
 					 */}
 					<Reveal index={3}>
 						<p className='max-w-[54ch] text-pretty text-base leading-relaxed text-muted sm:text-lg'>
-							Ensemblr™ is a macOS orchestrator for the Pi agent harness or the
-							Claude Code CLI you already have installed. Every stream of work
-							gets its own git worktree, and the agent inside it can spawn
+							Ensemblr™ is a desktop orchestrator for the Pi agent harness or
+							the Claude Code CLI you already have installed. Every stream of
+							work gets its own git worktree, and the agent inside it can spawn
 							sub-agents, delegate, wait and integrate — then open the diff, run
 							the scripts and file the PR.
 						</p>
@@ -132,9 +139,8 @@ export async function Hero() {
 					 */}
 					<Reveal index={4}>
 						<p className='max-w-[52ch] text-pretty text-[0.9375rem] text-muted/85 leading-relaxed'>
-							No account, no sign-in, no cloud sync, no telemetry. There is no
-							Ensemblr backend in the path, and the app ships no agent binary of
-							its own.
+							No account, no sign-in, no cloud sync, no telemetry. No Ensemblr
+							backend in the path, and no agent binary of its own.
 						</p>
 					</Reveal>
 
@@ -150,7 +156,18 @@ export async function Hero() {
 						className='mt-2 flex w-full flex-col items-stretch gap-4 sm:w-auto sm:flex-row sm:items-center'
 						index={5}
 					>
-						<DownloadButton className='justify-center' release={release} />
+						{/* Solo, because the row cannot hold two CTAs and a reader who
+						    needs the other one meets both, in full, in the download
+						    section — see `PlatformChoice`. */}
+						<PlatformChoice solo>
+							{(platform) => (
+								<DownloadButton
+									className='justify-center'
+									platform={platform}
+									release={release}
+								/>
+							)}
+						</PlatformChoice>
 						<Link
 							className='inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
 							href={REPO.url}
@@ -161,10 +178,11 @@ export async function Hero() {
 					</Reveal>
 
 					{/*
-					 * The brew line, at the button rather than only in the Download
-					 * section eight screens down. A reader who installs Mac apps with
-					 * `brew` reaches for it before a disk image, and there is nothing on
-					 * the way down this page that would tell them the tap exists.
+					 * The one-line install, at the button rather than only in the
+					 * Download section eight screens down. A reader who installs Mac apps
+					 * with `brew` reaches for it before a disk image, and a Linux reader
+					 * would otherwise never learn there is a script that unpacks the
+					 * launcher entry — neither fact is on the way down this page.
 					 *
 					 * The button's beat, not the fine print's: this is the same act by
 					 * another route, and the gates below it qualify both. It stays one
@@ -190,9 +208,29 @@ export async function Hero() {
 					 * gates and the upgrade line beside it, and it copies there too.
 					 */}
 					<Reveal className='hidden sm:block' index={5}>
-						<p className='max-w-full break-words px-2 font-mono text-[0.75rem] text-muted'>
-							or <CopyCommand command={HOMEBREW.install} variant='inline' />
-						</p>
+						{/* Each branch names its own constant rather than sharing one
+						    through a ternary, so `copy-command.test.ts` can see that every
+						    command this page prints is wrapped in a `CopyCommand`. That
+						    check reads source text, and a command reached through a
+						    variable is a command it cannot vouch for. */}
+						<PlatformChoice solo>
+							{(platform) =>
+								platform === 'macos' ? (
+									<p className={INSTALL_LINE}>
+										or{' '}
+										<CopyCommand command={HOMEBREW.install} variant='inline' />
+									</p>
+								) : (
+									<p className={INSTALL_LINE}>
+										or{' '}
+										<CopyCommand
+											command={LINUX_INSTALL.install}
+											variant='inline'
+										/>
+									</p>
+								)
+							}
+						</PlatformChoice>
 					</Reveal>
 
 					{/* The separator trails its gate, for the same reason the download
@@ -224,7 +262,15 @@ export async function Hero() {
 					</Reveal>
 
 					<Reveal index={6}>
-						<ReleaseLine className='justify-center' release={release} />
+						<PlatformChoice solo>
+							{(platform) => (
+								<ReleaseLine
+									className='justify-center'
+									platform={platform}
+									release={release}
+								/>
+							)}
+						</PlatformChoice>
 					</Reveal>
 				</div>
 

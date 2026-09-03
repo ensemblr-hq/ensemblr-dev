@@ -3,8 +3,10 @@
 [scripts]
 setup = "bun install"
 
+# Bind the workspace's own port, not Next's default 3000 — several workspaces of
+# this repo run side by side and the second dev server would die on EADDRINUSE.
 [scripts.run.dev]
-command = "bun run dev"
+command = "bun run dev --port $ENSEMBLR_PORT"
 icon = "play"
 default = true
 available_in = ["local"]
@@ -19,18 +21,21 @@ command = "bun test"
 icon = "test-tube"
 available_in = ["local"]
 
-# The two surfaces copied out of the app repo: the release the download button
-# pins, and the JSON Schemas this site serves at the $ids they declare. Both
-# checks skip rather than fail when GitHub is unreachable.
+# The surfaces copied out of the app repo — the release the download button
+# pins and the JSON Schemas this site serves at the $ids they declare — plus the
+# two shell scripts it serves of its own. The first two skip rather than fail
+# when GitHub is unreachable; the third needs no network at all.
 [scripts.run.check-copies]
-command = "bun run check:pin && bun run check:schemas"
+command = "bun run check:pin && bun run check:schemas && bun run check:scripts"
 icon = "shield-check"
 available_in = ["local"]
 
 # A production build, then serve it — dev does not exercise the static shell,
 # the response headers from next.config.ts, or the release lookup's caching.
+# Same workspace port as dev: `next start` defaults to 3000 too, so two
+# workspaces previewing at once would collide.
 [scripts.run.preview]
-command = "bun run build && bun run start"
+command = "bun run build && bun run start --port $ENSEMBLR_PORT"
 icon = "globe"
 available_in = ["local"]
 

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { EnsemblrWordmark } from '@/components/brand/wordmark';
 import { DownloadButton } from '@/components/download/download-button';
+import { PlatformChoice } from '@/components/download/platform-choice';
 import { GitHubIcon } from '@/components/icons/site';
 import { getSiteReleases } from '@/lib/github-release';
 import { REPO } from '@/lib/site';
@@ -59,13 +60,14 @@ export async function SiteNav({ variant = 'home' }: SiteNavProps = {}) {
 					 * download button rather than sitting beside it.
 					 *
 					 * The two of them together were what pushed the bar past 320px, and
-					 * the one to drop is the one a phone cannot use: this is a macOS app
-					 * behind a .dmg, so the CTA on a handset hands over a disk image to a
-					 * device that will never mount it. The repo is the thing a phone
-					 * reader can actually do something with — read it here, install it at
-					 * a desk. The hero's own download button is one screen below this and
-					 * says the same thing with the size and the digest beside it, so
-					 * nothing is lost but a control that could not be honoured.
+					 * the one to drop is the one a phone cannot use: this is a desktop
+					 * app behind a disk image or an AppImage, so the CTA on a handset
+					 * hands over a file the device will never open. The repo is the thing
+					 * a phone reader can actually do something with — read it here,
+					 * install it at a desk. The hero's own download button is one screen
+					 * below this and says the same thing with the size and the digest
+					 * beside it, so nothing is lost but a control that could not be
+					 * honoured.
 					 */}
 					{/* `-mr-3` below `sm`, where this is the last thing in the bar. The
 					    44px box is a touch target, not a shape anyone can see: it leaves
@@ -80,11 +82,18 @@ export async function SiteNav({ variant = 'home' }: SiteNavProps = {}) {
 					>
 						<GitHubIcon className='size-4.5' />
 					</Link>
-					<DownloadButton
-						className='hidden sm:inline-flex'
-						release={release}
-						size='sm'
-					/>
+					{/* Solo: the bar has room for one CTA, and the download section
+					    renders both platforms in full. See `PlatformChoice`. */}
+					<PlatformChoice solo>
+						{(platform) => (
+							<DownloadButton
+								className='hidden sm:inline-flex'
+								platform={platform}
+								release={release}
+								size='sm'
+							/>
+						)}
+					</PlatformChoice>
 				</div>
 			</nav>
 		</NavShell>

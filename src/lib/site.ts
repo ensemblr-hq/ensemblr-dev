@@ -11,27 +11,22 @@
  * "Claude Code" is where the search volume is, "Pi" is where Ensemblr is the
  * only answer.
  *
- * The app's README led the same way as of `4c17975`: "A macOS orchestrator for
- * multi-agent coding work, driving the Pi CLI or the Claude Code CLI —
- * whichever you already run." This is that sentence cut to a length a `<title>`
- * survives.
+ * "Desktop", not "macOS". The app has built a Linux x86-64 AppImage since
+ * 0.1.0-beta.19 and this site now offers it, so the word here matches the app
+ * README's own opening line. It was deliberately narrower than its source until
+ * that decision was taken, and the widening was made in one pass rather than
+ * piecemeal: this line, both descriptions, `REQUIREMENTS`, `DISTRIBUTION`, the
+ * hero, the download section and `structured-data.ts`'s `operatingSystem`.
  *
- * It now reads "A desktop orchestrator", and the word here stays "macOS"
- * anyway. That is a decision, not drift: the second platform is not being
- * advertised on this site yet, so every surface here describes the one download
- * the page offers. Widening this line is what announcing Linux looks like —
- * along with the platform table in the README, `REQUIREMENTS` below, the
- * download section and `structured-data.ts`'s `operatingSystem`. Do not do it
- * piecemeal because the README says something broader. Google renders about sixty characters and `Ensemblr — ` spends
- * eleven, so both runtimes are kept — "Ensemblr — A macOS orchestrator for Pi
- * and Claude Code." lands at 55 and neither name is truncated away — and
- * "multi-agent coding work" is carried by the descriptions and the keywords
- * instead.
+ * Google renders about sixty characters and `Ensemblr — ` spends eleven, so
+ * both runtimes are kept — "Ensemblr — A desktop orchestrator for Pi and Claude
+ * Code." lands at 56 and neither name is truncated away — and "multi-agent
+ * coding work" is carried by the descriptions and the keywords instead.
  */
 export const SITE = {
 	name: 'Ensemblr',
 	url: 'https://www.ensemblr.dev',
-	tagline: 'A macOS orchestrator for Pi and Claude Code.',
+	tagline: 'A desktop orchestrator for Pi and Claude Code.',
 	/*
 	 * Two descriptions, because the two consumers have different budgets.
 	 *
@@ -39,8 +34,8 @@ export const SITE = {
 	 * about 155 characters of it. The single 267-character string these were
 	 * split out of was cut mid-sentence at "drive the app itself" — so the two
 	 * facts a sceptical reader most wants from a search result, that there is no
-	 * account and that it is Apple silicon only, were the exact two that never
-	 * appeared. This one is 152 and ends where it means to.
+	 * account and which platforms it runs on, were the exact two that never
+	 * appeared. This one is 153 and ends where it means to.
 	 *
 	 * `description` has no such limit: Open Graph, Twitter and every JSON-LD node
 	 * take the full argument, and a link preview is read after the click has been
@@ -48,9 +43,9 @@ export const SITE = {
 	 * they are the same claim at two lengths, and both must stay true.
 	 */
 	searchDescription:
-		'A macOS orchestrator for Pi and Claude Code. Every stream of work gets its own git worktree, and an agent can spawn sub-agents and drive the app itself.',
+		'A desktop orchestrator for Pi and Claude Code, on macOS and Linux. Every stream of work gets its own git worktree, and an agent can drive the app itself.',
 	description:
-		'A macOS orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — spawn sub-agents, delegate, wait, integrate. No account, no tokens stored. Apple silicon, Apache 2.0.',
+		'A desktop orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — spawn sub-agents, delegate, wait, integrate. No account, no tokens stored. macOS on Apple silicon or Linux on x86-64, Apache 2.0.',
 	/*
 	 * One locale, three spellings of it. `<html lang>` and schema.org want the
 	 * BCP 47 tag, Open Graph wants the underscored form, and the page's own copy
@@ -124,27 +119,34 @@ export const NAV_SECTIONS = [
 ] as const;
 
 /**
- * How the build is distributed, stated where the visitor is asked to run it.
+ * How each build is distributed, stated where the visitor is asked to run it.
  *
  * This audience is about to hand an app their `gh` session and their repos. The
  * page cannot answer that with an adjective, so it answers with the mechanism:
- * who signed it, whether Apple has seen it, and the digest they can check
- * themselves before it ever opens.
+ * who signed it, whether anyone else has checked it, and the digest they can
+ * check themselves before it ever opens.
  *
- * "Both the .app and the disk image" is newly true and deliberately specific.
- * Releases build in CI as of 0.1.0-beta.7, and that is where the `.dmg` started
- * being codesigned before notarisation — stapling a ticket to an unsigned image
- * leaves Gatekeeper nothing to assess, and every earlier beta shipped that way.
- * The claim is `docs/guide/01-install.md` at `4d719d35`: "both the `.app` and
- * the `.dmg` carry their own ticket, so Gatekeeper clears them on first open
- * without a network round-trip."
+ * **The two halves are not symmetrical and the copy does not pretend they are.**
+ * The macOS claim is `docs/guide/01-install.md`: "both the `.app` and the `.dmg`
+ * carry their own ticket, so Gatekeeper clears them on first open without a
+ * network round-trip." There is no counterpart for the AppImage. `make:linux`
+ * runs in a CI job that skips `verify:signing` outright, and `notarizationEnabled`
+ * has required darwin since it existed — so the Linux artifact is unsigned, and
+ * the honest thing to do with that is print the word rather than change the
+ * subject. It is also what makes the digest load-bearing there rather than
+ * decorative: on Linux it is the only check there is.
  */
 export const DISTRIBUTION = {
-	signed: true,
-	notarised: true,
-	summary: 'Signed with an Apple Developer ID and notarised by Apple.',
-	detail:
-		'Hardened runtime, and the notarisation ticket is stapled to both the .app and the disk image it arrives in — so macOS validates each of them offline, on first open. No Gatekeeper override, no right-click → Open, no quarantine flag to strip.',
+	macos: {
+		summary: 'Signed with an Apple Developer ID and notarised by Apple.',
+		detail:
+			'Hardened runtime, and the ticket is stapled to both the .app and the disk image, so macOS validates each offline on first open. No Gatekeeper override, no quarantine flag to strip.',
+	},
+	linux: {
+		summary: 'Unsigned. Linux has no notarisation to pass.',
+		detail:
+			'Nothing on Linux issues the equivalent of a Developer ID, and a self-signed binary would prove nothing. The SHA-256 below is the check, and install.sh refuses on a mismatch.',
+	},
 } as const;
 
 /**
@@ -180,6 +182,14 @@ export const HOMEBREW = {
 	upgrade: 'brew upgrade --cask --greedy ensemblr',
 	/** The toggle to turn off first, named as the app's own menu spells it. */
 	autoUpdateSetting: 'Settings → General → Update Ensemblr automatically',
+	/*
+	 * Said out loud now that the page has two platforms on it. The cask's
+	 * `depends_on macos: :ventura` already refuses on anything else, but a
+	 * Linux reader meeting a `brew` line has been handed an install path that
+	 * cannot work — and with no JavaScript both platform blocks render, so this
+	 * is not a case the switcher can be relied on to prevent.
+	 */
+	platformNote: 'macOS only.',
 } as const;
 
 /**
@@ -190,14 +200,14 @@ export const HOMEBREW = {
  * `short` is the same gate in the length a single run-on line can carry, and it
  * exists so the hero can state the constraints beside the download button
  * instead of only in the Download section eight screens down. A reader who
- * learns "Apple silicon only" after scrolling the whole argument has been sold
- * something they cannot run; one who learns it in the first screenful trusts
- * everything under it. Both surfaces read the same array, so the two lists
+ * learns which architectures are built only after scrolling the whole argument
+ * has been sold something they cannot run; one who learns it in the first
+ * screenful trusts everything under it. Both surfaces read the same array, so the two lists
  * cannot drift into disagreeing about what the app needs.
  *
  * Every `short` is a noun phrase naming the thing you need, because the hero
  * sets them as one run-on line with middots between. "bring your own Pi or
- * Claude Code CLI" was an imperative sitting between "Apple silicon only" and
+ * Claude Code CLI" was an imperative sitting between the architecture gate and
  * "git", so the line changed voice mid-sentence and read as three constraints
  * with an instruction wedged into the middle of them. What it was doing — say
  * that the CLI is yours to supply — the hero's own credentials line already
@@ -219,20 +229,26 @@ export const HOMEBREW = {
  */
 export const REQUIREMENTS = [
 	{
-		name: 'macOS on Apple silicon',
-		short: 'Apple silicon only',
-		// Scoped to macOS on purpose. "Builds are arm64-only" was a true sentence
-		// about the whole product for as long as macOS was the whole product; it
-		// stopped being one and this is the same constraint stated about the
-		// download this page actually offers, which is the .dmg above.
-		detail: 'macOS builds are arm64-only.',
+		// One row for both platforms rather than one each, because it is one
+		// question — will it run on this machine — and a reader whose answer is
+		// "no" should meet it once. No semicolon anywhere in `name`:
+		// `softwareRequirements` joins these on `'; '` and the test splits them
+		// back, so a semicolon here silently invents a requirement.
+		name: 'macOS on Apple silicon, or Linux on x86-64',
+		// The page's one ®, and the Linux Foundation's own instruction for it: the
+		// first prominent appearance of the mark carries the symbol, the footer
+		// carries the legend, and no later mention repeats either. This gate line
+		// is where a reader meets the word first — the hero renders it above
+		// everything but the headline. See THIRD_PARTY in `legal.ts`.
+		short: 'Apple silicon or x86-64 Linux®',
+		detail:
+			'Intel Macs and arm64 Linux are not built. Windows is not supported.',
 		required: true,
 	},
 	{
 		name: 'An agent runtime CLI',
 		short: 'Pi or Claude Code CLI',
-		detail:
-			'Pi, Claude Code, or both. Ensemblr drives your own binaries and ships none.',
+		detail: 'Pi, Claude Code, or both. Ensemblr ships neither.',
 		required: true,
 	},
 	{
@@ -245,21 +261,20 @@ export const REQUIREMENTS = [
 		name: 'GitHub CLI (gh), authenticated',
 		short: 'gh, authenticated',
 		detail:
-			'Authenticate once with gh auth login. PR and check data is read through it; no GitHub tokens are stored.',
+			'Authenticate once with gh auth login. PR and check data reads through it.',
 		required: true,
 	},
 	{
 		name: 'A Linear account',
 		short: 'Linear',
-		detail:
-			'OAuth only, as many organisations as you need, with every token held in the macOS Keychain.',
+		detail: 'OAuth only, as many organisations as you need.',
 		required: false,
 	},
 	{
 		name: 'An Infisical project',
 		short: 'Infisical',
 		detail:
-			'A Machine Identity on your machine, and a project link committed to the repository. Secrets resolve live at every launch.',
+			'A Machine Identity and a project link in the repo. Secrets resolve live at launch.',
 		required: false,
 	},
 ] as const;

@@ -8,9 +8,9 @@ web
 
 ## Users
 
-Primary user: a macOS developer on Apple silicon who already runs coding agents
-daily — Pi, Claude Code, or both — and has hit the ceiling of doing it in one
-checkout. They understand git worktrees and branches; they are not looking to be
+Primary user: a developer on macOS/Apple silicon or Linux/x86-64 who already
+runs coding agents daily — Pi, Claude Code, or both — and has hit the ceiling of
+doing it in one checkout. They understand git worktrees and branches; they are not looking to be
 taught what an agent is. They arrive frustrated that parallel agent work
 collides: one working tree, one branch, sessions stepping on each other, no
 place to review what an agent actually did before it lands.
@@ -20,12 +20,14 @@ own isolated copy of the repo, and can I trust it with my credentials and my
 machine. Then they download.
 
 Not the audience for this site: agent-skeptics who need the concept explained,
-teams evaluating for procurement, and anyone on Intel Macs, Linux, or Windows.
+teams evaluating for procurement, and anyone on an Intel Mac, arm64 Linux, or
+Windows — none of which is built.
 
 ## Product Purpose
 
-Ensemblr is a native macOS orchestrator for multi-agent coding work, driving the
-Pi CLI or the Claude Code CLI — whichever the user already runs. The agent
+Ensemblr is a desktop orchestrator for multi-agent coding work — macOS on Apple
+silicon, Linux on x86-64 — driving the Pi CLI or the Claude Code CLI, whichever
+the user already runs. The agent
 inside a workspace can drive the app itself through Ensemblr Control: spawn
 sub-agents into their own tabs, delegate a unit of work to each, block until
 they report, and integrate the results. The worktree manager underneath exists
@@ -67,12 +69,12 @@ it.
 Fourth: **Ensemblr ships no agent binary.** It drives the Pi and `claude` CLIs
 the user installed, so provider credentials never enter Ensemblr's world. GitHub
 data is read through the user's own authenticated `gh`; Linear is OAuth with the
-token in the macOS Keychain; session history is local SQLite. Nothing is
+token in the OS keyring; session history is local SQLite. Nothing is
 uploaded to run the app. Against competitors that run an account and a sync
 service this is a headline, not a footnote, so it appears in the hero as well as
 in the Credentials section.
 
-Fifth: it is a **native macOS app, Apache 2.0-licensed, source public** at
+Fifth: it is a **native desktop app, Apache 2.0-licensed, source public** at
 `ensemblr-hq/ensemblr`.
 
 ### Vocabulary
@@ -109,18 +111,25 @@ A kanban board moves work from Backlog to Done across workspaces.
 
 ## Capabilities and Constraints
 
-Site scope, confirmed: **one landing page plus the download path.** No docs,
-changelog, blog, or pricing surface is planned. Everything deeper lives on
+Site scope, confirmed: **one landing page plus the download path**, with two
+supporting routes — `/schemas`, which publishes the app's JSON Schemas at the
+`$id`s they declare, and `/legal`, which holds the long-form notices the footer
+used to carry. No docs, changelog, blog, or pricing surface is planned. Everything deeper lives on
 GitHub — README, CHANGELOG.md, releases, LICENSE.
 
 Product facts the site must state accurately:
 
-- Requirements, hard gates: macOS on Apple silicon (arm64-only builds); at least
-  one agent runtime CLI (Pi, Claude Code, or both); git; the GitHub CLI (`gh`),
-  authenticated — PR and check data reads through it and no GitHub tokens are
-  stored.
-- Requirements, optional: a Linear account, OAuth only, token in the macOS
-  Keychain.
+- Requirements, hard gates: macOS on Apple silicon or Linux on x86-64 — Intel
+  Macs, arm64 Linux and Windows are not built; at least one agent runtime CLI
+  (Pi, Claude Code, or both); git; the GitHub CLI (`gh`), authenticated — PR and
+  check data reads through it and no GitHub tokens are stored.
+- Requirements, optional: a Linear account, OAuth only, token in the OS keyring —
+  the macOS Keychain, or gnome-keyring / KWallet on Linux.
+- The two builds are not symmetrical, and the site says so: the `.dmg` is signed,
+  notarised, stapled and self-updating; the `.AppImage` is **unsigned** and the
+  app is check-only on Linux, reporting a newer version rather than installing
+  it. `public/install.sh` and `public/update.sh` are this site's own answer to
+  the second half of that.
 - Status: public beta, pre-1.0. The current build is a prerelease. The site says
   so plainly and invites bug reports rather than implying stability.
 - License: Apache 2.0. Repository public. The relicence is not retroactive —
@@ -192,11 +201,12 @@ Explicitly absent — must never be fabricated:
    workspace is a real git worktree on their disk — but the first is what they
    meet first, because it is the only one a competitor cannot also print.
 3. **Trust is stated as mechanism, not adjective.** "Your runtimes, your keys",
-   "OAuth only, Keychain", "local SQLite" — never "secure" or "private".
+   "OAuth only, OS keyring", "local SQLite" — never "secure" or "private".
 4. **Say the beta and the gates out loud, early.** Pre-1.0 status, prerelease
-   builds, Apple silicon-only, bring-your-own agent CLI and an authenticated
-   `gh` are stated in the first screenful — not only in the download section,
-   and never left for a commenter to point out.
+   builds, the two architectures that are built, bring-your-own agent CLI and an
+   authenticated `gh` are stated in the first screenful — not only in the
+   download section, and never left for a commenter to point out. The AppImage
+   being unsigned belongs to the same rule: it is printed, not glossed.
 5. **The product is the hero.** The app's own surface, palette, and typography
    lead; the site is its frame, not a competing visual world.
 

@@ -4,6 +4,7 @@ import { Geist, JetBrains_Mono } from 'next/font/google';
 
 import { MotionProvider } from '@/components/motion/motion-provider';
 import { JsonLd } from '@/components/seo/json-ld';
+import { PLATFORM_BOOTSTRAP, PLATFORM_NOSCRIPT_CSS } from '@/lib/platform';
 import { SITE } from '@/lib/site';
 import { buildSiteGraph } from '@/lib/structured-data';
 
@@ -64,6 +65,8 @@ export const metadata: Metadata = {
 		'Claude Code',
 		'Pi',
 		'macOS',
+		'Linux',
+		'AppImage',
 		'developer tools',
 		'code review',
 	],
@@ -109,6 +112,18 @@ export const viewport: Viewport = {
 	themeColor: '#0d0a09',
 };
 
+/*
+ * `suppressHydrationWarning` on `<html>`, for `data-platform` and nothing else.
+ *
+ * The script at the top of the body sets that attribute before React hydrates,
+ * which is the whole point of it — an effect would run after the first paint
+ * and the reader would watch one download block disappear. React then finds an
+ * attribute on `<html>` the server never rendered and warns about it; this is
+ * the documented way to say the difference is deliberate.
+ *
+ * It covers this element's own attributes and not its subtree, so no real
+ * mismatch anywhere on the page is hidden behind it.
+ */
 export default function RootLayout({
 	children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -116,8 +131,44 @@ export default function RootLayout({
 		<html
 			className={`${geist.variable} ${jetbrainsMono.variable}`}
 			lang={SITE.locale}
+			suppressHydrationWarning
 		>
 			<body className='bg-canvas text-ink antialiased'>
+				{/*
+				 * The platform detection, first in the body and synchronous.
+				 *
+				 * It sets one attribute on `<html>`, which is what `globals.css`
+				 * reads to hide the download block that is not the reader's. It has
+				 * to run before the first paint — an effect would run after it and
+				 * the reader would see both blocks and then one of them vanish — and
+				 * the parser blocks here, before a pixel of the page below has been
+				 * parsed, let alone painted.
+				 *
+				 * Deliberately not `next/script`: every strategy it offers runs after
+				 * hydration or after load, which is exactly the ordering this cannot
+				 * have. It is four hundred bytes of source, so there is nothing to
+				 * defer.
+				 *
+				 * The payload is a constant in `src/lib/platform.ts`, not a template
+				 * — nothing user-supplied reaches it, which is what makes
+				 * `dangerouslySetInnerHTML` safe here rather than merely convenient.
+				 */}
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: a build-time
+				    constant with no interpolation; see PLATFORM_BOOTSTRAP. */}
+				<script dangerouslySetInnerHTML={{ __html: PLATFORM_BOOTSTRAP }} />
+				{/*
+				 * And the other half: with no JavaScript the switcher is hidden, so a
+				 * tab that opens only on a click would take the nightly downloads off
+				 * the page altogether. This puts them back. It sits after the
+				 * stylesheet in source order, which is what lets one rule of equal
+				 * specificity win.
+				 */}
+				<noscript>
+					{/* biome-ignore lint/security/noDangerouslySetInnerHtml: a
+					    build-time constant with no interpolation; see
+					    PLATFORM_NOSCRIPT_CSS. */}
+					<style dangerouslySetInnerHTML={{ __html: PLATFORM_NOSCRIPT_CSS }} />
+				</noscript>
 				{/* Site-wide nodes live here rather than on the page, so a second
 				    route inherits the publisher and the site identity instead of
 				    having to restate them. */}

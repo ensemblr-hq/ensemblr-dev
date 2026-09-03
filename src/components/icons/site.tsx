@@ -29,6 +29,23 @@ export function ShieldCheckIcon(props: IconProps) {
 	);
 }
 
+/**
+ * Marks the Linux half of the integrity note, where `ShieldCheckIcon` would be
+ * a lie: that build is unsigned, and a tick inside a shield is exactly the
+ * claim it cannot make. Lucide's `fingerprint` — a digest is a fingerprint, and
+ * on Linux it is the only check there is.
+ */
+export function FingerprintIcon(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<path d='M2.6 6.2a6.2 6.2 0 0 1 10.8 0' />
+			<path d='M4.9 8a3.4 3.4 0 0 1 6.2 0c0 2-.5 3.9-1.5 5.5' />
+			<path d='M8 8v1.4c0 1.7-.4 3.3-1.2 4.7' />
+			<path d='M11.9 11.4a12 12 0 0 1-.5 2' />
+		</Icon>
+	);
+}
+
 /** Marks the nightly row. A crescent, not a warning triangle: the build is
     untested, which is what it is for, rather than broken. */
 export function MoonIcon(props: IconProps) {

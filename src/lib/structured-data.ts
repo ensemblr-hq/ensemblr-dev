@@ -14,6 +14,7 @@
  */
 
 import { FEATURE_GROUPS } from './features';
+import { LEGAL_PAGE } from './legal';
 import { formatBytes, type Release } from './release';
 import { SCHEMA_DIALECT, SCHEMAS, SCHEMAS_PAGE } from './schemas';
 import { REPO, REQUIREMENTS, SITE } from './site';
@@ -28,6 +29,8 @@ export type JsonLdNode = Record<string, unknown>;
 export const SCHEMA_ID = {
 	app: `${SITE.url}/#software`,
 	organization: `${SITE.url}/#organization`,
+	/** The legal route's own page node, distinct from the home page's. */
+	legalPage: `${LEGAL_PAGE.url}#webpage`,
 	/** The schemas route's own page node, distinct from the home page's. */
 	schemasPage: `${SCHEMAS_PAGE.url}#webpage`,
 	webpage: `${SITE.url}/#webpage`,
@@ -204,6 +207,33 @@ export function buildSchemasPage(): JsonLdNode {
 	};
 }
 
+/**
+ * The legal route, for the same reason the schemas route has one: the layout
+ * emits `buildSiteGraph()` everywhere, so without this the document's only
+ * self-assertion is a `WebSite` node pointing at a different URL.
+ *
+ * No `datePublished`/`dateModified`. This page changes when a notice is
+ * rewritten and nothing here records when that was; an invented date is the one
+ * failure this module exists to avoid. No `primaryImageOfPage` either — the
+ * generated OG card serves this route, but it is the site's title card and a
+ * sub-page claiming it as its own primary image is a claim the page does not
+ * make out loud.
+ */
+export function buildLegalPage(): JsonLdNode {
+	return {
+		'@id': SCHEMA_ID.legalPage,
+		'@type': 'WebPage',
+		about: { '@id': SCHEMA_ID.app },
+		description: LEGAL_PAGE.description,
+		inLanguage: SITE.locale,
+		isPartOf: { '@id': SCHEMA_ID.website },
+		/* The rendered `<title>` exactly: the layout's template is `%s — Ensemblr`
+		 * and the page's own metadata sets the `%s`. */
+		name: `${LEGAL_PAGE.title} — ${SITE.name}`,
+		url: LEGAL_PAGE.url,
+	};
+}
+
 /** Every long-tail capability the page lists, flattened for `featureList`. */
 function featureList(): readonly string[] {
 	return FEATURE_GROUPS.flatMap((group) => group.items);
@@ -270,8 +300,15 @@ export function buildSoftwareApplication(release: Release): JsonLdNode {
 			priceCurrency: 'USD',
 			url: DOWNLOAD_URL,
 		},
-		operatingSystem: 'macOS',
-		processorRequirements: 'Apple silicon (arm64)',
+		/*
+		 * Both, comma-separated, which is how schema.org's own examples write a
+		 * multi-platform `operatingSystem` — it is a Text field with no enumerated
+		 * vocabulary behind it. The page says the same thing out loud in
+		 * `REQUIREMENTS`, which is the rule this whole file follows: nothing
+		 * asserted here that the rendered page does not also claim.
+		 */
+		operatingSystem: 'macOS, Linux',
+		processorRequirements: 'Apple silicon (arm64) on macOS, x86-64 on Linux',
 		releaseNotes: release.notesUrl,
 		sameAs: [REPO.url],
 		softwareRequirements: softwareRequirements(),
@@ -305,5 +342,13 @@ export function buildSchemasGraph(): JsonLdNode {
 	return {
 		'@context': 'https://schema.org',
 		'@graph': [buildSchemasPage()],
+	};
+}
+
+/** The legal route's own node. Nothing on that page describes a build either. */
+export function buildLegalGraph(): JsonLdNode {
+	return {
+		'@context': 'https://schema.org',
+		'@graph': [buildLegalPage()],
 	};
 }

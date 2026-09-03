@@ -12,6 +12,7 @@
 		"test": "bun test",
 		"check:pin": "bun scripts/check-pinned-release.ts",
 		"check:schemas": "bun scripts/check-schemas.ts",
+		"check:scripts": "bun scripts/check-install-scripts.ts",
 		"gen:favicon": "bun scripts/generate-favicon.ts"
 	},
 	"dependencies": {

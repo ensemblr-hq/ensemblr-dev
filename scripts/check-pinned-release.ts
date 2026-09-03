@@ -13,7 +13,8 @@
  *   - the newest `v*` release still matches the pinned tag  → hard failure
  *   - every url/size/digest the pin copied still matches     → hard failure
  *   - the pinned .dmg still resolves                         → hard failure
- *   - the pinned nightly .dmg still resolves                 → hard failure
+ *   - the pinned .AppImage still resolves                    → hard failure
+ *   - both pinned nightly downloads still resolve            → hard failure
  *   - GitHub could not be reached at all                     → warn and pass
  *
  * "Cannot verify" is not "is stale". A rate-limited check that failed the build
@@ -62,7 +63,7 @@ function skip(message: string): never {
 
 const REPIN = [
 	'  Update FALLBACK_RELEASE in src/lib/release.ts — tag, version,',
-	'  publishedAt, notesUrl, and both assets’ url, sizeBytes and sha256.',
+	'  publishedAt, notesUrl, and all three assets’ url, sizeBytes and sha256.',
 	'  Copy them out of `gh release view`; do not retype a digest.',
 	'  docs/re-pinning.md is the paste-ready version of this.',
 ].join('\n');
@@ -77,7 +78,7 @@ const REPIN = [
 function compareAssets(pinned: Release, live: Release): string[] {
 	const drift: string[] = [];
 
-	for (const kind of ['dmg', 'zip'] as const) {
+	for (const kind of ['dmg', 'zip', 'appImage'] as const) {
 		const ours = pinned[kind];
 		const theirs = live[kind];
 
@@ -163,17 +164,38 @@ async function main() {
 	const dmg = FALLBACK_RELEASE.dmg;
 	if (!dmg) {
 		fail(
-			'FALLBACK_RELEASE has no .dmg — the download button has nothing real to point at.',
+			'FALLBACK_RELEASE has no .dmg — the macOS download button has nothing real to point at.',
+		);
+	}
+
+	/*
+	 * The same guard, for the platform the page now also offers. `toRelease`
+	 * leaves this null when a release ships no Linux artifact, which is a state
+	 * the live page renders honestly — but a *pin* without one is a Linux visitor
+	 * on a rate-limited build handed nothing at all, which is the failure this
+	 * script exists to prevent.
+	 */
+	const appImage = FALLBACK_RELEASE.appImage;
+	if (!appImage) {
+		fail(
+			'FALLBACK_RELEASE has no .AppImage — the Linux download button has nothing real to point at.',
 		);
 	}
 
 	await resolves(dmg.url, '.dmg');
+	await resolves(appImage.url, '.AppImage');
 	await resolves(FALLBACK_NIGHTLY.dmg.url, 'nightly .dmg');
+
+	// Only the URL, never the bytes: the canary is clobbered most nights, so a
+	// size or digest check here would go red on a healthy repo and stay red.
+	if (FALLBACK_NIGHTLY.appImage) {
+		await resolves(FALLBACK_NIGHTLY.appImage.url, 'nightly .AppImage');
+	}
 
 	console.log(
 		`✓ Pinned release ${FALLBACK_RELEASE.tag} is current, matches GitHub and resolves.`,
 	);
-	console.log(`✓ Pinned nightly download resolves.`);
+	console.log(`✓ Pinned nightly downloads resolve.`);
 }
 
 await main();

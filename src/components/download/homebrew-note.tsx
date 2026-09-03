@@ -14,12 +14,20 @@ import { HOMEBREW } from '@/lib/site';
  * page's one conversion event and `IntegrityNote` describes the exact file it
  * links to; a second command set alongside it would split that click to serve
  * the smaller half of the audience.
+ *
+ * Inside the macOS block, and labelled macOS anyway. `depends_on macos:` means
+ * the cask refuses on Linux, but with no JavaScript both platform blocks render
+ * — so the label is what stops a Linux reader copying a command that cannot
+ * work, in the one case the switcher cannot cover.
  */
 export function HomebrewNote() {
 	return (
 		<div className='flex flex-col gap-3 rounded-lg border border-line/70 bg-surface/40 p-4'>
-			<p className='font-mono text-[0.75rem] text-ink'>
+			<p className='flex flex-wrap items-center gap-x-2 font-mono text-[0.75rem] text-ink'>
 				Or install it with Homebrew:
+				<span className='rounded border border-line px-1 py-px text-[9px] text-faint uppercase tracking-wider'>
+					{HOMEBREW.platformNote}
+				</span>
 			</p>
 			{/*
 			 * `break-words`, where the digest above it takes `break-all`. Both wrap
@@ -38,39 +46,41 @@ export function HomebrewNote() {
 			<CopyCommand command={HOMEBREW.install} />
 
 			<p className='border-line/70 border-t pt-3 text-[0.8125rem] leading-relaxed text-muted'>
+				{/* Every claim in this paragraph is a line in the cask — `depends_on
+				    arch: :arm64`, `depends_on macos: :ventura`, `depends_on formula:
+				    "gh"`, `auto_updates true` — read from
+				    `ensemblr-hq/homebrew-tap` rather than from `brew info`, which
+				    reports whatever tap the reader has already fetched. */}
 				<Link
 					className='text-ink underline decoration-line underline-offset-4 transition-colors hover:text-accent'
 					href={HOMEBREW.tapUrl}
 				>
 					The cask
 				</Link>{' '}
-				declares Apple silicon and macOS 13, so brew refuses on a machine that
-				cannot open the app rather than installing it anyway. It also declares{' '}
-				{/* The cask's `depends_on formula: "gh"`. It is the one requirement
-				    brew resolves for the reader rather than refusing on, so it is stated
-				    as what the install still leaves them to do rather than as a third bar
-				    to clear beside the two above it. `REQUIREMENTS` carries the same fact
-				    for the reader who took the .dmg; this half of the page has to say it
-				    too, because a `brew install` that succeeds is exactly when nobody
-				    goes back to read a requirements list. */}
-				<code className='whitespace-nowrap font-mono text-[0.75rem]'>gh</code>,
-				so Homebrew installs the GitHub CLI with it —{' '}
+				declares Apple silicon and macOS 13, so brew refuses where the app
+				cannot open. It pulls in{' '}
+				<code className='whitespace-nowrap font-mono text-[0.75rem]'>gh</code>{' '}
+				too;{' '}
 				<code className='whitespace-nowrap font-mono text-[0.75rem]'>
 					gh auth login
 				</code>{' '}
-				stays yours to run. It is marked{' '}
+				stays yours to run.
+			</p>
+
+			<p className='text-[0.8125rem] leading-relaxed text-muted'>
 				{/* Short enough to hold a line at any width the card has, and both read
 				    as one token — `brew | upgrade` split across two lines is a command
 				    the reader has to reassemble to be sure of. */}
+				It is marked{' '}
 				<code className='whitespace-nowrap font-mono text-[0.75rem]'>
 					auto_updates
-				</code>{' '}
-				because Ensemblr updates itself, so a plain{' '}
+				</code>
+				, so{' '}
 				<code className='whitespace-nowrap font-mono text-[0.75rem]'>
 					brew upgrade
 				</code>{' '}
-				leaves the bundle alone — two updaters writing one app is how an install
-				gets corrupted. To hand the job to Homebrew instead, turn{' '}
+				leaves the bundle to Ensemblr&rsquo;s own updater. To hand it to
+				Homebrew instead, turn{' '}
 				<span className='text-ink'>{HOMEBREW.autoUpdateSetting}</span> off and
 				upgrade explicitly:
 			</p>
