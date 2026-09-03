@@ -91,6 +91,7 @@ export async function SiteNav({ variant = 'home' }: SiteNavProps = {}) {
 								platform={platform}
 								release={release}
 								size='sm'
+								surface='nav'
 							/>
 						)}
 					</PlatformChoice>

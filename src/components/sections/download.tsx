@@ -9,6 +9,7 @@ import { NightlyDownload } from '@/components/download/nightly-download';
 import { DownloadChoice } from '@/components/download/platform-choice';
 import { PlatformSwitch } from '@/components/download/platform-switch';
 import { ReleaseLine } from '@/components/download/release-line';
+import { TrackedDownloadLink } from '@/components/download/tracked-download-link';
 import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
 import { getSiteReleases } from '@/lib/github-release';
@@ -38,7 +39,11 @@ function PlatformDownload({
 				className='flex flex-col items-start gap-4 sm:flex-row sm:items-center'
 				index={3}
 			>
-				<DownloadButton platform={platform} release={release} />
+				<DownloadButton
+					platform={platform}
+					release={release}
+					surface='download'
+				/>
 				<Link
 					className='inline-flex min-h-11 items-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
 					href={REPO.releasesUrl}
@@ -73,12 +78,17 @@ function PlatformDownload({
 				<Reveal index={5}>
 					<p className='font-mono text-[0.75rem] text-ink'>
 						Prefer a zip?{' '}
-						<Link
+						<TrackedDownloadLink
+							channel='stable'
 							className='text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
+							format='zip'
 							href={release.zip.url}
+							platform='macos'
+							surface='download'
+							version={release.version}
 						>
 							{release.zip.label} · {formatBytes(release.zip.sizeBytes)}
-						</Link>
+						</TrackedDownloadLink>
 					</p>
 				</Reveal>
 			) : null}

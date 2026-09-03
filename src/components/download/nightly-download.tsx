@@ -1,7 +1,12 @@
 import Link from 'next/link';
+import { TrackedDownloadLink } from '@/components/download/tracked-download-link';
 import { MoonIcon } from '@/components/icons/site';
-import { PLATFORMS } from '@/lib/platform';
-import type { Nightly, NightlyDownloadLink } from '@/lib/release';
+import { PLATFORMS, type Platform } from '@/lib/platform';
+import {
+	NIGHTLY_TAG,
+	type Nightly,
+	type NightlyDownloadLink,
+} from '@/lib/release';
 
 /**
  * The third tab: one untested build of `master`, for both platforms.
@@ -34,10 +39,18 @@ function NightlyRow({
 	download,
 	label,
 	note,
+	platform,
 }: {
 	download: NightlyDownloadLink;
 	label: string;
 	note: string;
+	/*
+	 * The row's own platform, threaded through from the map below rather than
+	 * inferred here. This component is drawn once per platform, so anything it
+	 * decided for itself would be the same value on both rows — which is the one
+	 * way an identifier can silently stop identifying anything.
+	 */
+	platform: Platform;
 }) {
 	return (
 		<div className='flex flex-col gap-1 border-line/70 border-t pt-3 first:border-t-0 first:pt-0'>
@@ -48,12 +61,24 @@ function NightlyRow({
 			{/* `break-all`: these filenames are long, and a link shown with its
 			    middle missing is one the reader cannot check against the release
 			    page it came from. */}
-			<Link
+			<TrackedDownloadLink
+				channel='nightly'
 				className='w-fit break-all font-mono text-[0.8125rem] text-ink underline decoration-line underline-offset-4 transition-colors hover:text-accent'
+				format={platform === 'macos' ? 'dmg' : 'appimage'}
 				href={download.url}
+				platform={platform}
+				surface='download'
+				/*
+				 * The tag, not a version. These URLs are fixed and the bytes behind
+				 * them are replaced most nights, so there is no version to name —
+				 * the same reason the row prints no digest and no size. `nightly` is
+				 * the honest value, and it keeps the canary's rows from being
+				 * averaged into whichever release happened to be current.
+				 */
+				version={NIGHTLY_TAG}
 			>
 				{download.url.split('/').pop()}
-			</Link>
+			</TrackedDownloadLink>
 		</div>
 	);
 }
@@ -106,6 +131,7 @@ export function NightlyDownload({ nightly }: { nightly: Nightly }) {
 							key={row.id}
 							label={row.label}
 							note={NIGHTLY_NOTES[row.id]}
+							platform={row.id}
 						/>
 					) : null,
 				)}

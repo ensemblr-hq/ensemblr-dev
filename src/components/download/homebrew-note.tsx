@@ -43,7 +43,11 @@ export function HomebrewNote() {
 			 * No version in it, and none printed beside it: the cask resolves its own
 			 * from the tap.
 			 */}
-			<CopyCommand command={HOMEBREW.install} />
+			<CopyCommand
+				command={HOMEBREW.install}
+				surface='download'
+				target='homebrew-install'
+			/>
 
 			<p className='border-line/70 border-t pt-3 text-[0.8125rem] leading-relaxed text-muted'>
 				{/* Every claim in this paragraph is a line in the cask — `depends_on
@@ -92,7 +96,11 @@ export function HomebrewNote() {
 			 * flag the reader is missing. Starting a line of its own, what it wraps at
 			 * on a narrow phone is a space instead.
 			 */}
-			<CopyCommand command={HOMEBREW.upgrade} />
+			<CopyCommand
+				command={HOMEBREW.upgrade}
+				surface='download'
+				target='homebrew-upgrade'
+			/>
 		</div>
 	);
 }
