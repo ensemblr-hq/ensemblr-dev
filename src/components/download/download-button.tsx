@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { PLATFORMS, type Platform } from '@/lib/platform';
 import { formatBytes, type Release } from '@/lib/release';
 import { REPO } from '@/lib/site';
 import { cn } from '@/lib/utils';
@@ -10,6 +11,12 @@ interface DownloadButtonProps {
 	 * the digest `IntegrityNote` prints beside it are provably the same build.
 	 */
 	release: Release;
+	/**
+	 * Which build this button is for. The two are rendered side by side and CSS
+	 * shows one — see `src/lib/platform.ts` — so the platform is a property of
+	 * the button rather than of the page's state.
+	 */
+	platform: Platform;
 	size?: 'sm' | 'lg';
 	className?: string;
 }
@@ -17,10 +24,19 @@ interface DownloadButtonProps {
 /** The page's one job. */
 export function DownloadButton({
 	className,
+	platform,
 	release,
 	size = 'lg',
 }: DownloadButtonProps) {
-	const href = release.dmg?.url ?? REPO.releasesUrl;
+	/*
+	 * Null when the release shipped nothing for this platform — macOS and Linux
+	 * build in separate CI jobs, so it happens. The releases page is the honest
+	 * fallback: it is where the artifact would be if it existed, and it is not a
+	 * link to a file that does not.
+	 */
+	const download = platform === 'macos' ? release.dmg : release.appImage;
+	const href = download?.url ?? REPO.releasesUrl;
+	const label = PLATFORMS.find((entry) => entry.id === platform)?.label;
 
 	return (
 		<Link
@@ -60,15 +76,20 @@ export function DownloadButton({
 			    phones, where the full string wrapped onto two lines and pushed the bar
 			    out of its own height — but the bar now drops this button below `sm`
 			    entirely and shows the repo link in its place, so the only widths this
-			    ever renders at are ones the full label fits. */}
-			<span>Download for macOS</span>
+			    ever renders at are ones the full label fits.
+
+			    The platform is named rather than left to "Download", because there are
+			    two builds now and the file behind this button is one of them. A reader
+			    the detection got wrong should be able to see that from the label
+			    without clicking. */}
+			<span>Download for {label}</span>
 			{/* /80, not /65. Dark-on-accent has far less headroom than the page's
 			    light-on-dark ramp: the same 65% that reads as a quiet subtitle in
 			    body copy lands at 4.1:1 here, under AA on the one control the page
 			    exists to get pressed. */}
-			{size === 'lg' && release.dmg ? (
+			{size === 'lg' && download ? (
 				<span className='font-mono text-[0.6875rem] text-accent-foreground/80'>
-					{formatBytes(release.dmg.sizeBytes)}
+					{formatBytes(download.sizeBytes)}
 				</span>
 			) : null}
 		</Link>

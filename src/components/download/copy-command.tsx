@@ -47,11 +47,12 @@ interface CopyCommandProps {
 /**
  * A command the reader can take with one click instead of a drag and a ⌘C.
  *
- * The page prints commands it means people to run — the brew install, the brew
- * upgrade — and every one of them wraps at phone widths, which is exactly where
- * selecting three lines of mono by hand is worst. Wrapping is the right call
- * for a command (`break-words`, never `truncate`: a command with its middle
- * missing cannot be copied at all), and this is what pays for it.
+ * The page prints commands it means people to run — the brew pair, and the two
+ * `curl … | sh` lines that are the Linux install — and every one of them wraps
+ * at phone widths, which is exactly where selecting three lines of mono by hand
+ * is worst. Wrapping is the right call for a command (`wrap-anywhere`, never
+ * `truncate`: a command with its middle missing cannot be copied at all), and
+ * this is what pays for it.
  *
  * The button never claims more than it did. `writeClipboard` reports whether
  * the write happened, and when it did not — an insecure context, a denied
@@ -111,7 +112,16 @@ export function CopyCommand({
 					variant === 'block'
 						? // Negative margin so the row's hover fill reaches past the text
 							// without the card having to give it a column of its own.
-							'-mx-2 flex min-h-11 w-full items-center justify-between gap-3 px-2 py-2 hover:border-line/70 hover:bg-surface'
+							//
+							// The mark drops below the command under 27rem, and only there.
+							// Beside it, it and its reserved label take 71px of a column
+							// that is 248px wide at 320 — leaving less than the install
+							// URL needs, so the one line the reader is meant to run wrapped
+							// as `…/install` + `.sh`, a filename split across two rows on a
+							// page whose whole argument is that its claims are checkable.
+							// Stacked, the command gets the full width and stays whole at
+							// every phone width above the 320 floor.
+							'-mx-2 flex min-h-11 w-full flex-col items-start justify-between gap-1 px-2 py-2 min-[27rem]:flex-row min-[27rem]:items-center min-[27rem]:gap-3 hover:border-line/70 hover:bg-surface'
 						: // `align-middle` and a tight line box, because this one sits in a
 							// sentence: a button is an atomic inline box whatever display it
 							// is given, so it aligns as a unit, and left on the baseline with
@@ -123,9 +133,29 @@ export function CopyCommand({
 				onClick={copy}
 				type='button'
 			>
+				{/*
+				 * `wrap-anywhere`, not `break-words`. They wrap identically once the
+				 * box is measured; they do not measure it the same way. `break-words`
+				 * is `overflow-wrap: break-word`, which permits a mid-word break at
+				 * layout time but leaves the element's *min-content* width equal to
+				 * its longest unbreakable token — and the longest token here is
+				 * `https://www.ensemblr.dev/install.sh`, 252px of JetBrains Mono.
+				 *
+				 * That number was a floor under the whole download column. The grid
+				 * item defaults to `min-width: auto`, so the column could not shrink
+				 * below it, and at 320px the section measured 379px inside a 320px
+				 * box. Nothing scrolled — `#download` is `overflow-hidden` for the
+				 * pixel field — so the overflow was simply cut off, taking the right
+				 * edge of the h2 and of every requirement row with it.
+				 *
+				 * `overflow-wrap: anywhere` makes the same break legal *and* counts it
+				 * in min-content, so the column shrinks to the viewport. The guarantee
+				 * the old class was chosen for is unchanged: every character is still
+				 * rendered, and this is still never `truncate`.
+				 */}
 				<code
 					className={cn(
-						'min-w-0 break-words font-mono text-[0.75rem] text-ink',
+						'min-w-0 wrap-anywhere font-mono text-[0.75rem] text-ink',
 						variant === 'block' ? 'leading-relaxed' : 'leading-none',
 					)}
 					ref={commandRef}
@@ -146,8 +176,15 @@ export function CopyCommand({
 						// state does, and a cluster that measured itself would drag the
 						// command's own wrap point sideways on every click. The word's
 						// right edge stays put and the mark shifts instead.
-						'flex shrink-0 items-center justify-end gap-1.5 font-mono text-[0.6875rem] transition-colors',
-						variant === 'block' && 'min-w-[9ch]',
+						//
+						// Both only apply while the mark is beside the command. Stacked
+						// under it, it shares no line with the command and so cannot move
+						// its wrap point however long the label grows — and 9ch of empty
+						// box flushed right at the foot of a card is reserving room
+						// against a collision that can no longer happen.
+						'flex shrink-0 items-center gap-1.5 font-mono text-[0.6875rem] transition-colors',
+						variant === 'block' &&
+							'min-[27rem]:min-w-[9ch] min-[27rem]:justify-end',
 						state === 'copied' && 'text-ok',
 						state === 'failed' && 'text-warning',
 						state === 'idle' && 'text-muted group-hover:text-ink',

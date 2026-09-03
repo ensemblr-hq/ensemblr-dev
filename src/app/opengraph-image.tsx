@@ -87,8 +87,8 @@ export default function OpengraphImage() {
 						maxWidth: '820px',
 					}}
 				>
-					A macOS orchestrator for Pi and Claude Code. Every stream of work gets
-					its own git worktree.
+					A desktop orchestrator for Pi and Claude Code. Every stream of work
+					gets its own git worktree.
 				</div>
 			</div>
 

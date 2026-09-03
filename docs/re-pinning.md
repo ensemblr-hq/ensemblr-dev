@@ -4,12 +4,16 @@ The site shows two downloads. Only one of them needs anything from you when a re
 
 | Row | Selected by | Pinned in `src/lib/release.ts` | Needs updating |
 | --- | --- | --- | --- |
-| Stable | newest tag matching `v<semver>` | `FALLBACK_RELEASE` — tag, date, both assets' url, size, digest | **every release** |
-| Nightly | the literal tag `nightly` | `FALLBACK_NIGHTLY` — url only | never |
+| Stable | newest tag matching `v<semver>` | `FALLBACK_RELEASE` — tag, date, all three assets' url, size, digest | **every release** |
+| Nightly | the literal tag `nightly` | `FALLBACK_NIGHTLY` — urls only | never |
 
-The nightly's tag never moves off `nightly` and its asset names carry no version, so its pinned URL
-is the same URL a live lookup returns. Its bytes change most nights, which is exactly why no size or
-digest is pinned for it and why the page says so on the row rather than leaving a gap.
+The nightly's tag never moves off `nightly` and its asset names carry no version, so its pinned URLs
+are the same URLs a live lookup returns. Its bytes change most nights, which is exactly why no size
+or digest is pinned for it and why the page says so on the row rather than leaving a gap.
+
+The stable pin copies **three** assets, not two: the Apple silicon `.dmg` and `.zip`, and the Linux
+x86-64 `.AppImage` the page has offered since Linux was announced. The nightly pins two URLs, one
+per platform.
 
 There is **no automation**. Nothing in this repository or in `ensemblr-hq/ensemblr` opens a bump PR,
 fires a `repository_dispatch`, or holds a cross-repo token. Re-pinning is a manual ask, once per
@@ -39,15 +43,20 @@ needs. Copy them into `FALLBACK_RELEASE`:
 - `tag` / `version` — the tag, and the tag with its leading `v` removed
 - `publishedAt` — `publishedAt` verbatim
 - `notesUrl` — `${REPO.releasesUrl}/tag/<tag>`
-- `dmg` and `zip` — each one's `url`, `sizeBytes` from `size`, and `sha256` from `digest` with the
-  `sha256:` prefix stripped
+- `dmg`, `zip` and `appImage` — each one's `url`, `sizeBytes` from `size`, and `sha256` from
+  `digest` with the `sha256:` prefix stripped
+
+**Watch the arch spelling.** The release AppImage is `Ensemblr-<version>-x64.AppImage` and the
+canary is `Ensemblr-Canary-x86_64.AppImage` — Forge names one after its `--arch=x64` and the nightly
+workflow renames the other to the `uname -m` spelling. `linuxAssets` accepts both; a pin that
+assumes one spelling for both is a 404.
 
 Digests and sizes are copied, never retyped. `bun test` rejects a digest a reader could not check
-with `shasum -a 256`, and `check:pin` compares all six copied values against the live release — but
+with `shasum -a 256`, and `check:pin` compares all nine copied values against the live release — but
 neither can save you from a plausible-looking digest for the wrong build.
 
 ```bash
-bun run check:pin   # tag matches, every copied value matches, both .dmg URLs resolve
+bun run check:pin   # tag matches, every copied value matches, all four URLs resolve
 bun test            # the pin is self-consistent offline
 ```
 
@@ -58,7 +67,10 @@ bun test            # the pin is self-consistent offline
 
 - the newest `v*` release is not the pinned tag
 - any pinned url, size, digest or publish date disagrees with that release
-- the pinned stable `.dmg` or the pinned nightly `.dmg` stops resolving
+- `FALLBACK_RELEASE` carries no `.dmg` or no `.AppImage` — one of the two download buttons would
+  have nothing real to point at
+- any of the pinned stable `.dmg`, stable `.AppImage`, nightly `.dmg` or nightly `.AppImage` stops
+  resolving
 
 It warns and passes when GitHub cannot be reached at all. *Cannot verify* is not *is stale*, and a
 flaky guard gets disabled, which is worse than not having one.

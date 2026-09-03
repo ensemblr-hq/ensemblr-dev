@@ -4,26 +4,87 @@ import { SectionHeading } from '@/components/brand/section-heading';
 import { DownloadButton } from '@/components/download/download-button';
 import { HomebrewNote } from '@/components/download/homebrew-note';
 import { IntegrityNote } from '@/components/download/integrity-note';
+import { LinuxInstallNote } from '@/components/download/linux-install-note';
 import { NightlyDownload } from '@/components/download/nightly-download';
+import { DownloadChoice } from '@/components/download/platform-choice';
+import { PlatformSwitch } from '@/components/download/platform-switch';
 import { ReleaseLine } from '@/components/download/release-line';
 import { GitHubIcon } from '@/components/icons/site';
 import { Reveal } from '@/components/motion/reveal';
 import { getSiteReleases } from '@/lib/github-release';
-import { formatBytes } from '@/lib/release';
+import { isPlatform, type Platform } from '@/lib/platform';
+import { formatBytes, type Release } from '@/lib/release';
 import { REPO, REQUIREMENTS } from '@/lib/site';
 
 /**
- * The two facts the visitor came to check, restated at the moment they matter.
+ * One platform's tab of the download surface: the button, the line under it,
+ * the digest, and the alternate install path for that platform.
  *
- * They are already made at length in the Trust section directly above, and that
- * is the point: a reader who scrolled past the argument still meets its
- * conclusion at the button, where the decision is actually taken.
+ * Both are rendered, always. `globals.css` hides the one that is not the
+ * reader's, off an attribute a blocking script sets before first paint — so a
+ * crawler and a reader with JavaScript off get both, complete, and nobody sees
+ * a flash. See `src/lib/platform.ts`.
  */
-const TRUST_ECHO = [
-	'Ships no agent binary',
-	'No GitHub tokens stored',
-	'Session history is a local SQLite file',
-] as const;
+function PlatformDownload({
+	platform,
+	release,
+}: {
+	platform: Platform;
+	release: Release;
+}) {
+	return (
+		<div className='flex flex-col gap-6'>
+			<Reveal
+				className='flex flex-col items-start gap-4 sm:flex-row sm:items-center'
+				index={3}
+			>
+				<DownloadButton platform={platform} release={release} />
+				<Link
+					className='inline-flex min-h-11 items-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
+					href={REPO.releasesUrl}
+				>
+					<GitHubIcon className='size-4' />
+					All releases
+				</Link>
+			</Reveal>
+
+			<Reveal index={4}>
+				<ReleaseLine platform={platform} release={release} />
+			</Reveal>
+
+			<Reveal index={5}>
+				<IntegrityNote platform={platform} release={release} />
+			</Reveal>
+
+			{/*
+			 * The alternate install path, on the same beat for both platforms. It
+			 * leads the rest because it is the only one that is a different way to
+			 * get the build the reader already wants — the zip under it is that
+			 * download in a wrapper needing no mount, and the nightly below is a
+			 * different build entirely.
+			 */}
+			<Reveal index={5}>
+				{platform === 'macos' ? <HomebrewNote /> : <LinuxInstallNote />}
+			</Reveal>
+
+			{/* macOS only, because there is no second Linux artifact: the AppImage is
+			    the whole delivery. */}
+			{platform === 'macos' && release.zip ? (
+				<Reveal index={5}>
+					<p className='font-mono text-[0.75rem] text-ink'>
+						Prefer a zip?{' '}
+						<Link
+							className='text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
+							href={release.zip.url}
+						>
+							{release.zip.label} · {formatBytes(release.zip.sizeBytes)}
+						</Link>
+					</p>
+				</Reveal>
+			) : null}
+		</div>
+	);
+}
 
 export async function Download() {
 	const { nightly, stable: release } = await getSiteReleases();
@@ -49,7 +110,7 @@ export async function Download() {
 				 * Explicit placement rather than source order, because the two orders
 				 * genuinely differ. On a phone the requirements have to land between
 				 * the promise and the button — the visitor should meet the gates before
-				 * committing to a 149 MB transfer, and the button has to be the last
+				 * committing to a transfer this size, and the button has to be the last
 				 * thing before the footer rather than the top of a five-row checklist
 				 * they scroll past on the way out. On a wide screen the same card sits
 				 * alongside instead, where it is read in parallel with the CTA.
@@ -68,33 +129,26 @@ export async function Download() {
 						 * than the sentence that explains the section, so it keeps body
 						 * measure and body size instead of taking the lede's `sm:text-lg`.
 						 *
-						 * The last sentence arrived with 0.1.0-beta.8, from that release's
-						 * notes and `docs/guide/01-install.md`, and it lands here rather
-						 * than in the feature grid because it answers the objection this
-						 * paragraph raises. A page that admits to rough edges and weekly
-						 * betas has just told the reader they are signing up to re-download
-						 * this by hand; they are not, and the sentence that says so belongs
-						 * against the one that provoked it. "Offers to restart" is the
-						 * mechanism, not a softening: the download is background, the
-						 * restart is the visitor's, and an agent still working is asked
-						 * about first.
+						 * What it used to close on — that the app downloads newer builds
+						 * in the background and offers to restart into one — is macOS's
+						 * behaviour and not Linux's, so it moved to the two platform
+						 * blocks below where each can be true. Stated here it would have
+						 * been a promise to a Linux reader the app deliberately does not
+						 * keep.
 						 */}
 						<Reveal index={2}>
 							<p className='max-w-xl text-pretty text-base leading-relaxed text-muted'>
 								Ensemblr is at{' '}
 								<strong className='text-ink'>{release.version}</strong> and
-								still pre-1.0. The core loop — isolated workspaces, agent
-								sessions, review, PR — is wired to real services and used daily.
-								Expect rough edges, and{' '}
+								still pre-1.0. The core loop is wired to real services and used
+								daily; expect rough edges, and{' '}
 								<Link
 									className='text-ink underline decoration-line underline-offset-4 transition-colors hover:text-accent'
 									href={REPO.issuesUrl}
 								>
 									file them
 								</Link>
-								. Once installed it keeps up on its own: newer builds download
-								in the background, and it offers to restart into one when you
-								say so.
+								.
 							</p>
 						</Reveal>
 					</div>
@@ -157,99 +211,39 @@ export async function Download() {
 					</Reveal>
 
 					<div className='flex flex-col gap-6 lg:col-start-1 lg:row-start-2'>
-						<Reveal
-							className='flex flex-col items-start gap-4 sm:flex-row sm:items-center'
-							index={3}
-						>
-							<DownloadButton release={release} />
-							<Link
-								className='inline-flex min-h-11 items-center gap-2 rounded-lg border border-line px-5 py-3 text-[0.9375rem] text-ink transition-colors hover:border-muted/50 hover:bg-surface'
-								href={REPO.releasesUrl}
-							>
-								<GitHubIcon className='size-4' />
-								All releases
-							</Link>
-						</Reveal>
-
-						<Reveal index={4}>
-							<ReleaseLine release={release} />
-						</Reveal>
-
-						<Reveal index={4}>
-							{/*
-							 * The separator trails its claim rather than leading the next
-							 * one. Three claims do not fit one line at any width the page
-							 * offers, so this list always wraps — and with the dot leading,
-							 * the wrap put a bare `·` at the start of the second line, which
-							 * reads as a bullet the other two rows are missing. Trailing, a
-							 * wrapped line ends on the dot, which is what a run-on line of
-							 * metadata is supposed to look like.
-							 */}
-							<ul className='flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[0.75rem] text-ink'>
-								{TRUST_ECHO.map((claim, index) => (
-									<li className='flex items-center gap-2' key={claim}>
-										{claim}
-										{/* `muted` under an `ink` run, matching the hero's gate list,
-										    which runs the same idiom over the same tier. One step
-										    down is all a separator needs; the fraction it used to
-										    carry was measured against far quieter text. */}
-										{index < TRUST_ECHO.length - 1 ? (
-											<span aria-hidden='true' className='text-muted'>
-												·
-											</span>
-										) : null}
-									</li>
-								))}
-							</ul>
-						</Reveal>
-
-						<Reveal index={5}>
-							<IntegrityNote release={release} />
-						</Reveal>
-
 						{/*
-						 * First of the three alternates to the button, and on their shared
-						 * beat. It leads them because it is the only one that is a
-						 * different way to install the same build a reader already wants —
-						 * the zip under it is that download in a wrapper needing no mount,
-						 * and the nightly below is a different build entirely.
+						 * The switcher sits above the blocks rather than inside any of
+						 * them, because it is the question they are three answers to —
+						 * and because with no detection it is not drawn at all and the
+						 * row costs nothing.
 						 */}
-						<Reveal index={5}>
-							<HomebrewNote />
-						</Reveal>
-
-						{release.zip ? (
-							<Reveal index={5}>
-								<p className='font-mono text-[0.75rem] text-ink'>
-									Prefer a zip?{' '}
-									<Link
-										className='text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
-										href={release.zip.url}
-									>
-										{release.zip.label} · {formatBytes(release.zip.sizeBytes)}
-									</Link>
-								</p>
-							</Reveal>
-						) : null}
+						{/* `self-start`: a segmented control is sized by its own tabs.
+						    As a plain flex item it stretched the full column and put
+						    three short words against a foot of empty box. */}
+						<PlatformSwitch className='self-start' />
 
 						{/*
-						 * Last, and visibly subordinate. Two buttons of equal weight would
-						 * ask a first-time visitor to pick a channel before they have
-						 * opened the app once — and the honest recommendation for almost
-						 * everyone is the release directly above. This row is here for the
-						 * reader who wants what landed on `master` today and knows what
-						 * that costs.
+						 * Three tabs from one component: the two release blocks, and the
+						 * nightly. `isPlatform` is what keeps the channel from reaching
+						 * anything that takes a `Platform` — the button, the release
+						 * line, the digest — and the type says so rather than a comment.
 						 *
-						 * Rendered only when there is one. `null` means the lookup
-						 * succeeded and GitHub had no `nightly` tag, which is a verified
-						 * absence — the pinned copy shows only when the lookup itself
-						 * failed. See `getSiteReleases`.
+						 * The nightly renders only when there is one. `null` means the
+						 * lookup succeeded and GitHub had no `nightly` tag, which is a
+						 * verified absence: the pinned copy shows only when the lookup
+						 * itself failed. See `getSiteReleases`.
 						 */}
-						{nightly ? (
-							<Reveal index={5}>
-								<NightlyDownload nightly={nightly} />
-							</Reveal>
-						) : null}
+						<DownloadChoice>
+							{(tab) =>
+								isPlatform(tab) ? (
+									<PlatformDownload platform={tab} release={release} />
+								) : nightly ? (
+									<Reveal index={3}>
+										<NightlyDownload nightly={nightly} />
+									</Reveal>
+								) : null
+							}
+						</DownloadChoice>
 					</div>
 				</div>
 			</div>

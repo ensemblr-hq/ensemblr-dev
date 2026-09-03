@@ -1,10 +1,11 @@
 # ensemblr.dev
 
-The marketing site for [Ensemblr](https://github.com/ensemblr-hq/ensemblr) — a macOS orchestrator for
-isolated, multi-agent coding workflows.
+The marketing site for [Ensemblr](https://github.com/ensemblr-hq/ensemblr) — a desktop orchestrator
+for isolated, multi-agent coding workflows.
 
-One route. It explains the product, shows a recreation of the app's workbench, and hands over two
-macOS builds: the newest release, and the rolling nightly.
+One landing route plus `/schemas` and `/legal`. It explains the product, shows a recreation of the
+app's shell, and hands over three downloads behind a switcher: the newest release for macOS on Apple
+silicon, the same release for Linux on x86-64, and the rolling nightly for both.
 
 ## Stack
 
@@ -88,7 +89,9 @@ brew install --cask ensemblr-hq/tap/ensemblr
 It lives once, in `HOMEBREW` in `src/lib/site.ts`, and both surfaces read it from there. The cask
 itself is in a second repository, [`ensemblr-hq/homebrew-tap`](https://github.com/ensemblr-hq/homebrew-tap),
 and so is everything the page says about it — the architecture and macOS floor it declares, and the
-`auto_updates` flag that keeps `brew upgrade` out of a bundle the app updates itself.
+`auto_updates` flag that keeps `brew upgrade` out of a bundle the app updates itself. The Linux tab
+carries the counterpart: `curl -fsSL https://www.ensemblr.dev/install.sh | sh`, whose script lives in
+`public/` and is checked by `bun run check:scripts`.
 
 That command deliberately carries **no version**. The cask resolves its own from the tap, bumped
 there by the app's release workflow; a tag printed here would be a second thing to update on every
@@ -97,20 +100,21 @@ release, and nothing in this repo checks it. `check:pin` covers `FALLBACK_RELEAS
 ## How it is put together
 
 ```
-scripts/          the pinned-release check CI runs, and the favicon generator
-src/app/          route, metadata, icons, OG image, robots, sitemap
+scripts/          the pinned-release, schema and shell-script checks CI runs, plus the favicon generator
+src/app/          routes, metadata, icons, OG image, robots, sitemap
 src/components/
-  app-mock/       DOM recreation of the Ensemblr workbench
+  app-mock/       DOM recreation of the Ensemblr app shell, and the Concierge panel over it
   brand/          wordmark, pixel field, section headings
   chrome/         nav and footer
-  download/       release-aware download button
+  download/       release-aware download buttons, the platform switcher and the install notes
   icons/          icons the site draws — nav, footer, hero, download
   motion/         LazyMotion provider and the shared reveal
   sections/       one file per page section
-src/lib/          site facts, feature copy, glyph bitmaps, release lookup
+src/lib/          site facts, feature copy, glyph bitmaps, release lookup, platform detection
+public/           the two JSON Schemas the site republishes, and install.sh / update.sh
 ```
 
-Five things are worth knowing before editing:
+Six things are worth knowing before editing:
 
 **The palette is the app's palette.** The oklch tokens in `src/app/globals.css` are copied from the
 desktop app's own token sheet. Keep them in sync — the recreated window only reads as the product
@@ -134,6 +138,12 @@ section of `docs/ux-conventions.md` in the app repo — the path this file used 
 `src/components/app-mock/data.ts`. It draws its own glyphs in `app-mock/icons.tsx`; icons the *site*
 uses belong in `components/icons/site.tsx`, so a nav or footer never imports from the mock.
 
+**Which platform a reader sees is one attribute and no React state.** A blocking script in
+`src/app/layout.tsx` writes `data-platform` on `<html>` before the first paint, and `globals.css`
+hides the download blocks that are not the reader's. Every block is in the markup either way, so a
+crawler and a reader with JavaScript off get the page complete and nobody sees a flash. The
+switcher's only job is to rewrite that attribute. See `src/lib/platform.ts`.
+
 **The release is fetched once per subtree and passed down.** `Hero`, `SiteNav`, `SiteFooter` and the
 `Download` section each await `getSiteReleases()` and hand the result to their children as a prop.
 That is what guarantees the digest `IntegrityNote` prints describes the file `DownloadButton` links
@@ -151,6 +161,8 @@ bun lint           # Biome check
 bun format         # Biome format
 bun typecheck      # tsc --noEmit
 bun test           # unit tests for the release and glyph logic
-bun run check:pin  # fail if the pinned fallback release has gone stale
-bun run gen:favicon  # redraw src/app/favicon.ico from the glyph table
+bun run check:pin      # fail if the pinned fallback release has gone stale
+bun run check:schemas  # fail if a republished JSON Schema has drifted from the app repo
+bun run check:scripts  # parse install.sh/update.sh in a POSIX shell, reject bashisms
+bun run gen:favicon    # redraw src/app/favicon.ico from the glyph table
 ```

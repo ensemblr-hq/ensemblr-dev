@@ -2,6 +2,11 @@ import type { NextConfig } from 'next';
 
 // Relative, not `@/lib/schemas`: the `@/*` alias is a tsconfig path, and this
 // file is loaded by Next's own config loader rather than compiled with the app.
+import {
+	SHELL_SCRIPT_CACHE_CONTROL,
+	SHELL_SCRIPT_CONTENT_TYPE,
+	SHELL_SCRIPTS,
+} from './src/lib/install-scripts';
 import { SCHEMA_CACHE_CONTROL, SCHEMAS } from './src/lib/schemas';
 
 const nextConfig: NextConfig = {
@@ -27,18 +32,39 @@ const nextConfig: NextConfig = {
 	 * HTML document as `application/json`.
 	 */
 	async headers() {
-		return SCHEMAS.map((schema) => ({
-			source: schema.path,
-			headers: [
-				// Next infers this from the extension already. Stated anyway: it is
-				// the one header these URLs exist to correct, since the copies they
-				// replace are served as `text/plain` from raw.githubusercontent.com.
-				{ key: 'Content-Type', value: 'application/json; charset=utf-8' },
-				{ key: 'Cache-Control', value: SCHEMA_CACHE_CONTROL },
-				{ key: 'Access-Control-Allow-Origin', value: '*' },
-				{ key: 'X-Content-Type-Options', value: 'nosniff' },
-			],
-		}));
+		return [
+			...SCHEMAS.map((schema) => ({
+				source: schema.path,
+				headers: [
+					// Next infers this from the extension already. Stated anyway: it is
+					// the one header these URLs exist to correct, since the copies they
+					// replace are served as `text/plain` from raw.githubusercontent.com.
+					{ key: 'Content-Type', value: 'application/json; charset=utf-8' },
+					{ key: 'Cache-Control', value: SCHEMA_CACHE_CONTROL },
+					{ key: 'Access-Control-Allow-Origin', value: '*' },
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+				],
+			})),
+			/*
+			 * The two shell scripts, one exact path each, for the same reason the
+			 * schemas take one each rather than a `:path*` that would swallow a
+			 * neighbouring route.
+			 *
+			 * No `Access-Control-Allow-Origin` here, unlike the schemas above. A
+			 * schema is fetched by a resolver running in somebody else's page and
+			 * has to be; an installer is fetched by `curl` and by nothing else, and
+			 * a wildcard that let a third-party page read this file back would be
+			 * an allowance with no use to justify it.
+			 */
+			...SHELL_SCRIPTS.map((script) => ({
+				source: script.path,
+				headers: [
+					{ key: 'Content-Type', value: SHELL_SCRIPT_CONTENT_TYPE },
+					{ key: 'Cache-Control', value: SHELL_SCRIPT_CACHE_CONTROL },
+					{ key: 'X-Content-Type-Options', value: 'nosniff' },
+				],
+			})),
+		];
 	},
 };
 

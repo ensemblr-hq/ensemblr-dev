@@ -57,6 +57,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # The two shell scripts this site serves. Needs no network and no app
+      # repo — it parses them with a real POSIX shell, rejects bashisms, and
+      # checks that the asset install.sh looks for is the asset the pin above
+      # names. `dash` is what makes the parse mean anything: ubuntu-latest has
+      # it, and /bin/sh there is dash already.
+      - run: bun run check:scripts
+
   # Scheduled and manual runs only. The PR path already ends `check` with both
   # of these, and a cron run has no reason to lint, test and build the site to
   # answer two questions about a repo it does not contain. A failure here mails

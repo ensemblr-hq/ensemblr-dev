@@ -213,6 +213,59 @@ export const COMPOSER = {
 } as const;
 
 /**
+ * The Concierge's own turn, in the panel that floats over the shell.
+ *
+ * Deliberately short and deliberately made of tool calls. The section's claim
+ * is that the Concierge reads everywhere and writes nowhere — it delegates
+ * instead — so the two rows that carry it are the two control calls it makes:
+ * it spawns a root orchestrator into an existing workspace, and it creates a
+ * workspace when the work needs one. Both names are the app's own, from
+ * `src/shared/agent-control/contracts.ts`.
+ *
+ * `ensemblr_start_conversation` starts a *root* orchestrator you can go and
+ * open, not a sub-agent reporting back — which is the distinction between this
+ * panel and the agent in the conversation pane behind it, and the reason the
+ * op names are printed rather than paraphrased.
+ *
+ * The two workspaces it names are the replica's own, from `REPOSITORIES` above:
+ * a reader arriving at this step has just scrolled three screens of a window
+ * whose sidebar holds them.
+ */
+export const CONCIERGE_TIMELINE: readonly TimelineEntry[] = [
+	{
+		kind: 'user',
+		text: 'Where does everything stand? Start the Linear sync work.',
+	},
+	{ kind: 'tool', name: 'ensemblr_start_conversation  Linear issue sync' },
+	{ kind: 'tool', name: 'ensemblr_create_workspace  Dock port detection' },
+	{
+		kind: 'paragraph',
+		spans: [
+			strong('Both are running.'),
+			text(' Where they stand is in '),
+			file('artifacts/where-the-work-stands.md', 'md'),
+			text('.'),
+		],
+	},
+	{ duration: '4.2s', kind: 'turn-footer' },
+];
+
+/**
+ * The Concierge composer, which is the workspace one at a different address.
+ *
+ * The placeholder is the app's, verbatim — `Ask across every project…` — and it
+ * is the whole pitch in four words, which is why the panel prints it rather
+ * than something shorter. The model is its own setting: `app.concierge` is a
+ * top-level sibling of `app.models`, because the model that suits supervising a
+ * dozen workspaces is not the one that suits editing a file in any of them.
+ */
+export const CONCIERGE_COMPOSER = {
+	placeholder: 'Ask across every project…',
+	model: 'Opus 5',
+	thinking: 'High',
+} as const;
+
+/**
  * Statuses are the app's own git vocabulary. `modified` carries no letter —
  * it is the default a row is already understood to be in — which is why the
  * mark beside the counts, not a letter, is what tells the states apart.

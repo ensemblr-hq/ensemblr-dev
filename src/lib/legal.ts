@@ -1,3 +1,23 @@
+import { SITE } from './site';
+
+/**
+ * The route the long-form notices moved to, and the three surfaces that have to
+ * agree on it: the page's own metadata, its `WebPage` node, and `sitemap.ts`.
+ *
+ * They used to sit in the footer, all four paragraphs of them, on a page whose
+ * whole problem was length. What stayed behind is the part addressed to the
+ * person actually reading — that they are being counted, and that the name is
+ * a mark — with a link to the rest. A forker who follows the licence link finds
+ * the terms one click on rather than four paragraphs down.
+ */
+export const LEGAL_PAGE = {
+	description:
+		'Analytics, trademark terms and third-party attributions for the Ensemblr website.',
+	path: '/legal',
+	title: 'Legal',
+	url: `${SITE.url}/legal`,
+} as const;
+
 /**
  * What this website measures about the person reading it.
  *
@@ -78,10 +98,11 @@ export const TRADEMARK = {
  * The other direction: marks this site uses that belong to someone else.
  *
  * `TRADEMARK` above tells a forker what they may not take from us. This tells a
- * reader what we have taken from four other owners — the Invertocat in the nav,
+ * reader what we have taken from five other owners — the Invertocat in the nav,
  * footer, hero and download section, the Claude and Pi marks in the hero, and
- * Apple's word marks throughout the copy. Naming our own mark and staying silent
- * on theirs is the asymmetry a page about checkable claims cannot afford.
+ * Apple's and Linus Torvalds's word marks throughout the copy. Naming our own
+ * mark and staying silent on theirs is the asymmetry a page about checkable
+ * claims cannot afford.
  *
  * Apple is the one owner here whose *logo* this site does not draw, and that is
  * the finding rather than an oversight: a traced Apple glyph sat on the download
@@ -115,10 +136,19 @@ export const TRADEMARK = {
  * - Pi carries no trademark claim to state. It is MIT-licensed at
  *   github.com/earendil-works/pi, © 2025 Mario Zechner, and the attribution is
  *   to the person because there is no company to name.
+ * - Linux joined the list the day this site announced a Linux download. The
+ *   sentence and the ® are both what the Linux Foundation's own mark page asks
+ *   for, verbatim: "For each web page ... the first prominent appearance of
+ *   LINUX should feature the 'circle R' character adjacent to the X", and this
+ *   exact legend "at the end of your web page". So the ® sits once, on
+ *   `REQUIREMENTS[0].short` — the hero's gate line, which is where a reader
+ *   meets the word first — and nowhere else on the page. Torvalds owns the
+ *   mark; the Foundation is the exclusive licensee, and this site is not a
+ *   sublicensee, so the sublicensee legend is deliberately not the one used.
  */
 export const THIRD_PARTY = {
 	attribution:
-		'GITHUB® and the INVERTOCAT logo design are trademarks of GitHub, Inc., registered in the United States and other countries. Claude and Claude Code are trademarks of Anthropic, PBC. Apple, Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions. Pi is a project by Mario Zechner.',
+		'GITHUB® and the INVERTOCAT logo design are trademarks of GitHub, Inc., registered in the United States and other countries. Claude and Claude Code are trademarks of Anthropic, PBC. Apple, Mac and macOS are trademarks of Apple Inc., registered in the U.S. and other countries and regions. Linux® is the registered trademark of Linus Torvalds in the U.S. and other countries. Pi is a project by Mario Zechner.',
 	disclaimer:
-		'Ensemblr is not affiliated with, endorsed by, or sponsored by GitHub, Anthropic, Apple, or the Pi project. Their names and marks appear on this site only to identify the runtimes Ensemblr drives and the platform it runs on.',
+		'Ensemblr is not affiliated with, endorsed by, or sponsored by GitHub, Anthropic, Apple, Linus Torvalds, or the Pi project. Their names and marks appear on this site only to identify the runtimes Ensemblr drives and the platforms it runs on.',
 } as const;

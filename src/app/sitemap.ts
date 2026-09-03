@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next';
 
 import { getSiteReleases } from '@/lib/github-release';
+import { LEGAL_PAGE } from '@/lib/legal';
 import { SCHEMAS_PAGE } from '@/lib/schemas';
 import { SITE } from '@/lib/site';
 
@@ -40,6 +41,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'monthly',
 			priority: 0.5,
 			url: SCHEMAS_PAGE.url,
+		},
+		/*
+		 * The notices, which moved off the home page's footer. Listed because a
+		 * route nothing links to from the nav is a route a crawler reaches only
+		 * from one footer link, and low-priority because nobody arrives here by
+		 * searching for it. No `lastModified` for the same reason as above: these
+		 * change when a notice is rewritten and nothing here records when.
+		 */
+		{
+			changeFrequency: 'yearly',
+			priority: 0.2,
+			url: LEGAL_PAGE.url,
 		},
 	];
 }

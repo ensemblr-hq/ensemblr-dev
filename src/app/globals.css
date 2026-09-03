@@ -153,10 +153,12 @@
 	 * JetBrains Mono, a weight and a width apart from each other.
 	 *
 	 * The system UI font is the fix rather than a heavier webfont, because it is
-	 * the one family that draws ⌘, ⇧ and C as a set — and on the only platform
-	 * this page offers a download for, it is the exact rendering the reader has
-	 * in their own menu bar. The Windows and Linux names are there for the
-	 * reader who is deciding whether to buy the Mac; both carry U+2318.
+	 * the one family that draws ⌘, ⇧ and C as a set — and on macOS it is the
+	 * exact rendering the reader has in their own menu bar. The Windows and
+	 * Linux names carry U+2318 too, which matters now that this page offers a
+	 * Linux download: the app draws the same shortcut there, and a keycap that
+	 * fell back to a tofu box would be the one glyph on the page a Linux reader
+	 * could not read.
 	 */
 	--font-key:
 		ui-sans-serif, system-ui, -apple-system, "Segoe UI Symbol", "Segoe UI",
@@ -508,4 +510,94 @@ body {
 		oklch(0.675 0.123 221 / 22%),
 		transparent 72%
 	);
+}
+
+/*
+ * The two-platform download surface, in five rules and no JavaScript on the
+ * critical path beyond the one attribute they read.
+ *
+ * `[data-for-platform]` blocks are visible by default and hidden only when the
+ * document says which platform the reader is on. So the server renders both,
+ * a crawler indexes both, a reader with JavaScript off gets both, and there is
+ * nothing to hydrate — the attribute is set by a blocking script in
+ * `layout.tsx` before the first paint, so nothing flashes either.
+ *
+ * `display: none` rather than a `hidden` attribute or a React branch: the
+ * elements are in the DOM and in the accessibility tree only when they are
+ * shown, which is what `display: none` already means, and the shown state
+ * never has its own `display` overwritten. See `src/lib/platform.ts`.
+ */
+html[data-platform="macos"]
+[data-for-platform]:not([data-for-platform="macos"]),
+html[data-platform="linux"]
+	[data-for-platform]:not([data-for-platform="linux"]),
+html[data-platform="nightly"]
+	[data-for-platform]:not([data-for-platform="nightly"]) {
+	display: none;
+}
+
+/*
+ * The nightly is a channel, not a platform: it is chosen and never detected, so
+ * it stays closed until a reader asks for it. That is the one asymmetry in this
+ * whole mechanism and it is the honest one — the two release blocks answer
+ * "which machine are you on", which a script can guess at, and this answers
+ * "do you want an untested build of master", which it cannot.
+ *
+ * `display: contents` on the restore, because that is what `PlatformChoice`'s
+ * wrappers carry: they exist to be transparent to the column around them.
+ */
+[data-for-platform="nightly"] {
+	display: none;
+}
+
+html[data-platform="nightly"] [data-for-platform="nightly"] {
+	display: contents;
+}
+
+/*
+ * The switcher only exists to disagree with the detection, so it is not there
+ * until something has detected. Without the attribute it does nothing at all —
+ * a control that cannot change what it points at should not be drawn.
+ */
+[data-platform-switch] {
+	display: none;
+}
+
+html[data-platform] [data-platform-switch] {
+	display: inline-flex;
+}
+
+/*
+ * The pair that can only ever draw one of itself — the nav's CTA and the hero's
+ * button row, where two download buttons would not fit and would not help.
+ *
+ * macOS is the default because it is the platform this site shipped for first
+ * and the majority of its traffic; Linux replaces it the moment the detection
+ * says so. Nothing is lost to a reader with no JavaScript: the download section
+ * renders both platforms in full, with both digests, and that is the surface a
+ * crawler indexes and the one the argument is actually made on.
+ *
+ * `display: contents` on the restore, because that is what `PlatformChoice`'s
+ * wrappers carry — they exist to be transparent to the flex row around them.
+ */
+[data-platform-solo] > [data-for-platform="linux"] {
+	display: none;
+}
+
+html[data-platform="linux"] [data-platform-solo] > [data-for-platform="linux"] {
+	display: contents;
+}
+
+/*
+ * The nightly is a tab in the download section and nowhere else, so a reader
+ * who opens it must not lose the nav's CTA and the hero's button with it. The
+ * pair falls back to what it shows when nothing has been detected: macOS.
+ *
+ * Without this the general rule above hides every block that is not the
+ * nightly's, and a reader one click into the third tab is looking at a bar with
+ * no download button in it.
+ */
+html[data-platform="nightly"] [data-platform-solo]
+	> [data-for-platform="macos"] {
+	display: contents;
 }

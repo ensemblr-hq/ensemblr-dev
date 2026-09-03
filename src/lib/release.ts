@@ -55,6 +55,17 @@ export interface Release {
 	readonly notesUrl: string;
 	readonly dmg: ReleaseDownload | null;
 	readonly zip: ReleaseDownload | null;
+	/**
+	 * The Linux x86-64 build, published since 0.1.0-beta.19.
+	 *
+	 * Nullable for the same reason `dmg` is, and it matters more here: the
+	 * release job that builds it is a separate one from the macOS job, so a
+	 * release can carry the `.dmg` and not this. The app's own updater draws the
+	 * same line — it requires an `.AppImage` on the release before offering a
+	 * Linux user the version — and the page does too, by printing the releases
+	 * page instead of a link that does not exist.
+	 */
+	readonly appImage: ReleaseDownload | null;
 }
 
 /**
@@ -69,16 +80,21 @@ export interface Release {
  *
  * Hence no `sizeBytes` and no `sha256` anywhere in this type, rather than
  * nullable ones. A component cannot print a stale digest for the nightly
- * because there is nowhere for it to read one from.
+ * because there is nowhere for it to read one from. That holds for both
+ * platforms: `Ensemblr-Canary-x86_64.AppImage` is replaced on the same nights.
  */
+export interface NightlyDownloadLink {
+	readonly label: string;
+	readonly url: string;
+}
+
 export interface Nightly {
 	/** Always the literal `nightly`; kept so the row can label itself. */
 	readonly tag: string;
 	readonly notesUrl: string;
-	readonly dmg: {
-		readonly label: string;
-		readonly url: string;
-	};
+	readonly dmg: NightlyDownloadLink;
+	/** Null when the canary build for Linux did not upload that night. */
+	readonly appImage: NightlyDownloadLink | null;
 }
 
 /** The rolling tag the app's `nightly.yml` republishes; never a release. */
@@ -117,6 +133,12 @@ export const FALLBACK_RELEASE: Release = {
 		sizeBytes: 158_870_176,
 		sha256: 'b554c70e604896a3cff5a4d4de60b466213497e88afb8b18d7c29cb95365912f',
 	},
+	appImage: {
+		label: 'Linux x86-64 .AppImage',
+		url: `${REPO.releasesUrl}/download/v0.1.0-beta.24/Ensemblr-0.1.0-beta.24-x64.AppImage`,
+		sizeBytes: 144_280_056,
+		sha256: 'c86d3e8b09a7517870afe971182061370437cad3be5b86642af28c2448670ca3',
+	},
 };
 
 /**
@@ -135,6 +157,17 @@ export const FALLBACK_NIGHTLY: Nightly = {
 		label: 'Apple silicon .dmg',
 		url: `${REPO.releasesUrl}/download/${NIGHTLY_TAG}/Ensemblr-Canary-arm64.dmg`,
 	},
+	/*
+	 * `x86_64`, where the release asset above says `x64`. The two spellings are
+	 * the app's, not a typo here: Forge names the release artifact after the
+	 * `--arch=x64` it was built with, and the nightly workflow renames the canary
+	 * to the uname spelling before it clobbers the rolling tag. `linuxAssets`
+	 * accepts both for exactly this reason.
+	 */
+	appImage: {
+		label: 'Linux x86-64 .AppImage',
+		url: `${REPO.releasesUrl}/download/${NIGHTLY_TAG}/Ensemblr-Canary-x86_64.AppImage`,
+	},
 };
 
 /**
@@ -152,7 +185,7 @@ export function toSha256(digest: string | null | undefined): string | null {
 }
 
 /**
- * The assets this page is allowed to answer with.
+ * The assets this page is allowed to answer with, per platform.
  *
  * `findAsset` matches on extension, and for every release up to 0.1.0-beta.18
  * that *was* a platform test: a release held macOS artifacts and nothing else,
@@ -163,16 +196,47 @@ export function toSha256(digest: string | null | undefined): string | null {
  * the kind — beside a digest that matches it, which is the worse version of the
  * failure: checkable, and still a lie.
  *
- * So the platform question is answered here, once, by name. `arm64` is in every
- * macOS artifact the app publishes — `Ensemblr-<version>-arm64.dmg`,
- * `Ensemblr-darwin-arm64-<version>.zip`, and the canary's
- * `Ensemblr-Canary-arm64.dmg` — and in nothing else. An asset without it is not
- * this page's to offer, whatever it is named after.
+ * So the platform question is answered here, once, by name — now twice, because
+ * the page offers both platforms and the same failure runs in both directions.
+ * These two filters must never return the same asset.
  */
-export function appleSiliconAssets(
+
+/**
+ * `arm64` is in every macOS artifact the app publishes —
+ * `Ensemblr-<version>-arm64.dmg`, `Ensemblr-darwin-arm64-<version>.zip`, and
+ * the canary's `Ensemblr-Canary-arm64.dmg` — and in no Linux one. An asset
+ * without it is not the macOS block's to offer, whatever it is named after.
+ */
+export function macosAssets(
 	assets: readonly z.infer<typeof assetSchema>[],
 ): readonly z.infer<typeof assetSchema>[] {
 	return assets.filter((asset) => /arm64/i.test(asset.name));
+}
+
+/**
+ * The Linux side of the same question, and it takes two conditions rather than
+ * one because neither is sufficient alone.
+ *
+ * The arch spelling differs by artifact: the release is
+ * `Ensemblr-<version>-x64.AppImage`, named after the `--arch=x64` Forge built
+ * it with, while the canary is `Ensemblr-Canary-x86_64.AppImage`. A matcher
+ * that accepted only one of those would silently drop the other, so both are
+ * accepted — and `arm64` matches neither, which is what keeps the two filters
+ * disjoint.
+ *
+ * The extension is required as well because the app has published a
+ * `Ensemblr-linux-x64-<version>.zip` shape before: an arch match alone would
+ * hand a zip to a button labelled `.AppImage`. Nothing is offered here that is
+ * not the single executable file the install instructions describe.
+ */
+export function linuxAssets(
+	assets: readonly z.infer<typeof assetSchema>[],
+): readonly z.infer<typeof assetSchema>[] {
+	return assets.filter(
+		(asset) =>
+			/x86_64|x64/i.test(asset.name) &&
+			asset.name.toLowerCase().endsWith('.appimage'),
+	);
 }
 
 export function findAsset(
@@ -195,15 +259,17 @@ export function findAsset(
 }
 
 export function toRelease(release: z.infer<typeof releaseSchema>): Release {
-	const assets = appleSiliconAssets(release.assets);
+	const macos = macosAssets(release.assets);
+	const linux = linuxAssets(release.assets);
 	return {
-		dmg: findAsset(assets, '.dmg', 'Apple silicon .dmg'),
+		appImage: findAsset(linux, '.appimage', 'Linux x86-64 .AppImage'),
+		dmg: findAsset(macos, '.dmg', 'Apple silicon .dmg'),
 		isPrerelease: release.prerelease,
 		notesUrl: release.html_url,
 		publishedAt: release.published_at,
 		tag: release.tag_name,
 		version: release.tag_name.replace(/^v/, ''),
-		zip: findAsset(assets, '.zip', 'Apple silicon .zip'),
+		zip: findAsset(macos, '.zip', 'Apple silicon .zip'),
 	};
 }
 
@@ -211,14 +277,23 @@ export function toNightly(
 	release: z.infer<typeof releaseSchema>,
 ): Nightly | null {
 	const dmg = findAsset(
-		appleSiliconAssets(release.assets),
+		macosAssets(release.assets),
 		'.dmg',
 		'Apple silicon .dmg',
 	);
 	if (!dmg) {
 		return null;
 	}
+	const appImage = findAsset(
+		linuxAssets(release.assets),
+		'.appimage',
+		'Linux x86-64 .AppImage',
+	);
 	return {
+		// Both are narrowed to a link on the way out: `ReleaseDownload` carries a
+		// size and a digest, and the nightly type has nowhere to put them because
+		// tonight's bytes are not the bytes this page was built against.
+		appImage: appImage ? { label: appImage.label, url: appImage.url } : null,
 		dmg: { label: dmg.label, url: dmg.url },
 		notesUrl: release.html_url,
 		tag: release.tag_name,
@@ -257,6 +332,12 @@ export function selectStableRelease(
 		// A release whose `.dmg` upload failed is skipped rather than fatal: the
 		// visitor gets the previous release, which is live and verifiable, instead
 		// of the pin, which may be older still.
+		//
+		// The `.AppImage` is deliberately not part of this gate. macOS and Linux
+		// build in separate CI jobs, so requiring both would let a failed Linux
+		// job pull the whole page back a version for everyone. A release carrying
+		// one and not the other is served as what it is: the Linux block prints
+		// the releases page rather than a link to a file that was never uploaded.
 		.filter((release) => release.dmg !== null);
 
 	return candidates.reduce<Release | null>((newest, candidate) => {

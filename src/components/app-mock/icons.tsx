@@ -363,3 +363,87 @@ export function VSCodeIcon({ className }: IconProps) {
 		</svg>
 	);
 }
+
+/** Lucide's `grip-vertical`: the panel's drag handle, first in its title bar. */
+export function GripIcon(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<circle cx='6' cy='4' r='0.9' />
+			<circle cx='6' cy='8' r='0.9' />
+			<circle cx='6' cy='12' r='0.9' />
+			<circle cx='10' cy='4' r='0.9' />
+			<circle cx='10' cy='8' r='0.9' />
+			<circle cx='10' cy='12' r='0.9' />
+		</Icon>
+	);
+}
+
+/** Lucide's `maximize-2`. The panel covers the shell inset rather than the
+    screen, but the glyph the app uses for it is this one. */
+export function MaximizeIcon(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<path d='M9.5 3h3.5v3.5M6.5 13H3V9.5' />
+			<path d='M13 3 9 7M3 13l4-4' />
+		</Icon>
+	);
+}
+
+/** Lucide's `x`, closing the panel back to its launcher. */
+export function CloseIcon(props: IconProps) {
+	return (
+		<Icon {...props}>
+			<path d='M4 4l8 8M12 4l-8 8' />
+		</Icon>
+	);
+}
+
+/** Side of an orbiting cell, in the mark's 24-unit canvas. */
+const ORBIT_CELL_SIZE = 5;
+
+/**
+ * The three orbiting cells and the opacity ramp along them, copied from the
+ * app's own `concierge-mark.tsx` rather than redrawn: the positions sit on a
+ * radius-8.7 circle about the canvas centre, and the falling opacity is what
+ * makes the ring read as a sweep rather than a static triangle.
+ */
+const ORBIT_CELLS = [
+	{ opacity: 1, x: 9.5, y: 0.8 },
+	{ opacity: 0.8, x: 1.97, y: 13.85 },
+	{ opacity: 0.55, x: 17.03, y: 13.85 },
+] as const;
+
+/**
+ * The Concierge mark: a lead cell with three of the app icon's rounded cells
+ * orbiting it — the one agent that sits above every workspace.
+ *
+ * Its own `<svg>` rather than an `Icon` child, and the only glyph in this file
+ * that needs one. `Icon` is a 16-unit stroked frame with `fill='none'`; this
+ * mark is four filled rounded squares on a 24-unit canvas, so it shares neither
+ * the viewBox nor the paint mode. It still draws in `currentColor`, so it takes
+ * whatever weight the surface around it asks for.
+ */
+export function ConciergeMark({ className }: IconProps) {
+	return (
+		<svg
+			aria-hidden='true'
+			className={className}
+			fill='currentColor'
+			viewBox='0 0 24 24'
+			xmlns='http://www.w3.org/2000/svg'
+		>
+			<rect height='6.6' rx='2.1' width='6.6' x='8.7' y='8.7' />
+			{ORBIT_CELLS.map((cell) => (
+				<rect
+					fillOpacity={cell.opacity}
+					height={ORBIT_CELL_SIZE}
+					key={`${cell.x},${cell.y}`}
+					rx='1.6'
+					width={ORBIT_CELL_SIZE}
+					x={cell.x}
+					y={cell.y}
+				/>
+			))}
+		</svg>
+	);
+}

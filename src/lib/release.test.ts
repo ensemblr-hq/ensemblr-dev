@@ -1,13 +1,14 @@
 import { describe, expect, test } from 'bun:test';
 
 import {
-	appleSiliconAssets,
 	FALLBACK_NIGHTLY,
 	FALLBACK_RELEASE,
 	FOUNDED_YEAR,
 	findAsset,
 	formatBytes,
 	formatReleaseDate,
+	linuxAssets,
+	macosAssets,
 	NIGHTLY_TAG,
 	releaseYear,
 	selectNightly,
@@ -91,60 +92,137 @@ describe('findAsset', () => {
 
 /*
  * Extension stopped being a platform test the day a release carried an artifact
- * for a second platform, and both labels on this page say "Apple silicon". The
- * fixtures below are the shapes that would have been served under the old rule:
- * an artifact with an extension the page does not look for, and — the one that
- * would actually have reached a visitor — one that shares an extension with a
- * macOS asset and sorts ahead of it.
+ * for a second platform, and it is now a two-way problem: the page prints an
+ * "Apple silicon" label and a "Linux x86-64" one, each over a digest that
+ * matches whatever file it was handed. The fixtures below are real artifact
+ * names from both platforms, so a filter that leaks in either direction fails
+ * here rather than on the page.
  */
-describe('appleSiliconAssets', () => {
-	function asset(name: string) {
-		return {
-			name,
-			browser_download_url: `https://example.test/${name}`,
-			size: 1,
-			digest: null,
-		};
-	}
+function asset(name: string) {
+	return {
+		name,
+		browser_download_url: `https://example.test/${name}`,
+		size: 1,
+		digest: null,
+	};
+}
 
+/** Every artifact a modern release and the canary between them publish. */
+const MACOS_NAMES = [
+	'Ensemblr-0.1.0-beta.24-arm64.dmg',
+	'Ensemblr-darwin-arm64-0.1.0-beta.24.zip',
+	'Ensemblr-Canary-arm64.dmg',
+	'Ensemblr-Canary-darwin-arm64.zip',
+];
+
+/*
+ * Both spellings, because the app uses both: the release artifact is named
+ * after Forge's `--arch=x64` and the canary after `uname -m`. A matcher that
+ * took only one would drop the other silently.
+ */
+const LINUX_NAMES = [
+	'Ensemblr-0.1.0-beta.24-x64.AppImage',
+	'Ensemblr-Canary-x86_64.AppImage',
+];
+
+describe('macosAssets', () => {
 	test('keeps every macOS artifact the app publishes', () => {
-		const names = [
-			'Ensemblr-0.1.0-beta.19-arm64.dmg',
-			'Ensemblr-darwin-arm64-0.1.0-beta.19.zip',
-			'Ensemblr-Canary-arm64.dmg',
-		];
-		expect(appleSiliconAssets(names.map(asset)).map((a) => a.name)).toEqual(
-			names,
+		expect(macosAssets(MACOS_NAMES.map(asset)).map((a) => a.name)).toEqual(
+			MACOS_NAMES,
 		);
 	});
 
-	test.each([
-		'Ensemblr-0.1.0-beta.19-x64.AppImage',
-		'Ensemblr-Canary-x86_64.AppImage',
-		'Ensemblr-linux-x64-0.1.0-beta.19.zip',
-	])('drops %s', (name) => {
-		expect(appleSiliconAssets([asset(name)])).toEqual([]);
+	test.each([...LINUX_NAMES, 'Ensemblr-linux-x64-0.1.0-beta.19.zip'])(
+		'drops %s',
+		(name) => {
+			expect(macosAssets([asset(name)])).toEqual([]);
+		},
+	);
+});
+
+describe('linuxAssets', () => {
+	test('accepts both arch spellings the app ships', () => {
+		expect(linuxAssets(LINUX_NAMES.map(asset)).map((a) => a.name)).toEqual(
+			LINUX_NAMES,
+		);
 	});
 
-	test('a non-arm64 artifact never becomes a download, whatever its position', () => {
-		const assets = [
-			asset('Ensemblr-linux-x64-0.1.0-beta.19.zip'),
-			asset('Ensemblr-0.1.0-beta.19-arm64.dmg'),
-			asset('Ensemblr-darwin-arm64-0.1.0-beta.19.zip'),
-		];
+	/*
+	 * The direction that would actually reach a reader: an Apple silicon build
+	 * printed under a button labelled Linux, beside a digest that matches it.
+	 */
+	test.each(MACOS_NAMES)('never returns the macOS artifact %s', (name) => {
+		expect(linuxAssets([asset(name)])).toEqual([]);
+	});
+
+	/*
+	 * Arch alone is not enough. The app has published a linux zip before, and a
+	 * zip handed to a button that says `.AppImage` is not the file the install
+	 * instructions beside it describe.
+	 */
+	test('requires the AppImage extension, not just the arch', () => {
+		expect(
+			linuxAssets([asset('Ensemblr-linux-x64-0.1.0-beta.19.zip')]),
+		).toEqual([]);
+	});
+
+	test('matches the extension regardless of case', () => {
+		expect(linuxAssets([asset('Ensemblr-0.1.0-x64.appimage')])).toHaveLength(1);
+	});
+});
+
+describe('the two platform filters together', () => {
+	/*
+	 * The invariant the pair exists for, asserted over one realistic release
+	 * rather than one artifact at a time: no asset may answer for both
+	 * platforms, and every asset must land on the side its filename names.
+	 */
+	test('partition a release with no asset in common', () => {
+		const assets = [...MACOS_NAMES, ...LINUX_NAMES, 'checksums.txt'].map(asset);
+		const macos = macosAssets(assets).map((a) => a.name);
+		const linux = linuxAssets(assets).map((a) => a.name);
+
+		expect(macos).toEqual(MACOS_NAMES);
+		expect(linux).toEqual(LINUX_NAMES);
+		expect(macos.filter((name) => linux.includes(name))).toEqual([]);
+	});
+
+	test('resolve all three downloads off one release, whatever the order', () => {
 		const release = toRelease({
-			tag_name: 'v0.1.0-beta.19',
+			tag_name: 'v0.1.0-beta.24',
 			name: null,
 			draft: false,
 			prerelease: true,
-			published_at: '2026-08-30T17:06:49Z',
-			html_url: 'https://example.test/releases/tag/v0.1.0-beta.19',
-			assets,
+			published_at: '2026-09-03T09:15:28Z',
+			html_url: 'https://example.test/releases/tag/v0.1.0-beta.24',
+			assets: [
+				asset('Ensemblr-linux-x64-0.1.0-beta.19.zip'),
+				asset('Ensemblr-0.1.0-beta.24-x64.AppImage'),
+				asset('Ensemblr-0.1.0-beta.24-arm64.dmg'),
+				asset('Ensemblr-darwin-arm64-0.1.0-beta.24.zip'),
+			],
 		});
+		expect(release.dmg?.url).toEndWith('Ensemblr-0.1.0-beta.24-arm64.dmg');
 		expect(release.zip?.url).toEndWith(
-			'Ensemblr-darwin-arm64-0.1.0-beta.19.zip',
+			'Ensemblr-darwin-arm64-0.1.0-beta.24.zip',
 		);
-		expect(release.dmg?.url).toEndWith('Ensemblr-0.1.0-beta.19-arm64.dmg');
+		expect(release.appImage?.url).toEndWith(
+			'Ensemblr-0.1.0-beta.24-x64.AppImage',
+		);
+	});
+
+	test('reports a platform the release did not build as null', () => {
+		const macOnly = toRelease({
+			tag_name: 'v0.1.0-beta.24',
+			name: null,
+			draft: false,
+			prerelease: true,
+			published_at: '2026-09-03T09:15:28Z',
+			html_url: 'https://example.test/releases/tag/v0.1.0-beta.24',
+			assets: [asset('Ensemblr-0.1.0-beta.24-arm64.dmg')],
+		});
+		expect(macOnly.dmg).not.toBeNull();
+		expect(macOnly.appImage).toBeNull();
 	});
 });
 
@@ -248,7 +326,11 @@ describe('FALLBACK_RELEASE', () => {
 		expect(FALLBACK_RELEASE.dmg).not.toBeNull();
 	});
 
-	test.each(['dmg', 'zip'] as const)(
+	test('carries a Linux artifact — the page offers that download too', () => {
+		expect(FALLBACK_RELEASE.appImage).not.toBeNull();
+	});
+
+	test.each(['dmg', 'zip', 'appImage'] as const)(
 		'the pinned %s digest is one a reader can actually check',
 		(kind) => {
 			const digest = FALLBACK_RELEASE[kind]?.sha256;
@@ -262,9 +344,24 @@ describe('FALLBACK_RELEASE', () => {
 	});
 
 	test('the pinned download urls carry the pinned tag', () => {
-		for (const download of [FALLBACK_RELEASE.dmg, FALLBACK_RELEASE.zip]) {
+		for (const download of [
+			FALLBACK_RELEASE.dmg,
+			FALLBACK_RELEASE.zip,
+			FALLBACK_RELEASE.appImage,
+		]) {
 			expect(download?.url).toContain(FALLBACK_RELEASE.tag);
 		}
+	});
+
+	/*
+	 * The pin is hand-copied, so the one mistake it invites is a macOS digest
+	 * under a Linux label. The filenames are the check a reader would make.
+	 */
+	test('each pinned asset is named for the platform its label claims', () => {
+		expect(FALLBACK_RELEASE.dmg?.url).toContain('arm64');
+		expect(FALLBACK_RELEASE.zip?.url).toContain('arm64');
+		expect(FALLBACK_RELEASE.appImage?.url).toEndWith('.AppImage');
+		expect(FALLBACK_RELEASE.appImage?.url).not.toContain('arm64');
 	});
 
 	test('is a release tag, not the nightly', () => {
@@ -287,6 +384,35 @@ describe('FALLBACK_NIGHTLY', () => {
 	test('names an asset with no version in it', () => {
 		expect(FALLBACK_NIGHTLY.dmg.url).toEndWith('Ensemblr-Canary-arm64.dmg');
 		expect(FALLBACK_NIGHTLY.dmg.url).not.toContain(FALLBACK_RELEASE.version);
+	});
+
+	/*
+	 * `x86_64`, not the `x64` the release asset uses. Getting this wrong is a
+	 * 404 on a link the page prints with no digest to fall back on, and nothing
+	 * else in the repo compares the two spellings.
+	 */
+	test('spells the canary AppImage the way the nightly workflow uploads it', () => {
+		expect(FALLBACK_NIGHTLY.appImage?.url).toEndWith(
+			'Ensemblr-Canary-x86_64.AppImage',
+		);
+		expect(FALLBACK_NIGHTLY.appImage?.url).toContain(
+			`/download/${NIGHTLY_TAG}/`,
+		);
+		expect(FALLBACK_NIGHTLY.appImage?.url).not.toContain(
+			FALLBACK_RELEASE.version,
+		);
+	});
+
+	/*
+	 * The type has no field for either, which is the decision enforced a level
+	 * down — but the pin is hand-written, so this is the assertion that a later
+	 * edit cannot quietly widen it.
+	 */
+	test('carries no bytes it would have to be right about tomorrow', () => {
+		for (const download of [FALLBACK_NIGHTLY.dmg, FALLBACK_NIGHTLY.appImage]) {
+			expect(download).not.toHaveProperty('sizeBytes');
+			expect(download).not.toHaveProperty('sha256');
+		}
 	});
 });
 
@@ -392,5 +518,31 @@ describe('selectStableRelease and selectNightly', () => {
 			label: 'Apple silicon .dmg',
 			url: `https://example.test/download/nightly/Ensemblr-${NIGHTLY_TAG}-arm64.dmg`,
 		});
+	});
+
+	test('the nightly resolves its AppImage under both arch spellings', () => {
+		for (const name of [
+			'Ensemblr-Canary-x86_64.AppImage',
+			'Ensemblr-Canary-x64.AppImage',
+		]) {
+			const nightly = selectNightly([
+				entry(NIGHTLY_TAG, {
+					assets: [`Ensemblr-${NIGHTLY_TAG}-arm64.dmg`, name],
+				}),
+			]);
+			expect(nightly?.appImage).toEqual({
+				label: 'Linux x86-64 .AppImage',
+				url: `https://example.test/download/nightly/${name}`,
+			});
+		}
+	});
+
+	/* A night the Linux job failed is a missing row, not a broken link. */
+	test('reports a canary with no AppImage as null', () => {
+		const nightly = selectNightly([
+			entry(NIGHTLY_TAG, { assets: [`Ensemblr-${NIGHTLY_TAG}-arm64.dmg`] }),
+		]);
+		expect(nightly?.dmg).not.toBeUndefined();
+		expect(nightly?.appImage).toBeNull();
 	});
 });

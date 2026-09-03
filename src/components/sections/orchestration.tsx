@@ -23,24 +23,30 @@ const TOOLS = [
 ] as const;
 
 /*
- * The last row is the one the app README leads its orchestration paragraph
- * with, and it was missing here: agent work stops at In Review, in code rather
- * than in a prompt. It is the strongest thing this section can say — every
- * other guardrail limits how much an agent can do, and that one settles who
- * decides when the work is finished. A reader handing an agent their repo is
- * buying exactly that guarantee.
+ * `Issue writes` is the one the app README leads its orchestration paragraph
+ * with, and it is the strongest thing this section can say: agent work stops at
+ * In Review, in code rather than in a prompt. Every other guardrail limits how
+ * much an agent can do; that one settles who decides when the work is finished,
+ * and a reader handing an agent their repo is buying exactly that guarantee.
  */
 const GUARDRAILS = [
 	['Permission mode', 'read-only · approval required · workspace-trusted'],
 	['Delegation depth', 'shallow — sub-agents never delegate onward'],
-	['Spawn limits', 'per-session quota and rate cap'],
-	[
-		'Waits',
-		'bounded — the caller blocks until its children report or the window expires; a blocked child can wake it',
-	],
+	/*
+	 * Two rows shorter than it was. "Spawn limits" (a per-session quota and a
+	 * rate cap) said what "Delegation depth" already implies about scale, and
+	 * "Waits" spent three clauses on a mechanism nobody buying this weighs — a
+	 * caller that blocks is the whole point of `ensemblr_wait_for_agents`, and
+	 * the interesting half, that a blocked child can wake it, is a detail for
+	 * someone already using it rather than someone deciding to.
+	 *
+	 * The five that stayed each answer a question a reader hands an agent their
+	 * repository asking. Both deletions are still true and both live in the app's
+	 * `docs/agent-control.md`; nothing here was softened, two rows were dropped.
+	 */
 	[
 		'Issue writes',
-		'withheld from sub-agents — and agent work stops at In Review, enforced in code',
+		'withheld from sub-agents; agent work stops at In Review, enforced in code',
 	],
 	/*
 	 * 0.1.0-beta.5. The row above says what an agent may not do to a ticket; this
@@ -58,7 +64,7 @@ const GUARDRAILS = [
 	 */
 	[
 		'Linked issue',
-		'a workspace made from one names it in every agent’s brief, cut to the calls that caller may make',
+		'named in every brief, cut to the calls that caller may make',
 	],
 	/*
 	 * 0.1.0-beta.6, from `docs/guide/06-agents.md` and CONTEXT.md's own entry for
@@ -82,22 +88,17 @@ const GUARDRAILS = [
 	 */
 	[
 		'Agent skill',
-		'handed to every agent it starts — the tool surface, the worktree model and every settings.toml key, read on demand and shipped inside the app, so nothing is written into your repository or your ~/.claude',
+		'the tool surface, the worktree model and every settings.toml key — read on demand, shipped inside the app',
 	],
 	/*
-	 * The Concierge row that used to close this list is now a section of its own,
-	 * `sections/concierge.tsx`, two rules further down the page.
+	 * The Concierge row that used to close this list is the showcase's last step
+	 * now, one section down.
 	 *
-	 * It never quite belonged here. Every row above gates an agent that *has* a
+	 * It never belonged here. Every row above gates an agent that *has* a
 	 * workspace — a mode it runs under, a depth it cannot exceed, a state it
 	 * cannot move a ticket into. The Concierge has no workspace, so none of those
 	 * axes reach it and it is held by refusal instead, which the row had to spend
-	 * its whole length explaining before it could make a claim. Its own comment
-	 * said as much: "a different one from the six rows above".
-	 *
-	 * What it stated in one line the section now states in three blocks, with the
-	 * middle one — that it changes things constantly, just never with its own
-	 * hands — that no single row had room for.
+	 * its whole length explaining before it could make a claim.
 	 */
 ] as const;
 
@@ -279,9 +280,18 @@ export function Orchestration() {
 					 * Pi extension registers the complement of `SUBAGENT_WITHHELD_OPS` and
 					 * a parity test compares its copy against the shared set.
 					 */}
+					{/*
+					 * Two sentences, where this listed seven verbs the chip row below
+					 * renders as seven tool names. The list was the section's longest
+					 * paragraph and its most redundant: a reader met "spawn sub-agents",
+					 * "launch a harness", "read the diff" in prose and then met
+					 * `ensemblr_start_conversation`, `ensemblr_launch_harness`,
+					 * `ensemblr_get_workspace_diff` an inch below, drawn. The drawing
+					 * is the better version, so the prose stopped competing with it.
+					 */}
 					<SectionHeading
 						eyebrow='Ensemblr Control'
-						lede='A permission-gated control surface lets an agent drive the app itself — spawn sub-agents into their own tabs and block until they report, launch a harness, run a script, read the diff and leave review comments on it, ask you a multiple-choice question, move the workspace across the board. Pi reaches it through a shipped extension, Claude Code through an embedded MCP server, and a parity test keeps the two tool lists from drifting apart.'
+						lede='A permission-gated surface lets an agent drive the app itself, not just the code in it. Pi reaches it through a shipped extension and Claude Code through an embedded MCP server, and a parity test keeps the two tool lists from drifting.'
 						title='Not a place you run one agent. A place a team of agents runs itself.'
 					/>
 
