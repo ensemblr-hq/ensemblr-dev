@@ -30,6 +30,14 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 	{
 		label: 'Workspaces & history',
 		items: [
+			// 0.1.2, from `docs/guide/03-first-run.md`. The Workspaces step names
+			// the owner picker; this row is the half that only the long tail has
+			// room for, and it is the more distinctive one — an org you cannot
+			// publish into is listed **disabled with its reason** rather than
+			// hidden, so the picker distinguishes "you have no access to this"
+			// from "this org restricts who may create repositories" instead of
+			// leaving a reader to guess which of the two silence meant.
+			'Organisations you cannot publish into listed disabled, No access or Owners only',
 			'Continue finished work onto a numbered continuation branch',
 			'Configured files copied into every new workspace',
 			'Archive a workspace’s context, git-backed, and browse it later',
@@ -42,6 +50,13 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 		label: 'Sessions & composer',
 		items: [
 			'Pasted images and @-mention file payloads',
+			// 0.1.2. A transcript, an issue, a patch and a review comment are all
+			// `.context/` documents under a generated filename, so a sent chip that
+			// rebuilt itself from the path alone had nothing to show but a uuid.
+			// Composer and sent chip now resolve through one glyph resolver, which
+			// is why the row can promise they agree rather than that one of them
+			// looks right.
+			'Sent prompts keep the chip titles and glyphs the composer showed',
 			// 0.1.0-beta.11, from `docs/guide/06-agents.md`'s "Right-clicking text".
 			// Electron draws no context menu unless the app builds one, so until this
 			// release right-clicking the composer did nothing at all — which is why
