@@ -115,4 +115,37 @@ describe('the commands the page prints', () => {
 			expect(command, identifier).not.toMatch(/\d+\.\d+\.\d+/);
 		}
 	});
+
+	/*
+	 * The wrapping class, asserted because the two candidates look
+	 * interchangeable and are not.
+	 *
+	 * `break-words` is `overflow-wrap: break-word`: it permits a mid-word break
+	 * at layout time but leaves min-content equal to the longest unbreakable
+	 * token. The longest token any of these carries is
+	 * `https://www.ensemblr.dev/install.sh`, and inside a grid item — which
+	 * defaults to `min-width: auto` — that token became a floor the download
+	 * column could not shrink below. At 320px the section measured 379px in a
+	 * 320px box, and because `#download` is `overflow-hidden` for the pixel
+	 * field, nothing scrolled: the overflow was cut off, taking the right edge
+	 * of the h2 and of every requirement row with it.
+	 *
+	 * `wrap-anywhere` is `overflow-wrap: anywhere`, which counts the same break
+	 * in min-content and lets the column shrink. Both render every character —
+	 * this is not a `truncate`, and must never become one — so the failure is
+	 * invisible in review and in any test that only reads the command strings.
+	 * Hence a check on the class itself.
+	 */
+	test('wrap in a class that shrinks to its column', async () => {
+		const source = await Bun.file(
+			join(import.meta.dir, 'copy-command.tsx'),
+		).text();
+		const command = source.slice(source.indexOf('<code'));
+
+		expect(command).toContain('wrap-anywhere');
+		expect(command).not.toContain('break-words');
+		// Never the other direction either: a command shown with its middle
+		// missing cannot be copied by the reader who wanted to check it.
+		expect(command).not.toContain('truncate');
+	});
 });
