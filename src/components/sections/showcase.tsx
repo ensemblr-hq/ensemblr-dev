@@ -43,6 +43,19 @@ const STEPS: readonly Step[] = [
 		eyebrow: 'Workspaces',
 		id: 'workspaces',
 		points: [
+			/*
+			 * 0.1.2's headline, from `docs/guide/03-first-run.md`'s "Adding your
+			 * first project". It leads the step because it is the one bullet here
+			 * that runs before a workspace exists: Quick start creates the repo the
+			 * other five then cut worktrees from.
+			 *
+			 * "publishes", not "creates", is the half that changed — the dialog
+			 * always created a repository, and what 0.1.2 added is a **GitHub
+			 * owner** picker that lets it land under an organization rather than
+			 * only under the signed-in account. `--private` either way, which is
+			 * why the word is stated rather than left to be assumed.
+			 */
+			'Quick start publishes a private repo to you or a GitHub organisation',
 			'Start from a branch, a GitHub PR, or a Linear issue',
 			'Adopt an existing branch, or cut one from the base ref',
 			'Branch names derived from your first sentence to the agent',

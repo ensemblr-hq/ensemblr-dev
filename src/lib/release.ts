@@ -116,28 +116,28 @@ export const NIGHTLY_TAG = 'nightly';
  * checkable. Nothing updates this automatically — see `docs/re-pinning.md`.
  */
 export const FALLBACK_RELEASE: Release = {
-	tag: 'v0.1.1',
-	version: '0.1.1',
+	tag: 'v0.1.2',
+	version: '0.1.2',
 	isPrerelease: false,
-	publishedAt: '2026-09-03T16:13:02Z',
-	notesUrl: `${REPO.releasesUrl}/tag/v0.1.1`,
+	publishedAt: '2026-09-03T22:55:19Z',
+	notesUrl: `${REPO.releasesUrl}/tag/v0.1.2`,
 	dmg: {
 		label: 'Apple silicon .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.1/Ensemblr-0.1.1-arm64.dmg`,
-		sizeBytes: 158_128_342,
-		sha256: 'af6059186e69e365490e32a8a10301d76f142f22eb4b30c9e1a539d1e373817f',
+		url: `${REPO.releasesUrl}/download/v0.1.2/Ensemblr-0.1.2-arm64.dmg`,
+		sizeBytes: 158_146_406,
+		sha256: 'ee74dadd5aa0bce8930728d117c3c1bcc08fbf13df0ae7d35f6371a7cfd7436b',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.1/Ensemblr-darwin-arm64-0.1.1.zip`,
-		sizeBytes: 159_210_325,
-		sha256: '8260eabcf2be5fcb654c77ca4490b44856929c4b8b5d28ca3d8ff7a5881f25ae',
+		url: `${REPO.releasesUrl}/download/v0.1.2/Ensemblr-darwin-arm64-0.1.2.zip`,
+		sizeBytes: 159_217_132,
+		sha256: '711576cf87269175d41d4e5efbca822ef40a8aa8fc904920939ea394d23fef1d',
 	},
 	appImage: {
 		label: 'Linux x86-64 .AppImage',
-		url: `${REPO.releasesUrl}/download/v0.1.1/Ensemblr-0.1.1-x64.AppImage`,
-		sizeBytes: 144_505_336,
-		sha256: 'fb0848b136b378747246545b76acdfd0113669a3676ef5a44ed352a0c829d711',
+		url: `${REPO.releasesUrl}/download/v0.1.2/Ensemblr-0.1.2-x64.AppImage`,
+		sizeBytes: 144_484_856,
+		sha256: '7b16c81f820177beed91f060a61ffb85c5399fcf82462d87664746a12dd2f8ee',
 	},
 };
 
