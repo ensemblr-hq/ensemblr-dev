@@ -45,7 +45,20 @@ export function HomebrewNote() {
 					The cask
 				</Link>{' '}
 				declares Apple silicon and macOS 13, so brew refuses on a machine that
-				cannot open the app rather than installing it anyway. It is marked{' '}
+				cannot open the app rather than installing it anyway. It also declares{' '}
+				{/* The cask's `depends_on formula: "gh"`. It is the one requirement
+				    brew resolves for the reader rather than refusing on, so it is stated
+				    as what the install still leaves them to do rather than as a third bar
+				    to clear beside the two above it. `REQUIREMENTS` carries the same fact
+				    for the reader who took the .dmg; this half of the page has to say it
+				    too, because a `brew install` that succeeds is exactly when nobody
+				    goes back to read a requirements list. */}
+				<code className='whitespace-nowrap font-mono text-[0.75rem]'>gh</code>,
+				so Homebrew installs the GitHub CLI with it —{' '}
+				<code className='whitespace-nowrap font-mono text-[0.75rem]'>
+					gh auth login
+				</code>{' '}
+				stays yours to run. It is marked{' '}
 				{/* Short enough to hold a line at any width the card has, and both read
 				    as one token — `brew | upgrade` split across two lines is a command
 				    the reader has to reassemble to be sure of. */}
