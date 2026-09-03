@@ -545,6 +545,15 @@ install_desktop() {
 		# Only the first token of `Exec` is replaced: what follows it is the field
 		# code the entry needs to receive a URL, and this app registers
 		# `x-scheme-handler/ensemblr`.
+		#
+		# `Exec` is double-quoted so a path with a space survives; `TryExec` is
+		# not, and the asymmetry is load-bearing. The spec defines the quoting
+		# mechanism for `Exec` alone — "the double quotes, escaping, etc. are
+		# defined in The Exec key section, so they don't apply to any other keys".
+		# A quoted `TryExec` is therefore a path holding literal `"` characters:
+		# the file is never found, and KDE rejects the whole entry as invalid
+		# rather than merely hiding it. `TryExec` takes the bare path, which needs
+		# no quoting because it is a single string that is never word-split.
 		has_try='0'
 		if grep -q '^TryExec=' "${desktop_src}"; then
 			has_try='1'
@@ -561,10 +570,10 @@ install_desktop() {
 				space = index(value, " ")
 				tail = (space > 0) ? substr(value, space) : ""
 				printf "Exec=\"%s\"%s\n", target, tail
-				if (in_entry && has_try == "0") { printf "TryExec=\"%s\"\n", target }
+				if (in_entry && has_try == "0") { printf "TryExec=%s\n", target }
 				next
 			}
-			/^TryExec=/ { printf "TryExec=\"%s\"\n", target; next }
+			/^TryExec=/ { printf "TryExec=%s\n", target; next }
 			{ print }
 		' "${desktop_src}" >"${desktop_dst}"
 
