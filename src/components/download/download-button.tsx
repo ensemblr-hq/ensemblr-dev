@@ -1,4 +1,5 @@
-import Link from 'next/link';
+import { TrackedDownloadLink } from '@/components/download/tracked-download-link';
+import type { AnalyticsSurface } from '@/lib/analytics';
 import { PLATFORMS, type Platform } from '@/lib/platform';
 import { formatBytes, type Release } from '@/lib/release';
 import { REPO } from '@/lib/site';
@@ -18,6 +19,12 @@ interface DownloadButtonProps {
 	 */
 	platform: Platform;
 	size?: 'sm' | 'lg';
+	/**
+	 * Which of the three copies of this button was pressed. The hero, the nav
+	 * bar and the Download section all render one, and the whole reason a page
+	 * carries its CTA three times is to learn which one gets pressed.
+	 */
+	surface: AnalyticsSurface;
 	className?: string;
 }
 
@@ -27,6 +34,7 @@ export function DownloadButton({
 	platform,
 	release,
 	size = 'lg',
+	surface,
 }: DownloadButtonProps) {
 	/*
 	 * Null when the release shipped nothing for this platform — macOS and Linux
@@ -37,9 +45,25 @@ export function DownloadButton({
 	const download = platform === 'macos' ? release.dmg : release.appImage;
 	const href = download?.url ?? REPO.releasesUrl;
 	const label = PLATFORMS.find((entry) => entry.id === platform)?.label;
+	/*
+	 * The format follows the same branch the href does, so the event names the
+	 * artifact the click actually fetches — and `releases-page` where the branch
+	 * fell through to the fallback, which is a download intent this page failed
+	 * to satisfy and the most useful press it can record.
+	 */
+	const format = download
+		? platform === 'macos'
+			? ('dmg' as const)
+			: ('appimage' as const)
+		: ('releases-page' as const);
 
 	return (
-		<Link
+		<TrackedDownloadLink
+			channel='stable'
+			format={format}
+			platform={platform}
+			surface={surface}
+			version={release.version}
 			className={cn(
 				// The floor is a touch target, not a look: at `py-3` the large button
 				// rendered 32px tall, well under the 44px a thumb needs, and the page's
@@ -92,6 +116,6 @@ export function DownloadButton({
 					{formatBytes(download.sizeBytes)}
 				</span>
 			) : null}
-		</Link>
+		</TrackedDownloadLink>
 	);
 }

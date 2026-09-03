@@ -27,7 +27,11 @@ export function LinuxInstallNote() {
 			<p className='font-mono text-[0.75rem] text-ink'>
 				Or install it with the script:
 			</p>
-			<CopyCommand command={LINUX_INSTALL.install} />
+			<CopyCommand
+				command={LINUX_INSTALL.install}
+				surface='download'
+				target='linux-install'
+			/>
 
 			<p className='border-line/70 border-t pt-3 text-[0.8125rem] leading-relaxed text-muted'>
 				It verifies the SHA-256 first, puts the AppImage under{' '}
@@ -50,7 +54,11 @@ export function LinuxInstallNote() {
 				reports a newer version instead; this is the other end of that:
 			</p>
 
-			<CopyCommand command={LINUX_INSTALL.update} />
+			<CopyCommand
+				command={LINUX_INSTALL.update}
+				surface='download'
+				target='linux-update'
+			/>
 		</div>
 	);
 }

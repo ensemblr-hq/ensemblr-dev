@@ -158,6 +158,7 @@ export async function Hero() {
 									className='justify-center'
 									platform={platform}
 									release={release}
+									surface='hero'
 								/>
 							)}
 						</PlatformChoice>
@@ -211,13 +212,20 @@ export async function Hero() {
 								platform === 'macos' ? (
 									<p className={INSTALL_LINE}>
 										or{' '}
-										<CopyCommand command={HOMEBREW.install} variant='inline' />
+										<CopyCommand
+											command={HOMEBREW.install}
+											surface='hero'
+											target='homebrew-install'
+											variant='inline'
+										/>
 									</p>
 								) : (
 									<p className={INSTALL_LINE}>
 										or{' '}
 										<CopyCommand
 											command={LINUX_INSTALL.install}
+											surface='hero'
+											target='linux-install'
 											variant='inline'
 										/>
 									</p>

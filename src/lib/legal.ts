@@ -50,15 +50,33 @@ export const LEGAL_PAGE = {
  * route that took a parameter would change that, and the redaction hook is at
  * vercel.com/docs/analytics/redacting-sensitive-data.
  *
- * `legal.test.ts` holds the copy to what the app actually does: the notice says
- * page views, so importing `track` from `@vercel/analytics` — custom events,
- * with a payload this paragraph does not describe — fails the suite.
+ * Two custom events joined the page views: `Download` when a release link is
+ * followed, `Copy Command` when an install command is copied. Vercel's page
+ * covers them under the same sentence as the views — "the recording of data
+ * points (for example, page views or custom events) is anonymous, so you have
+ * insight into your data without it being tied to or associated with any
+ * individual, customer, or IP address" — so the anonymity clause above did not
+ * need weakening. What it did need was for `detail` to say the events exist and
+ * to enumerate their payload, which is what it now does.
+ *
+ * The same page warns that a custom event is where a "user ID, token, order ID
+ * or any other information that can individually identify a person" typically
+ * leaks in. Nothing here is derived from the reader: `src/lib/analytics.ts`
+ * sends the name of the button, the filename behind it and the release it
+ * belongs to — facts about this page, all of which are already printed on it in
+ * plain sight.
+ *
+ * `legal.test.ts` still holds the copy to what the site actually does. The
+ * guard was inverted rather than deleted: it used to fail on any `track`
+ * import, and now it fails if a `track` import exists while `detail` has
+ * stopped naming both events — the same protection, aimed at the state that is
+ * now wrong.
  */
 export const ANALYTICS = {
 	notice:
-		'This site counts page views with Vercel Web Analytics. It sets no third-party cookies, and no data point it records is tied to your IP address.',
+		'This site counts page views with Vercel Web Analytics, and records which download link and which install command get used. It sets no third-party cookies, and no data point it records is tied to your IP address.',
 	detail:
-		'Each view stores a timestamp, the path, the referrer, a country, region and city derived from the connection, and the browser, OS and device type. Visitors are counted by a hash Vercel derives from the request and discards after 24 hours, so there is no identifier that follows you to another site and nothing to build a profile from. This is the website, not the app: Ensemblr sends no telemetry of its own, and none of this measurement follows the download.',
+		'Each view stores a timestamp, the path, the referrer, a country, region and city derived from the connection, and the browser, OS and device type. Two clicks are counted on top of that: Download, when you follow a link to a build, and Copy Command, when you copy an install command. Both record only what was pressed — the name of the button, the filename it points at, the release it belongs to, and where on the page it sits — and nothing derived from you. Visitors are counted by a hash Vercel derives from the request and discards after 24 hours, so there is no identifier that follows you to another site and nothing to build a profile from. This is the website, not the app: Ensemblr sends no telemetry of its own, and none of this measurement follows the download.',
 	sourceLabel: 'What Vercel stores, in Vercel’s words',
 	sourceUrl: 'https://vercel.com/docs/analytics/privacy-policy',
 } as const;

@@ -2,6 +2,11 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { CheckIcon, CopyIcon } from '@/components/icons/site';
+import {
+	type AnalyticsSurface,
+	type CopyTarget,
+	trackCopyCommand,
+} from '@/lib/analytics';
 import { selectTextOf, writeClipboard } from '@/lib/clipboard';
 import { cn } from '@/lib/utils';
 
@@ -33,6 +38,21 @@ interface CopyCommandProps {
 	/** The command, verbatim. What is shown is exactly what is written. */
 	command: string;
 	/**
+	 * Which command this is, for the `Copy Command` event. Required, and a union
+	 * rather than a string: the page offers four commands across six buttons,
+	 * and a count that cannot tell `brew` from `curl … | sh` answers none of the
+	 * questions the measurement exists for. Making it required is what stops a
+	 * seventh copy button being added that fires nothing — the component will
+	 * not compile without it.
+	 */
+	target: CopyTarget;
+	/**
+	 * Where the button was pressed. The brew line and the Linux installer each
+	 * appear twice, in the hero and in the Download section, and this is what
+	 * keeps the two apart.
+	 */
+	surface: AnalyticsSurface;
+	/**
 	 * `block` is a row of its own inside a card: full width, a 44px touch floor,
 	 * and the word beside the mark. `inline` is the hero's single line, where the
 	 * command sits mid-sentence — it carries the mark alone, because a word
@@ -62,6 +82,8 @@ interface CopyCommandProps {
 export function CopyCommand({
 	className,
 	command,
+	surface,
+	target,
 	variant = 'block',
 }: CopyCommandProps) {
 	const [state, setState] = useState<CopyState>('idle');
@@ -94,6 +116,19 @@ export function CopyCommand({
 		 */
 		if (copied) {
 			resetTimer.current = setTimeout(() => setState('idle'), COPIED_MS);
+		}
+
+		/*
+		 * The successful write only, for the same reason the label does not claim
+		 * a check mark over an unchanged clipboard: the event means the command is
+		 * on the reader's clipboard, and firing it on the fallback path would make
+		 * it mean "someone pressed a button", which is a different and much weaker
+		 * claim to read off a chart. The fallback selects the text and asks for
+		 * ⌘C, and whether that key was pressed is not something this page can see
+		 * — so counting it would be inventing the half it cannot observe.
+		 */
+		if (copied) {
+			trackCopyCommand({ command, surface, target });
 		}
 	};
 
