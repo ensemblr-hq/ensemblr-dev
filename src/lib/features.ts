@@ -52,6 +52,14 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			'Composer right-click menu with spellchecker suggestions and Add to dictionary',
 			'Auto-generated session names and summaries',
 			'Per-runtime model visibility',
+			// 0.1.1, from `src/main/claude-agent/claude-model-catalog.ts`. The
+			// Runtimes step names Fable 5.1 and where it sits; this row is the
+			// mechanism under it, which is the long tail's job rather than the
+			// step's — `supportedModels()` publishes only the moving aliases
+			// (`opus`, `sonnet`), so a release the CLI would accept as an explicit
+			// `--model` is unreachable from the picker until the catalog pins it.
+			// Pinning is what a chat needing a model whose behaviour is known buys.
+			'Claude releases the CLI accepts but never advertises, pinned into the picker',
 			'Claude plan usage per rate-limit window, beside the session’s cost',
 			'Workspace toolchain PATH and ENSEMBLR_* variables inherited',
 			'One shared code surface for viewer, diff and tool previews',

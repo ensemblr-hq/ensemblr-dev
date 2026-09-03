@@ -248,7 +248,25 @@ export const REQUIREMENTS = [
 	{
 		name: 'An agent runtime CLI',
 		short: 'Pi or Claude Code CLI',
-		detail: 'Pi, Claude Code, or both. Ensemblr ships neither.',
+		/*
+		 * The third sentence arrived with 0.1.1, and it belongs on this row rather
+		 * than beside the Fable claim in the Runtimes step.
+		 *
+		 * `claude-model-catalog.ts` pins `claude-fable-5-1` as an id the runtime
+		 * accepts but does not advertise, and #423 states the consequence outright:
+		 * Fable 5.1 resolves only against a `claude` binary at 2.1.251 or newer.
+		 * The app drives the CLI the reader installed, so the SDK version inside
+		 * the bundle settles nothing — which makes this a gate the reader supplies,
+		 * and gates are what this card is. The step one screen up names the model;
+		 * this names the floor, and neither repeats the other.
+		 *
+		 * It is a version number about somebody else's CLI, not about Ensemblr, so
+		 * the rule that keeps a tag off the `brew` line does not reach it: nothing
+		 * here goes stale when Ensemblr ships, and `depends_on macos: :ventura` is
+		 * already printed on the same page for the same reason.
+		 */
+		detail:
+			'Pi, Claude Code, or both. Ensemblr ships neither. Fable 5.1 resolves only against a claude binary at 2.1.251 or newer.',
 		required: true,
 	},
 	{
