@@ -49,17 +49,10 @@ export async function Hero() {
 
 			<div className='relative mx-auto w-full max-w-7xl px-5 pt-16 pb-16 sm:px-8 sm:pt-24 lg:pb-24'>
 				<div className='flex flex-col items-center gap-6 text-center'>
-					<Reveal className='flex items-center gap-2 rounded-full border border-line bg-surface/70 px-3 py-1'>
-						<span className='size-1.5 rounded-full bg-warning' />
-						<span className='font-mono text-[0.6875rem] uppercase tracking-[0.2em] text-muted'>
-							Public beta
-						</span>
-					</Reveal>
-
 					{/* Small on purpose. The wordmark is the signature under the headline,
 					    not a second headline — set any larger it competes with the h1
 					    directly beneath it and the eye has two things to read first. */}
-					<Reveal index={1}>
+					<Reveal>
 						<EnsemblrWordmark className='h-5 sm:h-6' />
 					</Reveal>
 
@@ -72,7 +65,7 @@ export async function Hero() {
 					 * app it runs inside — spawning sub-agents, waiting on them, folding
 					 * their work back in — is the sentence none of them can print.
 					 */}
-					<Reveal className='mt-1' index={2}>
+					<Reveal className='mt-1' index={1}>
 						{/* `text-[2rem]` set a size and nothing else, so the h1 arrived on
 						    a phone at weight 400 on a 48px line — a leading of 1.5 where
 						    the display token asks for 1.02. Same sizes, now carrying the
@@ -99,7 +92,7 @@ export async function Hero() {
 					 * on purpose; the footer's trademark notice is the only other place
 					 * the symbol appears, and it is verbatim there.
 					 */}
-					<Reveal index={3}>
+					<Reveal index={2}>
 						<p className='max-w-[54ch] text-pretty text-base leading-relaxed text-muted sm:text-lg'>
 							Ensemblr™ is a desktop orchestrator for the Pi agent harness or
 							the Claude Code CLI you already have installed. Every stream of
@@ -122,7 +115,7 @@ export async function Hero() {
 					 * floating between two blocks of prose, belonging to neither. Pulled
 					 * up they read as what they are: the lede's last line.
 					 */}
-					<RuntimeLinks className='-mt-2' index={3} />
+					<RuntimeLinks className='-mt-2' index={2} />
 
 					{/*
 					 * The credentials line, promoted out of the section it used to wait
@@ -132,12 +125,12 @@ export async function Hero() {
 					 * is one most readers never meet.
 					 */}
 					{/*
-					 * Its own step in the cascade, not the lede's. This shared `index={3}`
+					 * Its own step in the cascade, not the lede's. This shared `index={2}`
 					 * with the paragraph three blocks up and the marks between them, so
 					 * a stagger built to arrive one beat at a time landed three
 					 * consecutive beats at once and then paused.
 					 */}
-					<Reveal index={4}>
+					<Reveal index={3}>
 						<p className='max-w-[52ch] text-pretty text-[0.9375rem] text-muted/85 leading-relaxed'>
 							No account, no sign-in, no cloud sync, no telemetry. No Ensemblr
 							backend in the path, and no agent binary of its own.
@@ -154,7 +147,7 @@ export async function Hero() {
 					 */}
 					<Reveal
 						className='mt-2 flex w-full flex-col items-stretch gap-4 sm:w-auto sm:flex-row sm:items-center'
-						index={5}
+						index={4}
 					>
 						{/* Solo, because the row cannot hold two CTAs and a reader who
 						    needs the other one meets both, in full, in the download
@@ -207,7 +200,7 @@ export async function Hero() {
 					 * Download section carries the same command with the tap, the cask's
 					 * gates and the upgrade line beside it, and it copies there too.
 					 */}
-					<Reveal className='hidden sm:block' index={5}>
+					<Reveal className='hidden sm:block' index={4}>
 						{/* Each branch names its own constant rather than sharing one
 						    through a ternary, so `copy-command.test.ts` can see that every
 						    command this page prints is wrapped in a `CopyCommand`. That
@@ -238,7 +231,7 @@ export async function Hero() {
 					    and a leading dot puts a bare bullet at the head of line two. */}
 					{/* Gates and release line share a step on purpose: they are one band
 					    of fine print under the button, not two beats. */}
-					<Reveal index={6}>
+					<Reveal index={5}>
 						<ul className='flex flex-wrap items-center justify-center gap-x-2 gap-y-1 font-mono text-[0.75rem] text-ink'>
 							{GATES.map((gate, index) => (
 								<li className='flex items-center gap-2' key={gate}>
@@ -261,7 +254,7 @@ export async function Hero() {
 						</ul>
 					</Reveal>
 
-					<Reveal index={6}>
+					<Reveal index={5}>
 						<PlatformChoice solo>
 							{(platform) => (
 								<ReleaseLine
