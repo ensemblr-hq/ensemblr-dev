@@ -206,9 +206,23 @@ export const TIMELINE: readonly TimelineEntry[] = [
 	{ duration: '4m, 12.8s', kind: 'turn-footer' },
 ];
 
+/**
+ * The workspace composer, whose model chip is what the app's own picker offers
+ * first on a Claude session.
+ *
+ * `Fable 5.1`, not `Opus 5`, since 0.1.1. The name is the display name
+ * `presentClaudeModels` builds — family and version, never the runtime's
+ * `Opus (1M context)` phrasing — and the reason it heads the rows is
+ * `FAMILY_ORDER`, which runs fable before opus and each family newest first.
+ *
+ * `CONCIERGE_COMPOSER` below deliberately did **not** follow it. The two chips
+ * disagreeing is the point: `app.concierge` is a top-level setting rather than
+ * a key under `app.models`, and a replica that printed the same model in both
+ * places illustrated a shared default the app does not have.
+ */
 export const COMPOSER = {
 	placeholder: 'Send a follow-up',
-	model: 'Opus 5',
+	model: 'Fable 5.1',
 	thinking: 'Max',
 } as const;
 

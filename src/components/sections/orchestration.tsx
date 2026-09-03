@@ -163,8 +163,19 @@ function ControlDiagram() {
 				<div className='flex items-center gap-2'>
 					<StatusDot state='active' />
 					<span className='font-mono text-[11px] text-ink'>orchestrator</span>
+					{/*
+					 * The wire id, spelled as `claude-model-catalog.ts` pins it, and the
+					 * only place on the page a model id is printed rather than a display
+					 * name — this chip is drawn as the app draws one, and the app's
+					 * picker rows carry the id underneath.
+					 *
+					 * `claude-fable-5-1` and not `claude-fable-5-1[1m]`: the bracketed
+					 * qualifier belongs to the aliases the runtime advertises, and the
+					 * id the app adds carries none. Copying the wrong one would put a
+					 * string on the page that resolves to nothing.
+					 */}
 					<span className='ml-auto font-mono text-[10px] text-muted/80'>
-						claude-opus-5
+						claude-fable-5-1
 					</span>
 				</div>
 			</div>
