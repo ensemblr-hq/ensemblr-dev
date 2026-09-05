@@ -30,6 +30,25 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 	{
 		label: 'Workspaces & history',
 		items: [
+			// 0.1.3's headline, from the changelog entry and #437. It leads because
+			// it is the one row in this file describing a *document* rather than a
+			// screen: the diagram lives at `.ensemblr/architecture.json`, a tracked
+			// file, so a clone arrives with the architecture already drawn and a
+			// refinement lands in a pull request instead of hiding in application
+			// state. "an agent draws" is the load-bearing half — the module-graph
+			// scanner and the on-create seeding were both removed in favour of
+			// authoring it through two control ops, so nothing in the app derives
+			// one and `diagram: null` means nobody has drawn this workspace.
+			//
+			// The switch is named rather than left off because it is a gate, not a
+			// preference: with it off the pane, both control ops and the bundled
+			// skill are *absent* rather than disabled, and the app's own words for
+			// why are that nothing should advertise a surface it will not serve.
+			// This row is deliberately the whole of the site's claim — the showcase
+			// says nothing about the diagram, because the app's README and its user
+			// guide do not mention it either, and the page must not market a
+			// feature more loudly than the product does.
+			'An agent-drawn architecture diagram, committed to the repo, behind an experimental switch that is off by default',
 			// 0.1.2, from `docs/guide/03-first-run.md`. The Workspaces step names
 			// the owner picker; this row is the half that only the long tail has
 			// room for, and it is the more distinctive one — an org you cannot

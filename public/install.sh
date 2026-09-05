@@ -90,7 +90,7 @@ Install Ensemblr on Linux x86-64.
   curl -fsSL https://www.ensemblr.dev/install.sh | sh -s -- --nightly
 
 Options
-  --version <tag>   install a specific release, e.g. v0.1.2
+  --version <tag>   install a specific release, e.g. v0.1.3
   --nightly         install the rolling canary build, alongside a release
   --dir <path>      where the AppImage goes (default ~/.local/share/ensemblr)
   --no-desktop      skip the launcher entry and the icons
@@ -112,7 +112,7 @@ EOF
 while [ "$#" -gt 0 ]; do
 	case "$1" in
 	--version)
-		[ "$#" -ge 2 ] || die '--version needs a tag, e.g. --version v0.1.2'
+		[ "$#" -ge 2 ] || die '--version needs a tag, e.g. --version v0.1.3'
 		want_tag="$2"
 		shift 2
 		;;
