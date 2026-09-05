@@ -65,9 +65,10 @@ no size or digest is pinned for it and why the row on the page says so rather th
 
 The release pin is checked rather than trusted. `bun run check:pin` fails when the newest `v*`
 release no longer matches it, when any value it copied disagrees with that release, or when either
-pinned `.dmg` stops resolving; CI runs it on every PR and once a day on a schedule, because a
-release can ship on a week nobody opens one. If GitHub cannot be reached the check warns and passes,
-because *cannot verify* is not *is stale*.
+pinned `.dmg` stops resolving; CI runs it on every PR and every push to `master`, and on no schedule
+— a release that ships on a week nobody opens a PR is caught by whoever re-pins it, since that is a
+manual ask anyway. If GitHub cannot be reached the check warns and passes, because *cannot verify*
+is not *is stale*.
 
 Nothing updates the pin automatically — no bump PR, no cross-repo token, no dispatch from the app
 repo. It is a manual ask, once per release, and **[`docs/re-pinning.md`](docs/re-pinning.md) is the

@@ -1,0 +1,738 @@
+{
+	"generatedAt": "2026-09-05T12:05:23.964Z",
+	"ir": {
+		"boundaries": [
+			{
+				"kind": "region",
+				"label": "App Router routes",
+				"wraps": [
+					"app-layout",
+					"app-page",
+					"app-schemas-page",
+					"app-legal",
+					"app-metadata"
+				]
+			},
+			{
+				"kind": "region",
+				"label": "Rendered page",
+				"wraps": ["sections", "download-ui", "app-mock", "chrome", "primitives"]
+			},
+			{
+				"kind": "region",
+				"label": "Facts about the app, held in one place each",
+				"wraps": [
+					"copy-deck",
+					"release-pin",
+					"github-release",
+					"schemas-manifest",
+					"scripts-manifest",
+					"structured-data",
+					"platform",
+					"analytics"
+				]
+			},
+			{
+				"kind": "region",
+				"label": "Which release, and its digest",
+				"wraps": ["release-pin", "github-release"]
+			},
+			{
+				"kind": "region",
+				"label": "Served artifacts",
+				"wraps": ["public-schemas", "install-sh", "update-sh"]
+			},
+			{
+				"kind": "region",
+				"label": "The only executable code this domain serves",
+				"wraps": ["install-sh", "update-sh"]
+			},
+			{
+				"kind": "security-group",
+				"label": "Drift checks — a copy that goes stale fails CI",
+				"wraps": [
+					"ci",
+					"check-pin",
+					"check-schemas",
+					"check-scripts",
+					"gen-favicon",
+					"next-config"
+				]
+			},
+			{
+				"kind": "region",
+				"label": "Upstream, with no automated link back",
+				"wraps": ["app-repo", "gh-releases-api", "tap-repo", "vercel-analytics"]
+			}
+		],
+		"components": [
+			{
+				"id": "app-layout",
+				"label": "Root layout",
+				"sources": [
+					{
+						"path": "src/app/layout.tsx"
+					},
+					{
+						"path": "src/app/globals.css"
+					}
+				],
+				"sublabel": "fonts, tokens, blocking platform script",
+				"type": "frontend"
+			},
+			{
+				"id": "app-page",
+				"label": "Landing page",
+				"sources": [
+					{
+						"path": "src/app/page.tsx"
+					}
+				],
+				"sublabel": "src/app/page.tsx",
+				"type": "frontend"
+			},
+			{
+				"id": "app-schemas-page",
+				"label": "Schemas page",
+				"sources": [
+					{
+						"path": "src/app/schemas/page.tsx"
+					}
+				],
+				"sublabel": "the human view of the published $ids",
+				"type": "frontend"
+			},
+			{
+				"id": "app-legal",
+				"label": "Legal page",
+				"sources": [
+					{
+						"path": "src/app/legal/page.tsx"
+					}
+				],
+				"sublabel": "src/app/legal",
+				"type": "frontend"
+			},
+			{
+				"id": "app-metadata",
+				"label": "Metadata routes",
+				"sources": [
+					{
+						"path": "src/app/sitemap.ts"
+					},
+					{
+						"path": "src/app/robots.ts"
+					},
+					{
+						"path": "src/app/opengraph-image.tsx"
+					}
+				],
+				"sublabel": "sitemap · robots · manifest · OG image",
+				"type": "frontend"
+			},
+			{
+				"id": "sections",
+				"label": "Page sections",
+				"sources": [
+					{
+						"path": "src/components/sections"
+					}
+				],
+				"sublabel": "hero · showcase · orchestration · trust · download",
+				"type": "frontend"
+			},
+			{
+				"id": "download-ui",
+				"label": "Download surface",
+				"sources": [
+					{
+						"path": "src/components/download"
+					}
+				],
+				"sublabel": "buttons, digests, brew and curl commands",
+				"type": "frontend"
+			},
+			{
+				"id": "app-mock",
+				"label": "Desktop shell replica",
+				"sources": [
+					{
+						"path": "src/components/app-mock"
+					}
+				],
+				"sublabel": "the app window, redrawn in the page",
+				"type": "frontend"
+			},
+			{
+				"id": "chrome",
+				"label": "Nav & footer",
+				"sources": [
+					{
+						"path": "src/components/chrome"
+					}
+				],
+				"sublabel": "src/components/chrome",
+				"type": "frontend"
+			},
+			{
+				"id": "primitives",
+				"label": "Brand, motion & icon primitives",
+				"sources": [
+					{
+						"path": "src/components/brand"
+					},
+					{
+						"path": "src/components/motion"
+					},
+					{
+						"path": "src/components/icons"
+					}
+				],
+				"sublabel": "wordmark, pixel rules, reveal, icons",
+				"type": "frontend"
+			},
+			{
+				"id": "copy-deck",
+				"label": "Copy deck",
+				"sources": [
+					{
+						"path": "src/lib/site.ts"
+					},
+					{
+						"path": "src/lib/features.ts"
+					},
+					{
+						"path": "src/lib/legal.ts"
+					}
+				],
+				"sublabel": "SITE · REPO · HOMEBREW · REQUIREMENTS · TRUST_ITEMS",
+				"type": "backend"
+			},
+			{
+				"id": "release-pin",
+				"label": "Release pin & asset partition",
+				"sources": [
+					{
+						"path": "src/lib/release.ts"
+					},
+					{
+						"path": "src/lib/semver.ts"
+					}
+				],
+				"sublabel": "FALLBACK_RELEASE, semver ordering, macos/linux assets",
+				"type": "backend"
+			},
+			{
+				"id": "github-release",
+				"label": "Live release lookup",
+				"sources": [
+					{
+						"path": "src/lib/github-release.ts"
+					}
+				],
+				"sublabel": "'use cache' fetch at build time",
+				"type": "backend"
+			},
+			{
+				"id": "schemas-manifest",
+				"label": "Schema manifest",
+				"sources": [
+					{
+						"path": "src/lib/schemas.ts"
+					}
+				],
+				"sublabel": "drives the page, headers, tests and check:schemas",
+				"type": "backend"
+			},
+			{
+				"id": "scripts-manifest",
+				"label": "Shell-script manifest",
+				"sources": [
+					{
+						"path": "src/lib/install-scripts.ts"
+					}
+				],
+				"sublabel": "the curl commands and their response headers",
+				"type": "backend"
+			},
+			{
+				"id": "structured-data",
+				"label": "JSON-LD structured data",
+				"sources": [
+					{
+						"path": "src/lib/structured-data.ts"
+					},
+					{
+						"path": "src/components/seo/json-ld.tsx"
+					}
+				],
+				"sublabel": "schema.org nodes, never outrunning the visible copy",
+				"type": "backend"
+			},
+			{
+				"id": "platform",
+				"label": "Platform switch",
+				"sources": [
+					{
+						"path": "src/lib/platform.ts"
+					}
+				],
+				"sublabel": "data-platform on <html>; both blocks render without it",
+				"type": "backend"
+			},
+			{
+				"id": "analytics",
+				"label": "Download & command events",
+				"sources": [
+					{
+						"path": "src/lib/analytics.ts"
+					}
+				],
+				"sublabel": "which artifact, which command",
+				"type": "backend"
+			},
+			{
+				"id": "public-schemas",
+				"label": "Published JSON Schemas",
+				"sources": [
+					{
+						"path": "public/schemas"
+					}
+				],
+				"sublabel": "the app's files, republished byte-for-byte",
+				"type": "database"
+			},
+			{
+				"id": "install-sh",
+				"label": "install.sh",
+				"sources": [
+					{
+						"path": "public/install.sh"
+					}
+				],
+				"sublabel": "POSIX sh; verifies the published SHA-256 before moving anything",
+				"type": "backend"
+			},
+			{
+				"id": "update-sh",
+				"label": "update.sh",
+				"sources": [
+					{
+						"path": "public/update.sh"
+					}
+				],
+				"sublabel": "holds no second copy of the newest-release rule",
+				"type": "backend"
+			},
+			{
+				"id": "next-config",
+				"label": "Next config",
+				"sources": [
+					{
+						"path": "next.config.ts"
+					}
+				],
+				"sublabel": "cacheComponents, per-path response headers",
+				"type": "cloud"
+			},
+			{
+				"id": "check-pin",
+				"label": "check:pin",
+				"sources": [
+					{
+						"path": "scripts/check-pinned-release.ts"
+					}
+				],
+				"sublabel": "the pinned release against the live one",
+				"type": "security"
+			},
+			{
+				"id": "check-schemas",
+				"label": "check:schemas",
+				"sources": [
+					{
+						"path": "scripts/check-schemas.ts"
+					}
+				],
+				"sublabel": "byte compare against the app repo",
+				"type": "security"
+			},
+			{
+				"id": "check-scripts",
+				"label": "check:scripts",
+				"sources": [
+					{
+						"path": "scripts/check-install-scripts.ts"
+					}
+				],
+				"sublabel": "dash parse, no bashisms, asset test matches the pin",
+				"type": "security"
+			},
+			{
+				"id": "gen-favicon",
+				"label": "gen:favicon",
+				"sources": [
+					{
+						"path": "scripts/generate-favicon.ts"
+					}
+				],
+				"sublabel": "resize and re-encode only — no redraw",
+				"type": "cloud"
+			},
+			{
+				"id": "ci",
+				"label": "CI workflow",
+				"sources": [
+					{
+						"path": ".github/workflows/ci.yml"
+					}
+				],
+				"sublabel": "lint · typecheck · test · build, then the drift checks",
+				"type": "cloud"
+			},
+			{
+				"id": "app-repo",
+				"label": "ensemblr-hq/ensemblr",
+				"sublabel": "the app itself — source of truth for every claim here",
+				"type": "external"
+			},
+			{
+				"id": "gh-releases-api",
+				"label": "GitHub Releases API",
+				"sublabel": "/releases — /releases/latest 404s, all builds are prereleases",
+				"type": "external"
+			},
+			{
+				"id": "tap-repo",
+				"label": "ensemblr-hq/homebrew-tap",
+				"sublabel": "Casks/ensemblr.rb — owns its own version",
+				"type": "external"
+			},
+			{
+				"id": "vercel-analytics",
+				"label": "Vercel Analytics",
+				"type": "external"
+			}
+		],
+		"connections": [
+			{
+				"from": "app-layout",
+				"id": "e-layout-primitives",
+				"label": "motion provider",
+				"to": "primitives"
+			},
+			{
+				"from": "app-layout",
+				"id": "e-layout-structured",
+				"to": "structured-data"
+			},
+			{
+				"from": "app-layout",
+				"id": "e-layout-platform",
+				"label": "sets data-platform before paint",
+				"to": "platform",
+				"variant": "emphasis"
+			},
+			{
+				"from": "app-layout",
+				"id": "e-layout-copy",
+				"to": "copy-deck"
+			},
+			{
+				"from": "app-layout",
+				"id": "e-layout-vercel",
+				"label": "<Analytics />",
+				"to": "vercel-analytics"
+			},
+			{
+				"from": "app-page",
+				"id": "e-page-sections",
+				"to": "sections"
+			},
+			{
+				"from": "app-page",
+				"id": "e-page-chrome",
+				"to": "chrome"
+			},
+			{
+				"from": "app-page",
+				"id": "e-page-github",
+				"label": "reads the live release",
+				"to": "github-release",
+				"variant": "emphasis"
+			},
+			{
+				"from": "app-page",
+				"id": "e-page-structured",
+				"to": "structured-data"
+			},
+			{
+				"from": "app-schemas-page",
+				"id": "e-schemapage-manifest",
+				"to": "schemas-manifest"
+			},
+			{
+				"from": "app-legal",
+				"id": "e-legal-copy",
+				"to": "copy-deck"
+			},
+			{
+				"from": "app-metadata",
+				"id": "e-metadata-copy",
+				"to": "copy-deck"
+			},
+			{
+				"from": "app-metadata",
+				"id": "e-metadata-manifest",
+				"label": "sitemap",
+				"to": "schemas-manifest"
+			},
+			{
+				"from": "app-metadata",
+				"id": "e-metadata-github",
+				"to": "github-release"
+			},
+			{
+				"from": "sections",
+				"id": "e-sections-download",
+				"to": "download-ui"
+			},
+			{
+				"from": "sections",
+				"id": "e-sections-appmock",
+				"to": "app-mock"
+			},
+			{
+				"from": "sections",
+				"id": "e-sections-copy",
+				"to": "copy-deck"
+			},
+			{
+				"from": "sections",
+				"id": "e-sections-release",
+				"to": "release-pin"
+			},
+			{
+				"from": "sections",
+				"id": "e-sections-scripts",
+				"to": "scripts-manifest"
+			},
+			{
+				"from": "chrome",
+				"id": "e-chrome-copy",
+				"to": "copy-deck"
+			},
+			{
+				"from": "chrome",
+				"id": "e-chrome-github",
+				"to": "github-release"
+			},
+			{
+				"from": "chrome",
+				"id": "e-chrome-download",
+				"to": "download-ui"
+			},
+			{
+				"from": "download-ui",
+				"id": "e-download-release",
+				"label": "URL, size, SHA-256",
+				"to": "release-pin",
+				"variant": "emphasis"
+			},
+			{
+				"from": "download-ui",
+				"id": "e-download-copy",
+				"label": "brew line, carries no version",
+				"to": "copy-deck"
+			},
+			{
+				"from": "download-ui",
+				"id": "e-download-scripts",
+				"label": "curl … | sh",
+				"to": "scripts-manifest"
+			},
+			{
+				"from": "download-ui",
+				"id": "e-download-platform",
+				"to": "platform"
+			},
+			{
+				"from": "download-ui",
+				"id": "e-download-analytics",
+				"label": "track",
+				"to": "analytics"
+			},
+			{
+				"from": "structured-data",
+				"id": "e-structured-copy",
+				"to": "copy-deck"
+			},
+			{
+				"from": "github-release",
+				"id": "e-github-pin",
+				"label": "falls back to the pin when rate-limited",
+				"to": "release-pin",
+				"variant": "dashed"
+			},
+			{
+				"from": "github-release",
+				"id": "e-github-api",
+				"label": "newest v* by parsed semver",
+				"to": "gh-releases-api"
+			},
+			{
+				"from": "analytics",
+				"id": "e-analytics-vercel",
+				"to": "vercel-analytics"
+			},
+			{
+				"from": "next-config",
+				"id": "e-config-schemas",
+				"label": "response headers",
+				"to": "schemas-manifest"
+			},
+			{
+				"from": "next-config",
+				"id": "e-config-scripts",
+				"label": "response headers",
+				"to": "scripts-manifest"
+			},
+			{
+				"from": "schemas-manifest",
+				"id": "e-manifest-public-schemas",
+				"label": "serves",
+				"to": "public-schemas",
+				"variant": "dashed"
+			},
+			{
+				"from": "scripts-manifest",
+				"id": "e-manifest-install",
+				"label": "serves",
+				"to": "install-sh",
+				"variant": "dashed"
+			},
+			{
+				"from": "scripts-manifest",
+				"id": "e-manifest-update",
+				"to": "update-sh",
+				"variant": "dashed"
+			},
+			{
+				"from": "update-sh",
+				"id": "e-update-install",
+				"label": "--print-latest",
+				"to": "install-sh",
+				"variant": "emphasis"
+			},
+			{
+				"from": "install-sh",
+				"id": "e-install-api",
+				"label": "same semver rule, in awk",
+				"to": "gh-releases-api"
+			},
+			{
+				"from": "ci",
+				"id": "e-ci-pin",
+				"to": "check-pin"
+			},
+			{
+				"from": "ci",
+				"id": "e-ci-schemas",
+				"to": "check-schemas"
+			},
+			{
+				"from": "ci",
+				"id": "e-ci-scripts",
+				"to": "check-scripts"
+			},
+			{
+				"from": "check-pin",
+				"id": "e-checkpin-release",
+				"label": "pin still resolves?",
+				"to": "release-pin",
+				"variant": "security"
+			},
+			{
+				"from": "check-pin",
+				"id": "e-checkpin-api",
+				"to": "gh-releases-api"
+			},
+			{
+				"from": "check-schemas",
+				"id": "e-checkschemas-public",
+				"label": "byte compare",
+				"to": "public-schemas",
+				"variant": "security"
+			},
+			{
+				"from": "check-schemas",
+				"id": "e-checkschemas-repo",
+				"label": "contents API",
+				"to": "app-repo"
+			},
+			{
+				"from": "check-scripts",
+				"id": "e-checkscripts-install",
+				"label": "dash parse, asset test",
+				"to": "install-sh",
+				"variant": "security"
+			},
+			{
+				"from": "check-scripts",
+				"id": "e-checkscripts-update",
+				"to": "update-sh",
+				"variant": "security"
+			},
+			{
+				"from": "check-scripts",
+				"id": "e-checkscripts-release",
+				"label": "script and button seek the same asset",
+				"to": "release-pin",
+				"variant": "security"
+			},
+			{
+				"from": "copy-deck",
+				"id": "e-copy-apprepo",
+				"label": "copied by hand, re-read each time",
+				"to": "app-repo",
+				"variant": "dashed"
+			},
+			{
+				"from": "copy-deck",
+				"id": "e-copy-tap",
+				"label": "HOMEBREW ← Casks/ensemblr.rb",
+				"to": "tap-repo",
+				"variant": "dashed"
+			},
+			{
+				"from": "public-schemas",
+				"id": "e-publicschemas-apprepo",
+				"label": "verbatim",
+				"to": "app-repo",
+				"variant": "dashed"
+			},
+			{
+				"from": "app-mock",
+				"id": "e-appmock-apprepo",
+				"label": "ux-conventions.md",
+				"to": "app-repo",
+				"variant": "dashed"
+			},
+			{
+				"from": "gen-favicon",
+				"id": "e-genfavicon-apprepo",
+				"label": "assets/icon.png",
+				"to": "app-repo",
+				"variant": "dashed"
+			}
+		],
+		"layout": {
+			"mode": "organic"
+		},
+		"meta": {
+			"subtitle": "Marketing site for a desktop app that lives in another repo — every concrete claim is a copy, and the checks are what keep the copies honest",
+			"title": "ensemblr-site"
+		},
+		"schemaVersion": 1
+	}
+}
