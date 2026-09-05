@@ -62,8 +62,11 @@ bun test            # the pin is self-consistent offline
 
 ## What the checks actually assert
 
-`scripts/check-pinned-release.ts` runs on every PR and on the daily `pin` job in
-`.github/workflows/ci.yml` (07:17 UTC, after the app's nightly cron at 04:00). It fails when:
+`scripts/check-pinned-release.ts` runs on every PR and on every push to `master`, in the `check`
+job in `.github/workflows/ci.yml`, and nowhere else. There is no scheduled run: a release that ships
+in a week nobody opens a PR goes uncaught until someone does, which is the trade for re-pinning
+being a manual ask in the first place. Run `bun run check:pin` yourself if you want to know sooner.
+It fails when:
 
 - the newest `v*` release is not the pinned tag
 - any pinned url, size, digest or publish date disagrees with that release
