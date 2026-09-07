@@ -5,11 +5,13 @@
 #   curl -fsSL https://www.ensemblr.dev/update.sh | sh
 #   curl -fsSL https://www.ensemblr.dev/update.sh | sh -s -- --check
 #
-# Ensemblr does not update itself on Linux, by design: an AppImage is a single
-# file the user placed themselves, often on a read-only mount or under a
-# launcher that would be overwritten behind its back. The app reports a newer
-# version and links to the release page. This is the other end of that — the
-# thing the app is pointing at.
+# Since 0.1.6 (ADR 0065) the app installs its own Linux updates when it is
+# running as an AppImage in a directory it can write, so this is no longer the
+# only way up. It stays for the cases the app declines — a read-only or
+# root-owned location, a copy not running as an AppImage, a release GitHub
+# published no digest for, and updates switched off because a package manager
+# owns the copy — where the app reports the newer version and links the release
+# page. This is the other end of that, and the way to upgrade from a shell.
 #
 # Thin on purpose. It holds no copy of the installer and no second copy of the
 # "which release is newest" rule: it fetches `install.sh`, asks it what the
