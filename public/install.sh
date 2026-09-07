@@ -5,12 +5,18 @@
 #   curl -fsSL https://www.ensemblr.dev/install.sh | sh
 #
 # The app ships a `.AppImage` and nothing else for Linux: no package, no
-# launcher entry, no icon, and no self-update — an AppImage is a single file
-# the user placed themselves, often on a read-only mount, so the app reports a
-# newer version rather than writing over itself. This script is the missing
-# half. It puts the file somewhere predictable, extracts the desktop entry and
-# the icon ladder the AppImage already carries, and leaves a manifest so
-# `--uninstall` removes exactly what it added and nothing else.
+# launcher entry and no icon. This script is the missing half. It puts the file
+# somewhere predictable, extracts the desktop entry and the icon ladder the
+# AppImage already carries, and leaves a manifest so `--uninstall` removes
+# exactly what it added and nothing else.
+#
+# Putting it under $HOME is also what lets the app update itself. Since 0.1.6
+# (ADR 0065) a build running as an AppImage in a directory it can write
+# downloads, verifies and swaps in a newer version on restart, and rewrites the
+# `.version` below so this script does not re-download what the app applied.
+# Everything it cannot swap — a read-only mount, a copy not running as an
+# AppImage, a release with no published digest — still only reports the newer
+# version and links the release page. `update.sh` is that fallback's other end.
 #
 # Nothing here needs root and nothing is written outside $HOME.
 #
@@ -634,5 +640,5 @@ esac
 note ''
 note "Ensemblr ${tag} is installed. Start it with \`ensemblr\`, or from your launcher."
 note 'It needs git, an authenticated gh, and either the Pi or the Claude Code CLI.'
-note 'Ensemblr does not update itself on Linux. To update:'
+note 'Installed here, Ensemblr updates itself. To update from a shell instead:'
 note '  curl -fsSL https://www.ensemblr.dev/update.sh | sh'

@@ -2,11 +2,16 @@
  * The two shell scripts this site serves, and the commands that run them.
  *
  * They are the only executable code on this domain. The app ships Linux as a
- * bare `.AppImage` — no package, no launcher entry, no icon, and no
- * self-update, because an AppImage is a file the user placed themselves and
- * often cannot be written to. `install.sh` closes that gap and `update.sh` is
- * the same install gated on a version comparison, which is what the app's
- * check-only updater points a Linux user at.
+ * bare `.AppImage` — no package, no launcher entry and no icon — and
+ * `install.sh` closes that gap; `update.sh` is the same install gated on a
+ * version comparison.
+ *
+ * `update.sh` is no longer the only way up. ADR 0065 amended 0056 at 0.1.6: a
+ * build running as an AppImage in a directory it can write installs its own
+ * updates. What is left for the script is what the app still declines — a
+ * read-only or root-owned location, a copy not running as an AppImage, a
+ * release with no published digest, and updates switched off — which is what
+ * the check-only fallback points a Linux user at.
  *
  * Deliberately free of Next imports, for the same reason `schemas.ts` is:
  * `next.config.ts` reads this file to build the response headers, and it is

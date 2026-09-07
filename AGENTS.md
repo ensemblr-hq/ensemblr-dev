@@ -29,10 +29,15 @@ about.** Do not write a sentence that covers both unless it is true of both:
   `make:linux` runs in a CI job that skips `verify:signing`, and `notarizationEnabled` has always
   required darwin. `DISTRIBUTION.linux` says the word out loud and `IntegrityNote` draws a
   fingerprint rather than a shield for it. Do not soften either.
-- macOS updates itself. **Linux is check-only** — ADR 0056: "an AppImage is a single file the user
-  placed themselves, often on a read-only mount". The app reports a newer version and links to the
-  release page; `public/update.sh` is the other end of that. A page that promises background updates
-  to a Linux reader is promising something the app refuses to do on purpose.
+- macOS updates itself. **Linux updates itself only where it can write its own file** — ADR 0065
+  amended 0056 at 0.1.6: a build running as an AppImage in a writable directory downloads, verifies
+  against GitHub's digest, stages and swaps on restart, and rewrites `install.sh`'s `.version` if
+  that script placed it. Everything else keeps 0056's behaviour — a read-only or root-owned
+  location, a copy not running as an AppImage, a release with no published digest, and updates
+  switched off — and is reported with a link at the release page. `public/update.sh` is that
+  fallback's other end. Neither half may be written as the whole: a page that promises a Linux
+  reader background updates full stop is promising something the app declines on purpose, and one
+  that still says check-only describes the release before this one.
 - Secrets go to the macOS Keychain, or to gnome-keyring / KWallet through Electron's `safeStorage` on
   Linux. `TRUST_ITEMS` says both. "The Keychain" alone was true and is now a specific, checkable,
   wrong claim.
