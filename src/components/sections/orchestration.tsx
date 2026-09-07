@@ -91,6 +91,27 @@ const GUARDRAILS = [
 		'the tool surface, the worktree model and every settings.toml key — read on demand, shipped inside the app',
 	],
 	/*
+	 * 0.1.5, from `docs/guide/06-agents.md`'s "AFK mode" and its delivery loop,
+	 * amended by ADR 0064. The first row on this list about an agent nobody is
+	 * watching, and it belongs here for the same reason `Issue writes` does: it
+	 * is a question a reader hands an agent their repository asks, and the answer
+	 * is a stopping point in code rather than a promise in a prompt.
+	 *
+	 * Four clauses, each one a refusal or a bound rather than a capability. The
+	 * sizing clause is 0.1.5's own — before it, a version bump took a written
+	 * plan and a second reader — and it is phrased as *earned* rather than as a
+	 * heuristic on purpose, because the app's rule is evidence and not diff size,
+	 * and the tie breaks towards the full loop.
+	 *
+	 * What is deliberately not claimed: that an unattended run merges anything.
+	 * It never merges and never force-pushes; the pull request is where it stops,
+	 * which is the same line the `Issue writes` row draws for a ticket.
+	 */
+	[
+		'Unattended runs',
+		'told you are away rather than left asking; the loop is sized to what the change earns; a second writer on the worktree is refused, and the run stops at a pull request it never merges',
+	],
+	/*
 	 * The Concierge row that used to close this list is the showcase's last step
 	 * now, one section down.
 	 *
