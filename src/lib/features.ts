@@ -69,6 +69,18 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 		label: 'Sessions & composer',
 		items: [
 			'Pasted images and @-mention file payloads',
+			// 0.1.5. The row above is the file half of the `@` menu; this is the
+			// half that landed beside it, and the distinction worth the words is
+			// *reference*, not paste. Picking a sibling chat inserts a chip that
+			// serializes to the chat's session id, so the receiving agent reads the
+			// conversation through `ensemblr_read_conversation` if it needs it
+			// rather than carrying an inlined transcript it may not.
+			//
+			// "in this workspace" is load-bearing and not padding: the mechanism is
+			// the Concierge's, whose catalogue is app-wide, and the workbench menu
+			// narrows it to the chats that share this checkout. Before it, pointing
+			// an agent at a sibling conversation meant pasting a session id by hand.
+			'@-mention another chat in the same workspace, sent as a reference rather than an inlined transcript',
 			// 0.1.2. A transcript, an issue, a patch and a review comment are all
 			// `.context/` documents under a generated filename, so a sent chip that
 			// rebuilt itself from the path alone had nothing to show but a uuid.
