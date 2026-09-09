@@ -124,20 +124,20 @@ export const FALLBACK_RELEASE: Release = {
 	dmg: {
 		label: 'Apple silicon .dmg',
 		url: `${REPO.releasesUrl}/download/v0.1.11/Ensemblr-0.1.11-arm64.dmg`,
-		sizeBytes: 158_197_315,
-		sha256: '4940be742953b0abc068588e799d1a828be712b66aca9b425a25c4295f241fb4',
+		sizeBytes: 158_201_826,
+		sha256: '5f5de5de61160f4c2550dabcfcf86987d48e634bdf4395c04b15d28c4dc48d7a',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
 		url: `${REPO.releasesUrl}/download/v0.1.11/Ensemblr-darwin-arm64-0.1.11.zip`,
-		sizeBytes: 159_339_246,
-		sha256: 'be38a1820f0410862e8e35894e52493711afedbf5156e7f4104f5a2ff0afae46',
+		sizeBytes: 159_339_298,
+		sha256: 'a3bd3961ddb0c905b49457ac73645c9f2cef0f3d08632d73ebff6c68b902a24c',
 	},
 	appImage: {
 		label: 'Linux x86-64 .AppImage',
 		url: `${REPO.releasesUrl}/download/v0.1.11/Ensemblr-0.1.11-x64.AppImage`,
 		sizeBytes: 144_599_544,
-		sha256: '11506f7cdc1e8a5c2aa86d617dffa261b8e39c56324a2ed8605c5ffb04abbdc0',
+		sha256: '70289fcfaa9928dd1204941f089cec11bb335900de059451f57fab2763a1511b',
 	},
 };
 
