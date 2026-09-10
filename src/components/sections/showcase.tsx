@@ -77,22 +77,11 @@ const STEPS: readonly Step[] = [
 		points: [
 			'One timeline, tool cards, approvals and context gauge for both',
 			/*
-			 * 0.1.1's headline, and the sixth bullet this step has carried — the
-			 * Concierge step below already runs six, so the count is the cut's
-			 * ceiling rather than a rule this breaks.
-			 *
-			 * `src/main/claude-agent/claude-model-catalog.ts` is the source, and the
-			 * ordering is the half worth printing: `FAMILY_ORDER` runs fable, opus,
-			 * sonnet, haiku and each family lists its newest release first, so the
-			 * catalog is what puts Fable 5.1 at the head of the Claude rows rather
-			 * than the runtime, which advertises only its moving aliases. `Claude
-			 * picker`, not `the picker` — Pi's models are merged in ahead of these,
-			 * so this is the first Claude row and not the first row.
-			 *
-			 * The binary floor Fable 5.1 needs is a gate the reader supplies, so it
-			 * is stated once, on the runtime-CLI row of `REQUIREMENTS`.
+			 * 0.1.14's model roles, from `docs/guide/09-agent-control.md`. They are advisory
+			 * preferences rather than permissions or fixed routing, which is why the
+			 * row says "guide" rather than "choose".
 			 */
-			'Fable 5.1 leads the Claude picker, ahead of Opus, Sonnet and Haiku',
+			'Sage, Coder, Builder, Grunt and Explorer roles guide delegation',
 			'Plan mode holds an agent and every sub-agent to read-only tools',
 			'Git-backed checkpoints restore the tree to an earlier turn',
 			// `docs/guide/06-agents.md`'s "When a turn fails". It belongs to this
@@ -102,7 +91,7 @@ const STEPS: readonly Step[] = [
 			// clause that matters is the second: the row offers only what its
 			// failure class earns, rather than a retry that would be refused again.
 			'A failed turn offers only the recoveries its failure class earns',
-			'Codex, Vibe and the claude TUI run as terminal harnesses',
+			'Cross-runtime delegation between Pi and Claude Code stays opt-in',
 		],
 		region: 'conversation',
 		title: 'Two runtimes. One surface.',

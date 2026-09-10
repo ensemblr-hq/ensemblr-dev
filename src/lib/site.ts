@@ -45,7 +45,7 @@ export const SITE = {
 	searchDescription:
 		'A desktop orchestrator for Pi and Claude Code, on macOS and Linux. Every stream of work gets its own git worktree, and an agent can drive the app itself.',
 	description:
-		'A desktop orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — spawn sub-agents, delegate, wait, integrate. No account, no tokens stored. macOS on Apple silicon or Linux on x86-64, Apache 2.0.',
+		'A desktop orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — delegate from root to manager to leaf, wait, verify, integrate. No account, no tokens stored. macOS on Apple silicon or Linux on x86-64, Apache 2.0.',
 	/*
 	 * One locale, three spellings of it. `<html lang>` and schema.org want the
 	 * BCP 47 tag, Open Graph wants the underscored form, and the page's own copy

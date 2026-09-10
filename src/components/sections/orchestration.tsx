@@ -31,7 +31,7 @@ const TOOLS = [
  */
 const GUARDRAILS = [
 	['Permission mode', 'read-only · approval required · workspace-trusted'],
-	['Delegation depth', 'shallow — sub-agents never delegate onward'],
+	['Delegation depth', 'two edges — root → manager → leaf; leaves stop there'],
 	/*
 	 * Two rows shorter than it was. "Spawn limits" (a per-session quota and a
 	 * rate cap) said what "Delegation depth" already implies about scale, and
@@ -323,7 +323,7 @@ export function Orchestration() {
 					 */}
 					<SectionHeading
 						eyebrow='Ensemblr Control'
-						lede='A permission-gated surface lets an agent drive the app itself, not just the code in it. Pi reaches it through a shipped extension and Claude Code through an embedded MCP server, and a parity test keeps the two tool lists from drifting.'
+						lede='A root agent can hand a workstream to a manager, which may split it once more into leaves. Each conversation keeps its own context, while the Agents panel shows the whole tree, live tool activity and context use.'
 						title='Not a place you run one agent. A place a team of agents runs itself.'
 					/>
 
