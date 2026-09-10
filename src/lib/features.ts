@@ -97,11 +97,12 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			// exists because the app forwards Chromium's uncancelled verdict.
 			'Composer right-click menu with spellchecker suggestions and Add to dictionary',
 			'Auto-generated session names and summaries',
+			'An Agents panel with root → manager → leaf hierarchy, live tool activity, context use and closed chats',
 			'Per-runtime model visibility',
-			// 0.1.1, from `src/main/claude-agent/claude-model-catalog.ts`. The
-			// Runtimes step names Fable 5.1 and where it sits; this row is the
-			// mechanism under it, which is the long tail's job rather than the
-			// step's — `supportedModels()` publishes only the moving aliases
+			// 0.1.1, from `src/main/claude-agent/claude-model-catalog.ts`. This
+			// stays in the long tail now that the visible Runtimes step leads on
+			// delegation roles instead — `supportedModels()` publishes only the
+			// moving aliases
 			// (`opus`, `sonnet`), so a release the CLI would accept as an explicit
 			// `--model` is unreachable from the picker until the catalog pins it.
 			// Pinning is what a chat needing a model whose behaviour is known buys.
@@ -129,6 +130,7 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			// footer is where someone who wants the two `$id`s goes next.
 			'Both config files carry a published JSON Schema your editor completes against',
 			'Per-runtime executable override and readiness checks',
+			'Advisory Sage, Coder, Builder, Grunt and Explorer roles, plus opt-in delegation between Pi and Claude Code',
 			'Git defaults: branch prefix, auto-rename, archive on merge',
 			'Appearance: theme, code theme, markdown style, mono fonts',
 			'Any number of Linear organisations connected at once',

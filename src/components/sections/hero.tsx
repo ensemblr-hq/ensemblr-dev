@@ -96,9 +96,9 @@ export async function Hero() {
 						<p className='max-w-[54ch] text-pretty text-base leading-relaxed text-muted sm:text-lg'>
 							Ensemblr™ is a desktop orchestrator for the Pi agent harness or
 							the Claude Code CLI you already have installed. Every stream of
-							work gets its own git worktree, and the agent inside it can spawn
-							sub-agents, delegate, wait and integrate — then open the diff, run
-							the scripts and file the PR.
+							work gets its own git worktree, and the agent inside it can
+							delegate from root to manager to leaf, wait, verify and integrate
+							— then open the diff, run the scripts and file the PR.
 						</p>
 					</Reveal>
 
