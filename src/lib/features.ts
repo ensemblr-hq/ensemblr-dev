@@ -60,6 +60,13 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			'Continue finished work onto a numbered continuation branch',
 			'Configured files copied into every new workspace',
 			'Archive a workspace’s context, git-backed, and browse it later',
+			// 0.1.15, from ADR 0071. The claim is durability rather than storage:
+			// renderer UI state used to live only in the web storage partition,
+			// which Chromium is free to clear, so it is mirrored into the same
+			// SQLite database the rest of the app's state already lives in. Nothing
+			// new leaves the machine — the "No account, no server" item below still
+			// names that database as where everything sits.
+			'Panel layout and UI state mirrored into SQLite, so a cleared web store does not lose it',
 			'A History screen that restores or permanently deletes',
 			'Pin workspaces above their project groups',
 			'Unread markers and per-workspace activity dots',
@@ -98,6 +105,13 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			'Composer right-click menu with spellchecker suggestions and Add to dictionary',
 			'Auto-generated session names and summaries',
 			'An Agents panel with root → manager → leaf hierarchy, live tool activity, context use and closed chats',
+			// 0.1.15, from #560. The load-bearing half is *which* questions: a
+			// question in the chat you are looking at raises nothing, and neither
+			// does the Concierge's, so the toast only ever fires for one you could
+			// not have seen. It carries a Focus chat action across workspaces and
+			// clears itself when the question is answered or its chat is opened,
+			// which is why the row can say "waiting" rather than "was asked".
+			'A question waiting in another chat or workspace raises a notification that focuses it',
 			'Per-runtime model visibility',
 			// 0.1.1, from `src/main/claude-agent/claude-model-catalog.ts`. This
 			// stays in the long tail now that the visible Runtimes step leads on
@@ -122,6 +136,15 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 		label: 'Settings & integrations',
 		items: [
 			'Layered user / repository / workspace config, live reload',
+			// 0.1.15's headline, from ADR 0070. It supersedes 0041's root-write
+			// clauses: shared repository config — the Scripts settings and the
+			// committed half of an Infisical link — used to be written to the root
+			// clone, the one checkout the app never shows anybody, where it sat on
+			// no branch and appeared in no diff. "you name" is the half worth the
+			// words: the screen shows which workspace receives the write and reads
+			// that same workspace back, and a repository with no live workspace is
+			// refused rather than quietly falling back to the root.
+			'Shared repository settings written to a workspace branch you name, never to a clone nobody sees',
 			// 0.1.0-beta.6, from `docs/guide/11-app-settings.md` and
 			// `12-repository-settings.md`. The schemas themselves have a page of
 			// their own on this site, so the row is deliberately the *product*
@@ -131,6 +154,12 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			'Both config files carry a published JSON Schema your editor completes against',
 			'Per-runtime executable override and readiness checks',
 			'Advisory Sage, Coder, Builder, Grunt and Explorer roles, plus opt-in delegation between Pi and Claude Code',
+			// 0.1.15, from `agents.delegationInitiative` in the published config
+			// schema. Advisory prose rather than a tool gate — the same kind of
+			// setting the roles row above describes — and deliberately not applied
+			// to an unattended turn or to the Concierge, which is why the row says
+			// "until you ask" rather than "never".
+			'Delegation held until you ask for a hand-off, or left to the orchestrator',
 			'Git defaults: branch prefix, auto-rename, archive on merge',
 			'Appearance: theme, code theme, markdown style, mono fonts',
 			'Any number of Linear organisations connected at once',

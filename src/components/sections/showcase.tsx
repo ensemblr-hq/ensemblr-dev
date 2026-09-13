@@ -115,6 +115,16 @@ const STEPS: readonly Step[] = [
 			// comments takes focus once and a resolve batch that closed nothing
 			// takes it never.
 			'An agent’s comment pass pulls Checks forward once, however many it files',
+			/*
+			 * 0.1.15's headline, from ADR 0070, and it belongs to this step rather
+			 * than to a settings one because what changed is *where the edit shows
+			 * up*. Scripts saves and the committed half of an Infisical link went
+			 * to the root clone until this release — a tracked file edited on no
+			 * branch, in no diff, reviewed by nobody. They land in this panel now,
+			 * on a workspace branch, which is the step's own claim extended to the
+			 * one kind of change the app used to make behind it.
+			 */
+			'Repository settings land on a branch and in this diff, like any other change',
 			'PR title, description, live check status and merge, all through gh',
 		],
 		region: 'review',
