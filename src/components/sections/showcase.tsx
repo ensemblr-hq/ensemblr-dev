@@ -83,6 +83,18 @@ const STEPS: readonly Step[] = [
 			 */
 			'Sage, Coder, Builder, Grunt and Explorer roles guide delegation',
 			'Plan mode holds an agent and every sub-agent to read-only tools',
+			/*
+			 * 0.1.16's headline, from #593, and it is a qualifier on the row above
+			 * rather than a new capability: read-only was being read as "no tools",
+			 * so a planning session on a trusted or read-only workspace could not
+			 * name its tab or branch, record a summary, ask a question, delegate,
+			 * or submit the plan it had just written. "still" is the load-bearing
+			 * word — nothing was widened. The control tools were always meant to be
+			 * outside the read-only hold, and authority for each one stays where it
+			 * was, at the control server, per op and per role, with the workspace
+			 * permission mode applied on top.
+			 */
+			'A planning agent still names the work, asks, and submits its plan',
 			'Git-backed checkpoints restore the tree to an earlier turn',
 			// `docs/guide/06-agents.md`'s "When a turn fails". It belongs to this
 			// step because the step's claim is the surface, and a turn that dies is
