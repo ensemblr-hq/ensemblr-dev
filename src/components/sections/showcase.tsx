@@ -77,6 +77,15 @@ const STEPS: readonly Step[] = [
 		points: [
 			'One timeline, tool cards, approvals and context gauge for both',
 			/*
+			 * 0.1.19's headline, from #612, and it sits under the row above because
+			 * it is the same claim made about the agent rather than the user: the
+			 * surface is one surface for both runtimes. Every playbook, directive and
+			 * op result used to name the control tools in Pi's bare spelling, so a
+			 * Claude Code agent read names it could not call. They are respelled per
+			 * recipient now; content the app read rather than wrote stays verbatim.
+			 */
+			'Each agent is handed control-tool names its own runtime can call',
+			/*
 			 * 0.1.14's model roles, from `docs/guide/09-agent-control.md`. They are advisory
 			 * preferences rather than permissions or fixed routing, which is why the
 			 * row says "guide" rather than "choose".
