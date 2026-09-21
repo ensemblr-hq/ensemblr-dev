@@ -17,9 +17,8 @@ import { RuntimeLinks } from './runtime-links';
 /*
  * The hard gates, in the first screenful rather than only at the button.
  *
- * Three of these four disqualify a reader outright — an Intel Mac or an arm64
- * Linux box, no agent CLI on PATH, no authenticated `gh` — and a page that
- * withholds them until the download section has spent the reader's whole scroll
+ * Three of these four disqualify a reader outright — an arm64 Linux box, no
+ * agent CLI on PATH, no authenticated `gh` — and a page that withholds them until the download section has spent the reader's whole scroll
  * on a product they cannot install. Said up front they cost one line and buy the
  * rest of the page.
  */
@@ -269,6 +268,7 @@ export async function Hero() {
 									className='justify-center'
 									platform={platform}
 									release={release}
+									surface='hero'
 								/>
 							)}
 						</PlatformChoice>

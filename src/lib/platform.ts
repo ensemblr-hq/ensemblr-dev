@@ -1,7 +1,7 @@
 /**
  * Which of the two builds a visitor is being shown.
  *
- * The app builds for macOS on Apple silicon and for Linux on x86-64, and the
+ * The app builds for macOS on Apple silicon and Intel and for Linux on x86-64, and the
  * download surface has to answer for both without asking every reader to pick
  * before they have read anything. The mechanism is deliberately small and lives
  * entirely in one attribute on `<html>`:

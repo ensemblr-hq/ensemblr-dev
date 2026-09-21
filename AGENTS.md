@@ -16,7 +16,7 @@ you write it down. Your training data is older than the product.
 
 ## The site offers two platforms, and they are not symmetrical
 
-The app builds for **macOS on Apple silicon** and **Linux on x86-64**, and this site offers both. It
+The app builds for **macOS on Apple silicon and Intel** (a separate `.dmg` per architecture, Intel from 0.1.20, no universal binary) and **Linux on x86-64**, and this site offers all of them. It
 did not always: every surface here described the `.dmg` alone until Linux was announced, and the
 copy was deliberately narrower than its source. That is over — `SITE.tagline`, both descriptions,
 `REQUIREMENTS`, `DISTRIBUTION`, the hero, the download section and `structured-data.ts`'s
@@ -80,7 +80,7 @@ gh release view <tag> --repo ensemblr-hq/ensemblr \
 ```
 
 That second command returns each asset's `name`, `size`, `url` and `digest` — every field
-`FALLBACK_RELEASE` needs, for all **three** of them: the Apple silicon `.dmg` and `.zip`, and the
+`FALLBACK_RELEASE` needs, for all **five** of them: the Apple silicon `.dmg` and `.zip`, the Intel Mac `.dmg` and `.zip`, and the
 Linux x86-64 `.AppImage`. Copy them out of the response. Do not retype a digest or a byte size, and
 do not carry one over from a previous edit. `digest` is `sha256:<hex>`; the pin stores the bare hex,
 the same stripping `toSha256()` does at runtime, and `bun test` rejects anything a reader could not
@@ -196,7 +196,7 @@ editing, and prefer re-copying to hand-editing:
 | Here | Source of truth in the app repo |
 | --- | --- |
 | `public/schemas/*.schema.json` | `schemas/*.schema.json` — copy verbatim, then `bun run check:schemas` |
-| `FALLBACK_RELEASE` in `src/lib/release.ts` | the newest published `v*` release — **three** assets now: `.dmg`, `.zip`, `.AppImage` |
+| `FALLBACK_RELEASE` in `src/lib/release.ts` | the newest published `v*` release — **five** assets now: arm64 `.dmg` + `.zip`, x64 (Intel) `.dmg` + `.zip`, `.AppImage` |
 | `FALLBACK_NIGHTLY` in `src/lib/release.ts` | the rolling `nightly` tag — URLs only, never its bytes |
 | the nightly copy in `src/components/download/nightly-download.tsx` | `.github/workflows/nightly.yml` — note the signing clause is the macOS job's alone |
 | `REQUIREMENTS`, `DISTRIBUTION` in `src/lib/site.ts` | the app's README, its signing/notarisation setup, and `docs/adr/0056-ship-a-linux-amd64-appimage.md` |

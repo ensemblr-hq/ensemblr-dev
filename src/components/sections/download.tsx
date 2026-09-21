@@ -54,7 +54,7 @@ function PlatformDownload({
 			</Reveal>
 
 			<Reveal index={4}>
-				<ReleaseLine platform={platform} release={release} />
+				<ReleaseLine platform={platform} release={release} surface='download' />
 			</Reveal>
 
 			<Reveal index={5}>
@@ -74,21 +74,31 @@ function PlatformDownload({
 
 			{/* macOS only, because there is no second Linux artifact: the AppImage is
 			    the whole delivery. */}
-			{platform === 'macos' && release.zip ? (
+			{platform === 'macos' && (release.zip || release.zipIntel) ? (
 				<Reveal index={5}>
 					<p className='font-mono text-[0.75rem] text-ink'>
 						Prefer a zip?{' '}
-						<TrackedDownloadLink
-							channel='stable'
-							className='text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
-							format='zip'
-							href={release.zip.url}
-							platform='macos'
-							surface='download'
-							version={release.version}
-						>
-							{release.zip.label} · {formatBytes(release.zip.sizeBytes)}
-						</TrackedDownloadLink>
+						{[
+							{ download: release.zip, format: 'zip' as const },
+							{ download: release.zipIntel, format: 'zip-intel' as const },
+						].flatMap(({ download, format }) =>
+							download
+								? [
+										<TrackedDownloadLink
+											channel='stable'
+											className='mr-3 text-muted underline decoration-line underline-offset-4 transition-colors hover:text-accent'
+											format={format}
+											href={download.url}
+											key={format}
+											platform='macos'
+											surface='download'
+											version={release.version}
+										>
+											{download.label} · {formatBytes(download.sizeBytes)}
+										</TrackedDownloadLink>,
+									]
+								: [],
+						)}
 					</p>
 				</Reveal>
 			) : null}

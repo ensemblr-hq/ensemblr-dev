@@ -18,12 +18,14 @@ import {
 const BARE_RELEASE: Release = {
 	appImage: null,
 	dmg: null,
+	dmgIntel: null,
 	isPrerelease: true,
 	notesUrl: FALLBACK_RELEASE.notesUrl,
 	publishedAt: null,
 	tag: 'v0.0.0',
 	version: '0.0.0',
 	zip: null,
+	zipIntel: null,
 };
 
 describe('serialiseJsonLd', () => {

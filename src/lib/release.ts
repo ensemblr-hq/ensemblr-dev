@@ -56,6 +56,14 @@ export interface Release {
 	readonly dmg: ReleaseDownload | null;
 	readonly zip: ReleaseDownload | null;
 	/**
+	 * The Intel Mac build, published since 0.1.20. A separate `.dmg` per Mac
+	 * architecture rather than one universal binary, so `dmg` above is always
+	 * the Apple silicon one. Null on every earlier release, and on any release
+	 * whose Intel leg failed while the arm64 one went up.
+	 */
+	readonly dmgIntel: ReleaseDownload | null;
+	readonly zipIntel: ReleaseDownload | null;
+	/**
 	 * The Linux x86-64 build, published since 0.1.0-beta.19.
 	 *
 	 * Nullable for the same reason `dmg` is, and it matters more here: the
@@ -93,6 +101,8 @@ export interface Nightly {
 	readonly tag: string;
 	readonly notesUrl: string;
 	readonly dmg: NightlyDownloadLink;
+	/** Null on a night the Intel Mac canary did not upload. */
+	readonly dmgIntel: NightlyDownloadLink | null;
 	/** Null when the canary build for Linux did not upload that night. */
 	readonly appImage: NightlyDownloadLink | null;
 }
@@ -116,28 +126,40 @@ export const NIGHTLY_TAG = 'nightly';
  * checkable. Nothing updates this automatically — see `docs/re-pinning.md`.
  */
 export const FALLBACK_RELEASE: Release = {
-	tag: 'v0.1.19',
-	version: '0.1.19',
+	tag: 'v0.1.20',
+	version: '0.1.20',
 	isPrerelease: false,
-	publishedAt: '2026-09-18T09:34:10Z',
-	notesUrl: `${REPO.releasesUrl}/tag/v0.1.19`,
+	publishedAt: '2026-09-21T09:07:34Z',
+	notesUrl: `${REPO.releasesUrl}/tag/v0.1.20`,
 	dmg: {
 		label: 'Apple silicon .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.19/Ensemblr-0.1.19-arm64.dmg`,
-		sizeBytes: 153_172_395,
-		sha256: '6c49dfb5af4cacb18da26436c8546e6bca91d707a0c0b3a5a002bc2d388c856b',
+		url: `${REPO.releasesUrl}/download/v0.1.20/Ensemblr-0.1.20-arm64.dmg`,
+		sizeBytes: 153_211_768,
+		sha256: 'f4c800b5eb05f9740e7ca3bb0b83f0ad29da3a3915d81f920268e2ad8c6169bc',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.19/Ensemblr-darwin-arm64-0.1.19.zip`,
-		sizeBytes: 154_334_470,
-		sha256: 'eb246e73b0a98881177f7e2e738cbb42b8a71bbc23c7293e1364285333629bf5',
+		url: `${REPO.releasesUrl}/download/v0.1.20/Ensemblr-darwin-arm64-0.1.20.zip`,
+		sizeBytes: 154_354_615,
+		sha256: 'c7b3e8ba04244b8847c64699a563d169112282c4726c2644599f3a8b77b6d3a3',
+	},
+	dmgIntel: {
+		label: 'Intel Mac .dmg',
+		url: `${REPO.releasesUrl}/download/v0.1.20/Ensemblr-0.1.20-x64.dmg`,
+		sizeBytes: 159_010_923,
+		sha256: '7bf6ab1298ef82c72ee28f8a849f127d9ba7c5a23ed30498e10ad221d3adb30f',
+	},
+	zipIntel: {
+		label: 'Intel Mac .zip',
+		url: `${REPO.releasesUrl}/download/v0.1.20/Ensemblr-darwin-x64-0.1.20.zip`,
+		sizeBytes: 160_475_991,
+		sha256: '29b8b8c408db2910564fdc201e1ac326c3bb5302b46f4965b02a9add64e72e1b',
 	},
 	appImage: {
 		label: 'Linux x86-64 .AppImage',
-		url: `${REPO.releasesUrl}/download/v0.1.19/Ensemblr-0.1.19-x64.AppImage`,
-		sizeBytes: 140_474_872,
-		sha256: '237cc09e0e2bada53f9b7cc3bb888b3fc47aab90366fac6ea407429e46431619',
+		url: `${REPO.releasesUrl}/download/v0.1.20/Ensemblr-0.1.20-x64.AppImage`,
+		sizeBytes: 140_454_392,
+		sha256: '79dccdcd9d44de9d25fa259c38b5e8159954cb386ae35ee83a5992d05482070f',
 	},
 };
 
@@ -157,6 +179,13 @@ export const FALLBACK_NIGHTLY: Nightly = {
 		label: 'Apple silicon .dmg',
 		url: `${REPO.releasesUrl}/download/${NIGHTLY_TAG}/Ensemblr-Canary-arm64.dmg`,
 	},
+	/*
+	 * Null until the rolling tag actually carries `Ensemblr-Canary-x64.dmg`: the
+	 * first nightly to publish it is the first build after 0.1.20, and a pinned
+	 * URL for an asset that is not there yet is the 404 `check:pin` exists to
+	 * refuse. A live lookup fills the row in as soon as the asset exists.
+	 */
+	dmgIntel: null,
 	/*
 	 * `x86_64`, where the release asset above says `x64`. The two spellings are
 	 * the app's, not a typo here: Forge names the release artifact after the
@@ -214,6 +243,28 @@ export function macosAssets(
 }
 
 /**
+ * The Intel half of the Mac question. Its names carry `x64` — Forge's own
+ * spelling, `Ensemblr-<version>-x64.dmg`, `Ensemblr-darwin-x64-<version>.zip`
+ * and `Ensemblr-Canary-x64.dmg` — and the Linux AppImage carries `x64` or
+ * `x86_64` too, so the arch alone cannot separate them. Only a `.dmg` or a
+ * `darwin` `.zip` qualifies, which also rules out
+ * `Ensemblr-linux-x64-<version>.zip`. Disjoint from `macosAssets` (`arm64`)
+ * and from `linuxAssets` (`.AppImage`) by construction.
+ */
+export function macosIntelAssets(
+	assets: readonly z.infer<typeof assetSchema>[],
+): readonly z.infer<typeof assetSchema>[] {
+	return assets.filter((asset) => {
+		const name = asset.name.toLowerCase();
+		return (
+			/x86_64|x64/.test(name) &&
+			(name.endsWith('.dmg') ||
+				(name.endsWith('.zip') && name.includes('darwin')))
+		);
+	});
+}
+
+/**
  * The Linux side of the same question, and it takes two conditions rather than
  * one because neither is sufficient alone.
  *
@@ -260,10 +311,13 @@ export function findAsset(
 
 export function toRelease(release: z.infer<typeof releaseSchema>): Release {
 	const macos = macosAssets(release.assets);
+	const intel = macosIntelAssets(release.assets);
 	const linux = linuxAssets(release.assets);
 	return {
 		appImage: findAsset(linux, '.appimage', 'Linux x86-64 .AppImage'),
 		dmg: findAsset(macos, '.dmg', 'Apple silicon .dmg'),
+		dmgIntel: findAsset(intel, '.dmg', 'Intel Mac .dmg'),
+		zipIntel: findAsset(intel, '.zip', 'Intel Mac .zip'),
 		isPrerelease: release.prerelease,
 		notesUrl: release.html_url,
 		publishedAt: release.published_at,
@@ -284,6 +338,11 @@ export function toNightly(
 	if (!dmg) {
 		return null;
 	}
+	const dmgIntel = findAsset(
+		macosIntelAssets(release.assets),
+		'.dmg',
+		'Intel Mac .dmg',
+	);
 	const appImage = findAsset(
 		linuxAssets(release.assets),
 		'.appimage',
@@ -295,6 +354,7 @@ export function toNightly(
 		// tonight's bytes are not the bytes this page was built against.
 		appImage: appImage ? { label: appImage.label, url: appImage.url } : null,
 		dmg: { label: dmg.label, url: dmg.url },
+		dmgIntel: dmgIntel ? { label: dmgIntel.label, url: dmgIntel.url } : null,
 		notesUrl: release.html_url,
 		tag: release.tag_name,
 	};

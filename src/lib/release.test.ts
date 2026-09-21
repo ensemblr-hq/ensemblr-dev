@@ -9,6 +9,7 @@ import {
 	formatReleaseDate,
 	linuxAssets,
 	macosAssets,
+	macosIntelAssets,
 	NIGHTLY_TAG,
 	releaseYear,
 	selectNightly,
@@ -115,6 +116,14 @@ const MACOS_NAMES = [
 	'Ensemblr-Canary-darwin-arm64.zip',
 ];
 
+/** The Intel Mac artifacts, which share `x64` with the Linux AppImage. */
+const INTEL_NAMES = [
+	'Ensemblr-0.1.20-x64.dmg',
+	'Ensemblr-darwin-x64-0.1.20.zip',
+	'Ensemblr-Canary-x64.dmg',
+	'Ensemblr-Canary-darwin-x64.zip',
+];
+
 /*
  * Both spellings, because the app uses both: the release artifact is named
  * after Forge's `--arch=x64` and the canary after `uname -m`. A matcher that
@@ -138,6 +147,34 @@ describe('macosAssets', () => {
 			expect(macosAssets([asset(name)])).toEqual([]);
 		},
 	);
+});
+
+describe('macosIntelAssets', () => {
+	test('keeps every Intel Mac artifact the app publishes', () => {
+		expect(macosIntelAssets(INTEL_NAMES.map(asset)).map((a) => a.name)).toEqual(
+			INTEL_NAMES,
+		);
+	});
+
+	/*
+	 * The two that would reach a reader: an arm64 build under the Intel label,
+	 * or the Linux AppImage / zip — which also say x64 — under a `.dmg` one.
+	 */
+	test.each([
+		...MACOS_NAMES,
+		...LINUX_NAMES,
+		'Ensemblr-linux-x64-0.1.0-beta.19.zip',
+	])('drops %s', (name) => {
+		expect(macosIntelAssets([asset(name)])).toEqual([]);
+	});
+
+	test('the arm64 filter never returns an Intel artifact', () => {
+		expect(macosAssets(INTEL_NAMES.map(asset))).toEqual([]);
+	});
+
+	test('the Linux filter never returns an Intel artifact', () => {
+		expect(linuxAssets(INTEL_NAMES.map(asset))).toEqual([]);
+	});
 });
 
 describe('linuxAssets', () => {
@@ -211,6 +248,29 @@ describe('the two platform filters together', () => {
 		);
 	});
 
+	test('resolves both Mac architectures apart from each other and from Linux', () => {
+		const release = toRelease({
+			tag_name: 'v0.1.20',
+			name: null,
+			draft: false,
+			prerelease: false,
+			published_at: '2026-09-21T09:15:28Z',
+			html_url: 'https://example.test/releases/tag/v0.1.20',
+			assets: [
+				asset('Ensemblr-0.1.20-x64.AppImage'),
+				asset('Ensemblr-0.1.20-x64.dmg'),
+				asset('Ensemblr-darwin-x64-0.1.20.zip'),
+				asset('Ensemblr-0.1.20-arm64.dmg'),
+				asset('Ensemblr-darwin-arm64-0.1.20.zip'),
+			],
+		});
+		expect(release.dmg?.url).toEndWith('Ensemblr-0.1.20-arm64.dmg');
+		expect(release.dmgIntel?.url).toEndWith('Ensemblr-0.1.20-x64.dmg');
+		expect(release.dmgIntel?.label).toBe('Intel Mac .dmg');
+		expect(release.zipIntel?.url).toEndWith('Ensemblr-darwin-x64-0.1.20.zip');
+		expect(release.appImage?.url).toEndWith('Ensemblr-0.1.20-x64.AppImage');
+	});
+
 	test('reports a platform the release did not build as null', () => {
 		const macOnly = toRelease({
 			tag_name: 'v0.1.0-beta.24',
@@ -223,6 +283,8 @@ describe('the two platform filters together', () => {
 		});
 		expect(macOnly.dmg).not.toBeNull();
 		expect(macOnly.appImage).toBeNull();
+		expect(macOnly.dmgIntel).toBeNull();
+		expect(macOnly.zipIntel).toBeNull();
 	});
 });
 
@@ -330,7 +392,7 @@ describe('FALLBACK_RELEASE', () => {
 		expect(FALLBACK_RELEASE.appImage).not.toBeNull();
 	});
 
-	test.each(['dmg', 'zip', 'appImage'] as const)(
+	test.each(['dmg', 'zip', 'dmgIntel', 'zipIntel', 'appImage'] as const)(
 		'the pinned %s digest is one a reader can actually check',
 		(kind) => {
 			const digest = FALLBACK_RELEASE[kind]?.sha256;
@@ -347,6 +409,8 @@ describe('FALLBACK_RELEASE', () => {
 		for (const download of [
 			FALLBACK_RELEASE.dmg,
 			FALLBACK_RELEASE.zip,
+			FALLBACK_RELEASE.dmgIntel,
+			FALLBACK_RELEASE.zipIntel,
 			FALLBACK_RELEASE.appImage,
 		]) {
 			expect(download?.url).toContain(FALLBACK_RELEASE.tag);
@@ -360,6 +424,8 @@ describe('FALLBACK_RELEASE', () => {
 	test('each pinned asset is named for the platform its label claims', () => {
 		expect(FALLBACK_RELEASE.dmg?.url).toContain('arm64');
 		expect(FALLBACK_RELEASE.zip?.url).toContain('arm64');
+		expect(FALLBACK_RELEASE.dmgIntel?.url).toEndWith('-x64.dmg');
+		expect(FALLBACK_RELEASE.zipIntel?.url).toContain('darwin-x64');
 		expect(FALLBACK_RELEASE.appImage?.url).toEndWith('.AppImage');
 		expect(FALLBACK_RELEASE.appImage?.url).not.toContain('arm64');
 	});
@@ -544,5 +610,23 @@ describe('selectStableRelease and selectNightly', () => {
 		]);
 		expect(nightly?.dmg).not.toBeUndefined();
 		expect(nightly?.appImage).toBeNull();
+		expect(nightly?.dmgIntel).toBeNull();
+	});
+
+	test('the nightly carries the Intel Mac canary as a link, never as bytes', () => {
+		const nightly = selectNightly([
+			entry(NIGHTLY_TAG, {
+				assets: [
+					`Ensemblr-${NIGHTLY_TAG}-arm64.dmg`,
+					'Ensemblr-Canary-x64.dmg',
+					'Ensemblr-Canary-x86_64.AppImage',
+				],
+			}),
+		]);
+		expect(nightly?.dmgIntel).toEqual({
+			label: 'Intel Mac .dmg',
+			url: 'https://example.test/download/nightly/Ensemblr-Canary-x64.dmg',
+		});
+		expect(nightly?.dmg.url).toContain('arm64');
 	});
 });

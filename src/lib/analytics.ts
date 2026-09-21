@@ -76,7 +76,13 @@ export type DownloadChannel = 'stable' | 'nightly';
  * because a press there is a download intent the page failed to satisfy, which
  * is worth more than the presses it did satisfy.
  */
-export type DownloadFormat = 'dmg' | 'zip' | 'appimage' | 'releases-page';
+export type DownloadFormat =
+	| 'dmg'
+	| 'dmg-intel'
+	| 'zip'
+	| 'zip-intel'
+	| 'appimage'
+	| 'releases-page';
 
 /**
  * The slug that identifies one download affordance across every release.

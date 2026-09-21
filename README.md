@@ -4,8 +4,8 @@ The marketing site for [Ensemblr](https://github.com/ensemblr-hq/ensemblr) — a
 for isolated, multi-agent coding workflows.
 
 One landing route plus `/schemas` and `/legal`. It explains the product, shows a recreation of the
-app's shell, and hands over three downloads behind a switcher: the newest release for macOS on Apple
-silicon, the same release for Linux on x86-64, and the rolling nightly for both.
+app's shell, and hands over three downloads behind a switcher: the newest release for macOS (Apple
+silicon, with the Intel Mac build beside it), the same release for Linux on x86-64, and the rolling nightly for both.
 
 ## Stack
 

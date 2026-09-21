@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { TrackedDownloadLink } from '@/components/download/tracked-download-link';
+import type { AnalyticsSurface } from '@/lib/analytics';
 import type { Platform } from '@/lib/platform';
 import { formatReleaseDate, type Release } from '@/lib/release';
 import { cn } from '@/lib/utils';
@@ -47,8 +49,11 @@ export function ReleaseLine({
 	className,
 	platform,
 	release,
+	surface,
 }: {
 	className?: string;
+	/** Which copy of the line was pressed, for the Intel link's event. */
+	surface: AnalyticsSurface;
 	/** Same build the button beside this one links to. */
 	platform: Platform;
 	/** Same object the button beside this one links to. */
@@ -86,6 +91,31 @@ export function ReleaseLine({
 				<span className='sr-only'>Architecture: </span>
 				{ARCHITECTURE[platform]}
 			</span>
+			{/*
+			 * The button is the Apple silicon build, and a browser cannot tell an
+			 * Intel Mac from an arm64 one, so the other build is offered here — on
+			 * every copy of this line, the hero's included — rather than left to
+			 * whoever scrolls to the Download section.
+			 */}
+			{platform === 'macos' && release.dmgIntel ? (
+				<>
+					<span aria-hidden='true'>·</span>
+					<span>
+						Intel Mac:{' '}
+						<TrackedDownloadLink
+							channel='stable'
+							className='rounded-sm text-ink underline decoration-line underline-offset-4 transition-colors hover:text-accent'
+							format='dmg-intel'
+							href={release.dmgIntel.url}
+							platform='macos'
+							surface={surface}
+							version={release.version}
+						>
+							.dmg
+						</TrackedDownloadLink>
+					</span>
+				</>
+			) : null}
 			{published ? (
 				<>
 					<span aria-hidden='true'>·</span>
