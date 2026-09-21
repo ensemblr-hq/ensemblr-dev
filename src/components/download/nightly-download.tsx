@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { TrackedDownloadLink } from '@/components/download/tracked-download-link';
 import { MoonIcon } from '@/components/icons/site';
-import { PLATFORMS, type Platform } from '@/lib/platform';
+import type { DownloadFormat } from '@/lib/analytics';
+import type { Platform } from '@/lib/platform';
 import {
 	NIGHTLY_TAG,
 	type Nightly,
@@ -37,11 +38,13 @@ import {
  */
 function NightlyRow({
 	download,
+	format,
 	label,
 	note,
 	platform,
 }: {
 	download: NightlyDownloadLink;
+	format: DownloadFormat;
 	label: string;
 	note: string;
 	/*
@@ -64,7 +67,7 @@ function NightlyRow({
 			<TrackedDownloadLink
 				channel='nightly'
 				className='w-fit break-all font-mono text-[0.8125rem] text-ink underline decoration-line underline-offset-4 transition-colors hover:text-accent'
-				format={platform === 'macos' ? 'dmg' : 'appimage'}
+				format={format}
 				href={download.url}
 				platform={platform}
 				surface='download'
@@ -90,14 +93,35 @@ const NIGHTLY_NOTES: Record<string, string> = {
 };
 
 export function NightlyDownload({ nightly }: { nightly: Nightly }) {
-	const rows = PLATFORMS.map((platform) => ({
-		download:
-			platform.id === 'macos'
-				? (nightly.dmg as NightlyDownloadLink | null)
-				: nightly.appImage,
-		id: platform.id,
-		label: platform.label,
-	}));
+	const rows: readonly {
+		download: NightlyDownloadLink | null;
+		format: DownloadFormat;
+		id: Platform;
+		key: string;
+		label: string;
+	}[] = [
+		{
+			download: nightly.dmg,
+			format: 'dmg',
+			id: 'macos',
+			key: 'macos-arm64',
+			label: 'macOS · Apple silicon',
+		},
+		{
+			download: nightly.dmgIntel,
+			format: 'dmg-intel',
+			id: 'macos',
+			key: 'macos-x64',
+			label: 'macOS · Intel',
+		},
+		{
+			download: nightly.appImage,
+			format: 'appimage',
+			id: 'linux',
+			key: 'linux-x64',
+			label: 'Linux',
+		},
+	];
 
 	return (
 		<div className='flex flex-col gap-4 rounded-lg border border-line border-dashed bg-surface/70 p-4'>
@@ -128,7 +152,8 @@ export function NightlyDownload({ nightly }: { nightly: Nightly }) {
 					row.download ? (
 						<NightlyRow
 							download={row.download}
-							key={row.id}
+							format={row.format}
+							key={row.key}
 							label={row.label}
 							note={NIGHTLY_NOTES[row.id]}
 							platform={row.id}

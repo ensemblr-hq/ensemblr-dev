@@ -50,9 +50,9 @@ export function HomebrewNote() {
 			/>
 
 			<p className='border-line/70 border-t pt-3 text-[0.8125rem] leading-relaxed text-muted'>
-				{/* Every claim in this paragraph is a line in the cask — `depends_on
-				    arch: :arm64`, `depends_on macos: :ventura`, `depends_on formula:
-				    "gh"`, `auto_updates true` — read from
+				{/* Every claim in this paragraph is a line in the cask — `arch arm:
+				    "arm64", intel: "x64"`, `depends_on macos: :ventura`,
+				    `depends_on formula: "gh"`, `auto_updates true` — read from
 				    `ensemblr-hq/homebrew-tap` rather than from `brew info`, which
 				    reports whatever tap the reader has already fetched. */}
 				<Link
@@ -61,8 +61,8 @@ export function HomebrewNote() {
 				>
 					The cask
 				</Link>{' '}
-				declares Apple silicon and macOS 13, so brew refuses where the app
-				cannot open. It pulls in{' '}
+				picks the Apple silicon or Intel disk image to match the Mac and needs
+				macOS 13, so brew refuses where the app cannot open. It pulls in{' '}
 				<code className='whitespace-nowrap font-mono text-[0.75rem]'>gh</code>{' '}
 				too;{' '}
 				<code className='whitespace-nowrap font-mono text-[0.75rem]'>

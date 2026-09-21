@@ -35,10 +35,11 @@ export function IntegrityNote({
 	platform: Platform;
 	release: Release;
 }) {
-	const download = platform === 'macos' ? release.dmg : release.appImage;
+	const downloads = (
+		platform === 'macos' ? [release.dmg, release.dmgIntel] : [release.appImage]
+	).filter((download) => download !== null);
 	const distribution = DISTRIBUTION[platform];
 	const signed = platform === 'macos';
-	const sha256 = download?.sha256 ?? null;
 
 	return (
 		<div className='flex flex-col gap-3 rounded-lg border border-line/70 bg-surface/40 p-4'>
@@ -54,27 +55,33 @@ export function IntegrityNote({
 				</span>
 			</p>
 
-			{sha256 ? (
-				<div className='flex flex-col gap-1.5 border-line/70 border-t pt-3'>
-					<p className='font-mono text-[0.75rem] text-ink'>
-						Check it before you open it:
-					</p>
-					{/*
-					 * `break-all`, not `truncate`. A digest shown with its middle
-					 * missing is a digest nobody can compare — the one string on the
-					 * page where wrapping ugly beats fitting neatly.
-					 */}
-					<code className='break-all font-mono text-[0.75rem] leading-relaxed text-ink'>
-						{/* `shasum` on macOS, `sha256sum` on Linux: coreutils ships the
-						    second and not the first, and a command that is not there is
-						    worse than no command at all. */}
-						{signed ? 'shasum -a 256' : 'sha256sum'} ~/Downloads/
-						{download?.url.split('/').pop()}
-						<br />
-						<span className='text-ink'>{sha256}</span>
-					</code>
-				</div>
-			) : null}
+			{downloads.map((download) =>
+				download.sha256 ? (
+					<div
+						className='flex flex-col gap-1.5 border-line/70 border-t pt-3'
+						key={download.url}
+					>
+						<p className='font-mono text-[0.75rem] text-ink'>
+							Check it before you open it
+							{downloads.length > 1 ? ` (${download.label}):` : ':'}
+						</p>
+						{/*
+						 * `break-all`, not `truncate`. A digest shown with its middle
+						 * missing is a digest nobody can compare — the one string on the
+						 * page where wrapping ugly beats fitting neatly.
+						 */}
+						<code className='break-all font-mono text-[0.75rem] leading-relaxed text-ink'>
+							{/* `shasum` on macOS, `sha256sum` on Linux: coreutils ships the
+							    second and not the first, and a command that is not there is
+							    worse than no command at all. */}
+							{signed ? 'shasum -a 256' : 'sha256sum'} ~/Downloads/
+							{download.url.split('/').pop()}
+							<br />
+							<span className='text-ink'>{download.sha256}</span>
+						</code>
+					</div>
+				) : null,
+			)}
 		</div>
 	);
 }

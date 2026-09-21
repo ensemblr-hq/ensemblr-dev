@@ -106,7 +106,15 @@ export function DownloadButton({
 			    two builds now and the file behind this button is one of them. A reader
 			    the detection got wrong should be able to see that from the label
 			    without clicking. */}
-			<span>Download for {label}</span>
+			<span>
+				Download for {label}
+				{/* The `.dmg` behind this button is the arm64 one, and an Intel Mac
+				    cannot open it: the architecture is on the button because the
+				    reader cannot be trusted to work it out from the file. The Intel
+				    build is offered beside the release line under every copy of the
+				    button. */}
+				{platform === 'macos' ? ' (Apple silicon)' : null}
+			</span>
 			{/* /80, not /65. Dark-on-accent has far less headroom than the page's
 			    light-on-dark ramp: the same 65% that reads as a quiet subtitle in
 			    body copy lands at 4.1:1 here, under AA on the one control the page

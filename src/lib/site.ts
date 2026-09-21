@@ -45,7 +45,7 @@ export const SITE = {
 	searchDescription:
 		'A desktop orchestrator for Pi and Claude Code, on macOS and Linux. Every stream of work gets its own git worktree, and an agent can drive the app itself.',
 	description:
-		'A desktop orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — delegate from root to manager to leaf, wait, verify, integrate. No account, no tokens stored. macOS on Apple silicon or Linux on x86-64, Apache 2.0.',
+		'A desktop orchestrator for the Pi agent harness or the Claude Code CLI you already have installed. Every stream of work gets its own git worktree, and an agent can drive the app itself — delegate from root to manager to leaf, wait, verify, integrate. No account, no tokens stored. macOS on Apple silicon or Intel, or Linux on x86-64, Apache 2.0.',
 	/*
 	 * One locale, three spellings of it. `<html lang>` and schema.org want the
 	 * BCP 47 tag, Open Graph wants the underscored form, and the page's own copy
@@ -154,9 +154,11 @@ export const DISTRIBUTION = {
  *
  * `ensemblr-hq/homebrew-tap` is a second, public repository holding one cask on
  * the stable channel. Every claim the page makes about it is a line in that
- * file: `depends_on arch: :arm64` and `depends_on macos: :ventura`, so brew
- * refuses on a machine that cannot open the app instead of installing it
- * anyway, and `auto_updates true`, which is why a plain `brew upgrade` leaves
+ * file: `arch arm: "arm64", intel: "x64"` chooses the disk image for the Mac
+ * it runs on (one-architecture until 0.1.20, which added the Intel `.dmg`), and
+ * `depends_on macos: :ventura` makes brew refuse on a machine that cannot open
+ * the app instead of installing it anyway, and `auto_updates true`, which is
+ * why a plain `brew upgrade` leaves
  * the bundle to Ensemblr's own updater — two updaters writing one bundle is how
  * an install gets corrupted.
  *
@@ -234,15 +236,14 @@ export const REQUIREMENTS = [
 		// "no" should meet it once. No semicolon anywhere in `name`:
 		// `softwareRequirements` joins these on `'; '` and the test splits them
 		// back, so a semicolon here silently invents a requirement.
-		name: 'macOS on Apple silicon, or Linux on x86-64',
+		name: 'macOS on Apple silicon or Intel, or Linux on x86-64',
 		// The page's one ®, and the Linux Foundation's own instruction for it: the
 		// first prominent appearance of the mark carries the symbol, the footer
 		// carries the legend, and no later mention repeats either. This gate line
 		// is where a reader meets the word first — the hero renders it above
 		// everything but the headline. See THIRD_PARTY in `legal.ts`.
-		short: 'Apple silicon or x86-64 Linux®',
-		detail:
-			'Intel Macs and arm64 Linux are not built. Windows is not supported.',
+		short: 'Apple silicon or Intel Mac, or x86-64 Linux®',
+		detail: 'arm64 Linux is not built. Windows is not supported.',
 		required: true,
 	},
 	{

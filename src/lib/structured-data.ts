@@ -308,7 +308,8 @@ export function buildSoftwareApplication(release: Release): JsonLdNode {
 		 * asserted here that the rendered page does not also claim.
 		 */
 		operatingSystem: 'macOS, Linux',
-		processorRequirements: 'Apple silicon (arm64) on macOS, x86-64 on Linux',
+		processorRequirements:
+			'Apple silicon (arm64) or Intel (x86-64) on macOS, x86-64 on Linux',
 		releaseNotes: release.notesUrl,
 		sameAs: [REPO.url],
 		softwareRequirements: softwareRequirements(),
