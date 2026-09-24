@@ -126,40 +126,40 @@ export const NIGHTLY_TAG = 'nightly';
  * checkable. Nothing updates this automatically — see `docs/re-pinning.md`.
  */
 export const FALLBACK_RELEASE: Release = {
-	tag: 'v0.1.21',
-	version: '0.1.21',
+	tag: 'v0.1.22',
+	version: '0.1.22',
 	isPrerelease: false,
-	publishedAt: '2026-09-22T16:09:09Z',
-	notesUrl: `${REPO.releasesUrl}/tag/v0.1.21`,
+	publishedAt: '2026-09-24T07:02:38Z',
+	notesUrl: `${REPO.releasesUrl}/tag/v0.1.22`,
 	dmg: {
 		label: 'Apple silicon .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.21/Ensemblr-0.1.21-arm64.dmg`,
-		sizeBytes: 153_560_740,
-		sha256: '81f3eb47d3f26bf1edcc1513ba9bbfd09c1a0f3ab32c0f9d5b19d16b745652be',
+		url: `${REPO.releasesUrl}/download/v0.1.22/Ensemblr-0.1.22-arm64.dmg`,
+		sizeBytes: 153_562_291,
+		sha256: '9bfb01be6f22b3efa2fc986d10eb9de2c4809456e1d4a971f7808b8e5b4ecb63',
 	},
 	zip: {
 		label: 'Apple silicon .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.21/Ensemblr-darwin-arm64-0.1.21.zip`,
-		sizeBytes: 154_698_222,
-		sha256: '2d9315bb0eab6a8cdfe7e31189ec146a0c40cf6ac6be0cc7d0108fd8f567cc16',
+		url: `${REPO.releasesUrl}/download/v0.1.22/Ensemblr-darwin-arm64-0.1.22.zip`,
+		sizeBytes: 154_695_722,
+		sha256: '97acb2fa5d349161c8943fb7c727c684cc9b33d2c0410a41e529afa0be52034a',
 	},
 	dmgIntel: {
 		label: 'Intel Mac .dmg',
-		url: `${REPO.releasesUrl}/download/v0.1.21/Ensemblr-0.1.21-x64.dmg`,
-		sizeBytes: 159_074_014,
-		sha256: '22df092f3766a6250780fb02efa34403cb329747cb97a2c98532a7a8f1c702d0',
+		url: `${REPO.releasesUrl}/download/v0.1.22/Ensemblr-0.1.22-x64.dmg`,
+		sizeBytes: 159_077_788,
+		sha256: '85d8a63490ae19b1798c0cc1ec9f367491215d8dd27f8a013f07a5a7c2af0a37',
 	},
 	zipIntel: {
 		label: 'Intel Mac .zip',
-		url: `${REPO.releasesUrl}/download/v0.1.21/Ensemblr-darwin-x64-0.1.21.zip`,
-		sizeBytes: 160_542_886,
-		sha256: 'c4414571b78170fcfd2b1a6e0a07f4ecc31c27fe95a9d6b768afde203a42948b',
+		url: `${REPO.releasesUrl}/download/v0.1.22/Ensemblr-darwin-x64-0.1.22.zip`,
+		sizeBytes: 160_541_332,
+		sha256: 'ddfd7d0a2f73de52528056b23fc4bdbc3f16c64b57ffbdb87f977bbe289013fc',
 	},
 	appImage: {
 		label: 'Linux x86-64 .AppImage',
-		url: `${REPO.releasesUrl}/download/v0.1.21/Ensemblr-0.1.21-x64.AppImage`,
+		url: `${REPO.releasesUrl}/download/v0.1.22/Ensemblr-0.1.22-x64.AppImage`,
 		sizeBytes: 140_712_440,
-		sha256: 'a328a968e7c3682294216684a4c9f64cbcab739afd72e207a277b1790a6513d0',
+		sha256: '89ecd3aad7e9f289e6ffc740286a5b837c36c4cfa7f46a07334a3d9e85947ab1',
 	},
 };
 
