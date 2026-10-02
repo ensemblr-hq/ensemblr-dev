@@ -84,7 +84,7 @@ export interface PublishedSchema {
 	readonly guideUrl: string;
 }
 
-const GUIDE = `${REPO.url}/blob/master/docs/guide`;
+const GUIDE = `${REPO.url}/blob/master/apps/desktop/docs/guide`;
 
 /*
  * `id` is built from `SITE.url` rather than typed out, so the manifest cannot
@@ -97,7 +97,7 @@ export const SCHEMAS: readonly PublishedSchema[] = [
 		file: 'config.schema.json',
 		path: '/schemas/config.schema.json',
 		id: `${SITE.url}/schemas/config.schema.json`,
-		sourcePath: 'schemas/config.schema.json',
+		sourcePath: 'apps/desktop/schemas/config.schema.json',
 		title: 'Ensemblr user config',
 		describes: '~/.config/ensemblr/config.json',
 		summary:
@@ -117,7 +117,7 @@ export const SCHEMAS: readonly PublishedSchema[] = [
 		file: 'settings.schema.json',
 		path: '/schemas/settings.schema.json',
 		id: `${SITE.url}/schemas/settings.schema.json`,
-		sourcePath: 'schemas/settings.schema.json',
+		sourcePath: 'apps/desktop/schemas/settings.schema.json',
 		title: 'Ensemblr repository settings',
 		describes: '.ensemblr/settings.toml',
 		summary:

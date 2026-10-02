@@ -44,7 +44,7 @@ const STEPS: readonly Step[] = [
 		id: 'workspaces',
 		points: [
 			/*
-			 * 0.1.2's headline, from `docs/guide/03-first-run.md`'s "Adding your
+			 * 0.1.2's headline, from `apps/desktop/docs/guide/03-first-run.md`'s "Adding your
 			 * first project". It leads the step because it is the one bullet here
 			 * that runs before a workspace exists: Quick start creates the repo the
 			 * other five then cut worktrees from.
@@ -86,7 +86,7 @@ const STEPS: readonly Step[] = [
 			 */
 			'Each agent is handed control-tool names its own runtime can call',
 			/*
-			 * 0.1.14's model roles, from `docs/guide/09-agent-control.md`. They are advisory
+			 * 0.1.14's model roles, from `apps/desktop/docs/guide/09-agent-control.md`. They are advisory
 			 * preferences rather than permissions or fixed routing, which is why the
 			 * row says "guide" rather than "choose".
 			 */
@@ -105,7 +105,7 @@ const STEPS: readonly Step[] = [
 			 */
 			'A planning agent still names the work, asks, and submits its plan',
 			'Git-backed checkpoints restore the tree to an earlier turn',
-			// `docs/guide/06-agents.md`'s "When a turn fails". It belongs to this
+			// `apps/desktop/docs/guide/06-agents.md`'s "When a turn fails". It belongs to this
 			// step because the step's claim is the surface, and a turn that dies is
 			// part of it — the one place the two runtimes used to stop agreeing,
 			// each leaking its provider's English under the last tool card. The
@@ -123,7 +123,7 @@ const STEPS: readonly Step[] = [
 		id: 'review',
 		points: [
 			'Diffs scoped to uncommitted work, a commit, or a whole branch',
-			// `docs/guide/08-reviewing-changes.md`. It belongs to this step rather
+			// `apps/desktop/docs/guide/08-reviewing-changes.md`. It belongs to this step rather
 			// than the long tail because it is the step's own argument made
 			// mechanical: the panel sits beside the conversation, and this is the
 			// two-click path between them. A diff has no file of its own, so its

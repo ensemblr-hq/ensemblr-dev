@@ -1,6 +1,6 @@
 /**
  * Long-tail capability copy. Sourced from the app's own README and the "Current
- * Shell Contract" section of `docs/ux-conventions.md`, kept in one place so the
+ * Shell Contract" section of `apps/desktop/docs/ux-conventions.md`, kept in one place so the
  * prose can be corrected in one place. That section is where
  * `docs/product/current-shell-inventory.md` went — the path this file and
  * `AGENTS.md` both used to name now 404s in the app repo, which is worth
@@ -49,7 +49,7 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			// guide do not mention it either, and the page must not market a
 			// feature more loudly than the product does.
 			'An agent-drawn architecture diagram, committed to the repo, behind an experimental switch that is off by default',
-			// 0.1.2, from `docs/guide/03-first-run.md`. The Workspaces step names
+			// 0.1.2, from `apps/desktop/docs/guide/03-first-run.md`. The Workspaces step names
 			// the owner picker; this row is the half that only the long tail has
 			// room for, and it is the more distinctive one — an org you cannot
 			// publish into is listed **disabled with its reason** rather than
@@ -95,7 +95,7 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			// is why the row can promise they agree rather than that one of them
 			// looks right.
 			'Sent prompts keep the chip titles and glyphs the composer showed',
-			// 0.1.0-beta.11, from `docs/guide/06-agents.md`'s "Right-clicking text".
+			// 0.1.0-beta.11, from `apps/desktop/docs/guide/06-agents.md`'s "Right-clicking text".
 			// Electron draws no context menu unless the app builds one, so until this
 			// release right-clicking the composer did nothing at all — which is why
 			// the row names the spellchecker rather than the clipboard verbs: Cut,
@@ -145,7 +145,7 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			// that same workspace back, and a repository with no live workspace is
 			// refused rather than quietly falling back to the root.
 			'Shared repository settings written to a workspace branch you name, never to a clone nobody sees',
-			// 0.1.0-beta.6, from `docs/guide/11-app-settings.md` and
+			// 0.1.0-beta.6, from `apps/desktop/docs/guide/11-app-settings.md` and
 			// `12-repository-settings.md`. The schemas themselves have a page of
 			// their own on this site, so the row is deliberately the *product*
 			// claim rather than the publishing one: what a reader gets is an editor
@@ -165,7 +165,7 @@ export const FEATURE_GROUPS: readonly FeatureGroup[] = [
 			'Any number of Linear organisations connected at once',
 			'Infisical secrets resolved live at launch, never written into the repo',
 			'Setup diagnostics with per-check remediation',
-			// 0.1.0-beta.15, from `docs/guide/11-app-settings.md`'s "Concierge
+			// 0.1.0-beta.15, from `apps/desktop/docs/guide/11-app-settings.md`'s "Concierge
 			// settings". `app.concierge` is a top-level sibling of `app.models`,
 			// not a key inside it — the model that suits supervising a dozen
 			// workspaces is not the one that suits editing a file in any of them.
@@ -196,7 +196,7 @@ export interface TrustItem {
  * softened into an adjective on the way across.
  *
  * Two clauses arrived with 0.1.0-beta.5 and come from
- * `docs/guide/10-integrations.md` at `34d446b0` rather than the README: Linear's
+ * `apps/desktop/docs/guide/10-integrations.md` at `34d446b0` rather than the README: Linear's
  * tokens are now "keyed per account", because several organisations can be
  * connected at once, and "Infisical secrets are not stored at all — they resolve
  * live at launch". The second is the stronger claim of the two and is the reason

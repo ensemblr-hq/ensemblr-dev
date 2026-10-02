@@ -74,7 +74,7 @@ export const REPO = {
 	releasesUrl: 'https://github.com/ensemblr-hq/ensemblr/releases',
 	issuesUrl: 'https://github.com/ensemblr-hq/ensemblr/issues',
 	changelogUrl:
-		'https://github.com/ensemblr-hq/ensemblr/blob/master/CHANGELOG.md',
+		'https://github.com/ensemblr-hq/ensemblr/blob/master/apps/desktop/CHANGELOG.md',
 	licenseUrl: 'https://github.com/ensemblr-hq/ensemblr/blob/master/LICENSE',
 	/*
 	 * The licence the source carries now, spelled the way a reader says it rather
@@ -127,7 +127,7 @@ export const NAV_SECTIONS = [
  * check themselves before it ever opens.
  *
  * **The two halves are not symmetrical and the copy does not pretend they are.**
- * The macOS claim is `docs/guide/01-install.md`: "both the `.app` and the `.dmg`
+ * The macOS claim is `apps/desktop/docs/guide/01-install.md`: "both the `.app` and the `.dmg`
  * carry their own ticket, so Gatekeeper clears them on first open without a
  * network round-trip." There is no counterpart for the AppImage. `make:linux`
  * runs in a CI job that skips `verify:signing` outright, and `notarizationEnabled`

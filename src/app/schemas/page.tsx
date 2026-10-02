@@ -247,7 +247,7 @@ export default function SchemasPage() {
 							A check in CI compares the copies against{' '}
 							<Link
 								className='underline decoration-line underline-offset-4 transition-colors hover:text-ink hover:decoration-current'
-								href={`${REPO.url}/tree/master/schemas`}
+								href={`${REPO.url}/tree/master/apps/desktop/schemas`}
 							>
 								the originals
 							</Link>{' '}
