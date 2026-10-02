@@ -42,7 +42,7 @@ const GUARDRAILS = [
 	 *
 	 * The five that stayed each answer a question a reader hands an agent their
 	 * repository asking. Both deletions are still true and both live in the app's
-	 * `docs/agent-control.md`; nothing here was softened, two rows were dropped.
+	 * `apps/desktop/docs/agent-control.md`; nothing here was softened, two rows were dropped.
 	 */
 	[
 		'Issue writes',
@@ -51,7 +51,7 @@ const GUARDRAILS = [
 	/*
 	 * 0.1.0-beta.5. The row above says what an agent may not do to a ticket; this
 	 * one says why it does anything to it at all, which is the half that was
-	 * missing. `docs/agent-control.md` is blunt about it — the tools had been
+	 * missing. `apps/desktop/docs/agent-control.md` is blunt about it — the tools had been
 	 * there since Linear landed, and for as long as nothing told the agent there
 	 * *was* a ticket, every transition happened because someone asked for one by
 	 * hand, "which is the same as it not happening".
@@ -67,7 +67,7 @@ const GUARDRAILS = [
 		'named in every brief, cut to the calls that caller may make',
 	],
 	/*
-	 * 0.1.0-beta.6, from `docs/guide/06-agents.md` and CONTEXT.md's own entry for
+	 * 0.1.0-beta.6, from `apps/desktop/docs/guide/06-agents.md` and CONTEXT.md's own entry for
 	 * the term at `30b2d945`. The two rows above say what an agent is *told*; this
 	 * one says what it can look up, which is what the chip row on the other side
 	 * of this section has been silently assuming since it was written. Seven tool
@@ -91,7 +91,7 @@ const GUARDRAILS = [
 		'the tool surface, the worktree model and every settings.toml key — read on demand, shipped inside the app',
 	],
 	/*
-	 * 0.1.5, from `docs/guide/06-agents.md`'s "AFK mode" and its delivery loop,
+	 * 0.1.5, from `apps/desktop/docs/guide/06-agents.md`'s "AFK mode" and its delivery loop,
 	 * amended by ADR 0064. The first row on this list about an agent nobody is
 	 * watching, and it belongs here for the same reason `Issue writes` does: it
 	 * is a question a reader hands an agent their repository asks, and the answer
@@ -295,7 +295,7 @@ export function Orchestration() {
 					 * drive the app" when Control moved to the front of the page, and a
 					 * section that repeats the headline it sits directly under reads as
 					 * the reader having lost their place. This one escalates instead,
-					 * and it is the app's own framing: `docs/agent-control.md` opens on
+					 * and it is the app's own framing: `apps/desktop/docs/agent-control.md` opens on
 					 * turning "a place you run one agent into a place a team of agents
 					 * runs itself".
 					 */}

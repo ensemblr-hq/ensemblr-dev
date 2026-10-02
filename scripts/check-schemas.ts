@@ -3,7 +3,7 @@
  * repo's own.
  *
  * These files are not ours to edit. They are written in
- * `ensemblr-hq/ensemblr@master:schemas/`, and each declares a canonical `$id` on
+ * `ensemblr-hq/ensemblr@master:apps/desktop/schemas/`, and each declares a canonical `$id` on
  * this domain — which is why the site serves them at all. A copy that has fallen
  * behind is a schema that documents a config key the app no longer reads, or
  * rejects one it now requires, published from the URL every editor was told is
