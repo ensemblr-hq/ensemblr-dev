@@ -98,6 +98,10 @@
 				"set_upstream_on_push": {
 					"type": "boolean",
 					"description": "Configure new workspaces so a plain `git push` sets the branch upstream."
+				},
+				"show_upstream_issues": {
+					"type": "boolean",
+					"description": "List GitHub issues from a fork's upstream (the repository `gh repo set-default` picked, else the `upstream` remote's) instead of the one `origin` points at."
 				}
 			}
 		},
@@ -135,6 +139,21 @@
 				"project_name": {
 					"type": "string",
 					"description": "Project display name, kept so the Secrets pane can name the project before a fetch."
+				}
+			}
+		},
+		"linear": {
+			"type": "object",
+			"description": "Which Linear teams this repository's work is filed under. Linear issues are not tied to a repository by themselves, so without this block every connected account's issues show next to every repository.",
+			"additionalProperties": false,
+			"properties": {
+				"teams": {
+					"type": "array",
+					"description": "Linear teams whose issues belong to this repository, each named by its key (`THE`, matched case-insensitively) or its id. The create-from picker's Issues tab lists only these teams' issues for this repository. On the dashboard, a repository filter keeps only the Linear issues of the repositories it picks, and an issue whose team no repository on the board takes is left off the Backlog. Omitted, or an empty list, scopes nothing: every team's issues show, as they do without the block. A team id pins one organization's team when two connected organizations use the same key.",
+					"items": {
+						"type": "string",
+						"minLength": 1
+					}
 				}
 			}
 		},
